@@ -397,6 +397,12 @@
     ],
     "cross-providers-deps": []
   },
+  "huawei": {
+    "deps": [
+      "apache-airflow>=2.5.0"
+    ],
+    "cross-providers-deps": []
+  },
   "imap": {
     "deps": [],
     "cross-providers-deps": []
