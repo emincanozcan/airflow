@@ -27,29 +27,91 @@ if TYPE_CHECKING:
     from airflow.utils.context import Context
 
 
-class SMNTestOperator(BaseOperator):
-    """
-    This operator creates an OSS bucket
+class SMNPublishMessageTemplateOperator(BaseOperator):
+    def __init__(
+        self,
+        project_id: str | None = None,
+        topic_urn: str | None = None,
+        subject: str | None = None,
+        tags: dict | None = None,
+        template_name: str | None = None,
+        huaweicloud_conn_id: str = "huaweicloud_default",
+        **kwargs,
+        ) -> None:
+        super().__init__(**kwargs)
 
-    :param region: OSS region you want to create bucket
-    :param bucket_name: This is bucket name you want to create
-    :param smn_conn_id: The Airflow connection used for OSS credentials.
-    """
+        self.project_id = project_id
+        self.topic_urn = topic_urn
+        self.subject = subject
+        self.tags = tags
+        self.template_name = template_name
+        self.huaweicloud_conn_id = huaweicloud_conn_id
+
+    def execute(self, context: Context):
+        
+        # Connection parameter and kwargs parameter from Airflow UI
+        smn_hook = SMNHook(huaweicloud_conn_id = self.huaweicloud_conn_id, 
+                           topic_urn = self.topic_urn,
+                           project_id = self.project_id,
+                           tags = self.tags,
+                           template_name = self.template_name)
+                           
+        smn_hook.publish_message()
+
+class PublishTextMessage(BaseOperator):
+    def __init__(
+        self,
+        project_id: str | None = None,
+        topic_urn: str | None = None,
+        subject: str | None = None,
+        message: str | None = None,
+        huaweicloud_conn_id: str = "huaweicloud_default",
+        **kwargs,
+        ) -> None:
+        super().__init__(**kwargs)
+
+        self.project_id = project_id
+        self.topic_urn = topic_urn
+        self.subject = subject
+        self.message = message
+        self.huaweicloud_conn_id = huaweicloud_conn_id
+
+    def execute(self, context: Context):
+        
+        # Connection parameter and kwargs parameter from Airflow UI
+        smn_hook = SMNHook(huaweicloud_conn_id = self.huaweicloud_conn_id, 
+                           topic_urn = self.topic_urn,
+                           project_id = self.project_id,
+                           message = self.message)
+                           
+        smn_hook.publish_message()
+
+
+class PublishJsonMessage(BaseOperator):
 
     def __init__(
         self,
-        region: str,
-        bucket_name: str | None = None,
+        project_id: str | None = None,
+        topic_urn: str | None = None,
+        subject: str | None = None,
+        message_structure: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
-    ) -> None:
+        ) -> None:
         super().__init__(**kwargs)
-        print("ARGUMENTS")
-        print(kwargs)
+
+        self.project_id = project_id
+        self.topic_urn = topic_urn
+        self.subject = subject
+        self.message_structure = message_structure
         self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.region = region
-        self.bucket_name = bucket_name
 
     def execute(self, context: Context):
-        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
-        smn_hook.test()
+        
+        # Connection parameter and kwargs parameter from Airflow UI
+        smn_hook = SMNHook(huaweicloud_conn_id = self.huaweicloud_conn_id, 
+                           topic_urn = self.topic_urn,
+                           project_id = self.project_id,
+                           message_structure = self.message_structure)
+                           
+        smn_hook.publish_message()

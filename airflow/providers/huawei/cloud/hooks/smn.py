@@ -24,12 +24,14 @@ from typing import TYPE_CHECKING, Callable, TypeVar, cast, Any
 from urllib.parse import urlsplit
 from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
-# from huaweicloudsdksmn.v3 import *
+
+from huaweicloudsdkcore.auth.credentials import BasicCredentials
+from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
+from huaweicloudsdkcore.exceptions import exceptions
+from huaweicloudsdksmn.v2 import *
 
 if TYPE_CHECKING:
     from airflow.models.connection import Connection
-
-T = TypeVar("T", bound=Callable)
 
 class SMNHook(BaseHook):
     conn_name_attr = "huaweicloud_conn_id"
@@ -37,14 +39,74 @@ class SMNHook(BaseHook):
     conn_type = "huaweicloud"
     hook_name = "SMN"
 
-    def __init__(self, region: str | None = None, huaweicloud_conn_id="huaweicloud_default", *args, **kwargs) -> None:
+    def __init__(self,
+                 project_id: str | None = None,
+                 topic_urn: str | None = None,
+                 tags: str | None = None,
+                 template_name: str | None = None,
+                 subject: str | None = None,
+                 message_structure: str | None = None, 
+                 message: str | None = None, 
+                 huaweicloud_conn_id="huaweicloud_default", 
+                 *args, 
+                 **kwargs) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.smn_conn = self.get_connection(huaweicloud_conn_id)
-        self.region=region
+        self.smn_conn = self.get_connection(self.huaweicloud_conn_id)
+        self.projectId = project_id
+        self.topic_urn = topic_urn
+        self.tags = tags
+        self.template_name = template_name
+        self.subject = subject
+        self.message_structure = message_structure
+        self.message = message
         super().__init__(*args, **kwargs)
 
-    def test(self):
-        print(f"SMN Hook test {self.region}")
+    def __get_region(self) -> str:
+        region = self.get_connection(self.huaweicloud_conn_id).extra_dejson.get('region',None)
+
+        if region is None:
+            raise Exception(f"No region is specified for connection")
+        return region
+
+
+    def publish_message(self):
+
+        ak = self.smn_conn.login
+        sk = self.smn_conn.password
+        projectId = self.projectId 
+
+        credentials = BasicCredentials(ak, sk, projectId) \
+
+        client = SmnClient.new_builder() \
+            .with_credentials(credentials) \
+            .with_region(SmnRegion.value_of(self.__get_region())) \
+            .build()
+
+        try:
+            kwargs = dict()
+
+            if self.message_structure:
+                kwargs["message_structure"] = self.message_structure
+            if self.template_name:
+                kwargs["message_template_name"] = self.template_name
+            if self.subject:
+                kwargs["subject"] = self.subject
+            if self.tags:
+                kwargs['tags'] = self.tags
+            if self.message:
+                kwargs['message'] = self.message
+
+            request = PublishMessageRequest()
+            request.topic_urn = self.topic_urn
+            request.body = PublishMessageRequestBody(**kwargs)
+            response = client.publish_message(request)
+            print(response)
+        except exceptions.ClientRequestException as e:
+            print(e.status_code)
+            print(e.request_id)
+            print(e.error_code)
+            print(e.error_msg)
+            # TODO: Raise an exception!
 
     @staticmethod
     def get_ui_field_behaviour() -> dict[str, Any]:
@@ -60,6 +122,7 @@ class SMNHook(BaseHook):
                 "password": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
                 "extra": json.dumps(
                     {
+                        "region" : "ap-southeast-3"
                     },
                     indent=2,
                 ),
