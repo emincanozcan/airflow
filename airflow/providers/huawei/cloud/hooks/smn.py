@@ -40,17 +40,20 @@ class SMNHook(BaseHook):
 
     def __init__(self,
                  huaweicloud_conn_id="huaweicloud_default",
+                 region=None,
                  *args,
                  **kwargs) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
+        self.preferred_region = region
         self.smn_conn = self.get_connection(self.huaweicloud_conn_id)
         super().__init__(*args, **kwargs)
 
     def get_region(self) -> str:
-        region = self.smn_conn.extra_dejson.get('region', None)
-        if region is None:
-            raise Exception(f"No region is specified for connection")
-        return region
+        if hasattr(self,"preferred_region") and self.preferred_region is not None:
+            return self.preferred_region
+        if self.smn_conn.extra_dejson.get('region', None) is not None:
+            return self.smn_conn.extra_dejson.get('region', None)
+        raise Exception(f"No region is specified for connection")
 
     def send_message(self,
                         project_id: str,

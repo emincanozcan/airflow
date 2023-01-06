@@ -30,16 +30,18 @@ if TYPE_CHECKING:
 class SMNPublishMessageTemplateOperator(BaseOperator):
     def __init__(
         self,
-        project_id: str | None = None,
-        topic_urn: str | None = None,
+        project_id: str,
+        topic_urn: str,
+        tags: dict,
+        template_name: str,
+        region: str | None = None,
         subject: str | None = None,
-        tags: dict | None = None,
-        template_name: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
-        ) -> None:
+    ) -> None:
         super().__init__(**kwargs)
 
+        self.region = region
         self.project_id = project_id
         self.topic_urn = topic_urn
         self.subject = subject
@@ -48,28 +50,30 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
-        
+
         # Connection parameter and kwargs parameter from Airflow UI
-        smn_hook = SMNHook(huaweicloud_conn_id = self.huaweicloud_conn_id, 
-                           topic_urn = self.topic_urn,
-                           project_id = self.project_id,
-                           tags = self.tags,
-                           template_name = self.template_name)
-                           
-        smn_hook.send_message()
+        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id,region=self.region)
+
+        smn_hook.send_message(topic_urn=self.topic_urn,
+                              project_id=self.project_id,
+                              tags=self.tags,
+                              template_name=self.template_name)
+
 
 class SMNPublishTextMessageOperator(BaseOperator):
     def __init__(
         self,
-        project_id: str | None = None,
-        topic_urn: str | None = None,
+        project_id: str,
+        topic_urn: str,
+        message: str,
+        region: str | None = None,
         subject: str | None = None,
-        message: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
-        ) -> None:
+    ) -> None:
         super().__init__(**kwargs)
 
+        self.region = region
         self.project_id = project_id
         self.topic_urn = topic_urn
         self.subject = subject
@@ -77,30 +81,32 @@ class SMNPublishTextMessageOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
-        
+
         # Connection parameter and kwargs parameter from Airflow UI
-        smn_hook = SMNHook(huaweicloud_conn_id = self.huaweicloud_conn_id, 
-                           topic_urn = self.topic_urn,
-                           project_id = self.project_id,
-                           message = self.message)
-                           
-        smn_hook.send_message()
+        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+
+        smn_hook.send_message(topic_urn=self.topic_urn,
+                              project_id=self.project_id,
+                              message=self.message)
+
 
 class SMNPublishJsonMessageOperator(BaseOperator):
-    
-    #TODO: update message_structure param -> sms, email etc.
+
+    # TODO: update message_structure param -> sms, email etc.
 
     def __init__(
         self,
-        project_id: str | None = None,
-        topic_urn: str | None = None,
+        project_id: str,
+        topic_urn: str,
+        message_structure: str,
+        region: str | None = None,
         subject: str | None = None,
-        message_structure: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
-        ) -> None:
+    ) -> None:
         super().__init__(**kwargs)
 
+        self.region = region
         self.project_id = project_id
         self.topic_urn = topic_urn
         self.subject = subject
@@ -108,11 +114,10 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
-        
+
         # Connection parameter and kwargs parameter from Airflow UI
-        smn_hook = SMNHook(huaweicloud_conn_id = self.huaweicloud_conn_id, 
-                           topic_urn = self.topic_urn,
-                           project_id = self.project_id,
-                           message_structure = self.message_structure)
-                           
-        smn_hook.send_message()
+        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+
+        smn_hook.send_message(topic_urn=self.topic_urn,
+                              project_id=self.project_id,
+                              message_structure=self.message_structure)

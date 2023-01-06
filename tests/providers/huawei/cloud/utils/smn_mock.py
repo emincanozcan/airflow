@@ -27,6 +27,7 @@ SK = "SK"
 
 def mock_smn_hook_default_project_id(self, huaweicloud_conn_id="mock_smn_default", region="ap-southeast-3"):
     self.huaweicloud_conn_id = huaweicloud_conn_id
+    #self.preferred_region = region
     self.smn_conn = Connection(
         login=AK,
         password=SK,
