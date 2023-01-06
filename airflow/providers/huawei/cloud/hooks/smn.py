@@ -17,22 +17,20 @@
 # under the License.
 
 from __future__ import annotations
-from functools import wraps
-from inspect import signature
 import json
-from typing import TYPE_CHECKING, Callable, TypeVar, cast, Any
-from urllib.parse import urlsplit
+from typing import TYPE_CHECKING, Any
 from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
 
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
 from huaweicloudsdkcore.exceptions import exceptions
-#from huaweicloudsdksmn.v2 import *
+
 import huaweicloudsdksmn.v2 as SmnSdk
 
 if TYPE_CHECKING:
     from airflow.models.connection import Connection
+
 
 class SMNHook(BaseHook):
     conn_name_attr = "huaweicloud_conn_id"
@@ -41,55 +39,47 @@ class SMNHook(BaseHook):
     hook_name = "SMN"
 
     def __init__(self,
-                 project_id: str,
-                 topic_urn: str,
-                 tags: str | None = None,
-                 template_name: str | None = None,
-                 subject: str | None = None,
-                 message_structure: str | None = None, 
-                 message: str | None = None, 
-                 huaweicloud_conn_id="huaweicloud_default", 
-                 *args, 
+                 huaweicloud_conn_id="huaweicloud_default",
+                 *args,
                  **kwargs) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
         self.smn_conn = self.get_connection(self.huaweicloud_conn_id)
-        self.project_id = project_id
-        self.topic_urn = topic_urn
-        self.tags = tags
-        self.template_name = template_name
-        self.subject = subject
-        self.message_structure = message_structure
-        self.message = message
         super().__init__(*args, **kwargs)
 
     def get_region(self) -> str:
-        #dddd = self.get_connection(self.huaweicloud_conn_id).extra_dejson.get('region',None)
         region = self.smn_conn.extra_dejson.get('region', None)
         if region is None:
             raise Exception(f"No region is specified for connection")
         return region
 
+    def send_message(self,
+                        project_id: str,
+                        topic_urn: str,
+                        tags: str | None = None,
+                        template_name: str | None = None,
+                        subject: str | None = None,
+                        message_structure: str | None = None,
+                        message: str | None = None, ):
 
-    def publish_message(self):
-        
         kwargs = dict()
 
-        if self.message_structure:
-            kwargs["message_structure"] = self.message_structure
-        if self.template_name:
-            kwargs["message_template_name"] = self.template_name
-        if self.subject:
-            kwargs["subject"] = self.subject
-        if self.tags:
-            kwargs['tags'] = self.tags
-        if self.message:
-            kwargs['message'] = self.message
-        
-        self.send_request(self.make_publish_app_message_request(kwargs))
-            
-    def send_request(self, request: SmnSdk.PublishMessageRequest) -> None :     
+        if message_structure:
+            kwargs["message_structure"] = message_structure
+        if template_name:
+            kwargs["message_template_name"] = template_name
+        if subject:
+            kwargs["subject"] = subject
+        if tags:
+            kwargs['tags'] = tags
+        if message:
+            kwargs['message'] = message
+
+        self.send_request(project_id, self.make_publish_app_message_request(
+            topic_urn=topic_urn, body=kwargs))
+
+    def send_request(self, project_id, request: SmnSdk.PublishMessageRequest) -> None:
         try:
-            response = self.get_smn_client().publish_message(request)
+            response = self.get_smn_client(project_id).publish_message(request)
             print(response)
         except exceptions.ClientRequestException as e:
             print(e.status_code)
@@ -97,21 +87,20 @@ class SMNHook(BaseHook):
             print(e.error_code)
             print(e.error_msg)
             # TODO: Raise an exception!
-            
-    def make_publish_app_message_request(self,body: dict) -> SmnSdk.PublishMessageRequest:
+
+    def make_publish_app_message_request(self, topic_urn, body: dict) -> SmnSdk.PublishMessageRequest:
         request = SmnSdk.PublishMessageRequest()
-        request.topic_urn = self.topic_urn
+        request.topic_urn = topic_urn
         request.body = SmnSdk.PublishMessageRequestBody(**body)
         return request
-            
-    def get_smn_client(self) -> SmnSdk.SmnClient:
-        
+
+    def get_smn_client(self, project_id) -> SmnSdk.SmnClient:
+
         ak = self.smn_conn.login
         sk = self.smn_conn.password
-        project_id = self.project_id 
 
-        credentials = BasicCredentials(ak, sk, project_id) 
-        
+        credentials = BasicCredentials(ak, sk, project_id)
+
         return SmnSdk.SmnClient.new_builder() \
             .with_credentials(credentials) \
             .with_region(SmnRegion.value_of(self.get_region())) \
@@ -131,7 +120,7 @@ class SMNHook(BaseHook):
                 "password": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
                 "extra": json.dumps(
                     {
-                        "region" : "ap-southeast-3"
+                        "region": "ap-southeast-3"
                     },
                     indent=2,
                 ),

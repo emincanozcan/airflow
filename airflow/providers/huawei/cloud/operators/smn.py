@@ -56,9 +56,9 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
                            tags = self.tags,
                            template_name = self.template_name)
                            
-        smn_hook.publish_message()
+        smn_hook.send_message()
 
-class PublishTextMessage(BaseOperator):
+class SMNPublishTextMessageOperator(BaseOperator):
     def __init__(
         self,
         project_id: str | None = None,
@@ -84,10 +84,11 @@ class PublishTextMessage(BaseOperator):
                            project_id = self.project_id,
                            message = self.message)
                            
-        smn_hook.publish_message()
+        smn_hook.send_message()
 
-
-class PublishJsonMessage(BaseOperator):
+class SMNPublishJsonMessageOperator(BaseOperator):
+    
+    #TODO: update message_structure param -> sms, email etc.
 
     def __init__(
         self,
@@ -114,4 +115,4 @@ class PublishJsonMessage(BaseOperator):
                            project_id = self.project_id,
                            message_structure = self.message_structure)
                            
-        smn_hook.publish_message()
+        smn_hook.send_message()

@@ -22,8 +22,6 @@ import json
 from airflow.models import Connection
 
 SMN_PROJECT_ID_HOOK_UNIT_TEST = "example-project"
-PROJECT_ID = "project_id"
-TOPIC_URN = "topic_urn"
 AK = "AK"
 SK = "SK"
 
@@ -38,9 +36,6 @@ def mock_smn_hook_default_project_id(self, huaweicloud_conn_id="mock_smn_default
             }
         )
     )
-    self.project_id = PROJECT_ID
-    self.topic_urn = TOPIC_URN
-    self.region = region
 
 def response_text_message():
     return
