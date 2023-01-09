@@ -18,8 +18,6 @@
 | [OBSDeleteBatchObjectOperator](#obsdeletebatchobjectoperator)  | 批量删除OBS桶对象 |
 | [OBSMoveObjectOperator](#obsmoveobjectoperator)  | 移动OBS桶对象 |
 
-
-
 ____
 
 ### Airflow Connection配置

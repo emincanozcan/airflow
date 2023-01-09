@@ -18,8 +18,6 @@
 """This module contains Alibaba Cloud OBS operators."""
 from __future__ import annotations
 
-import os
-
 from typing import TYPE_CHECKING, Sequence
 
 from airflow.models import BaseOperator
@@ -68,7 +66,7 @@ class OBSListBucketOperator(BaseOperator):
     This operator list all OBS buckets on region.
     This operator returns a python list with the name of buckets which can be
     used by `xcom` in the downstream task.
-    
+
 
     :param obs_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to list bucket
@@ -221,12 +219,12 @@ class OBSSetBucketTaggingOperator(BaseOperator):
     This operator set OBS bucket tagging
     进行该操作，会重置桶标签
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials. 
+    :param obs_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to set bucket tagging
         默认从obs_conn_id对应的connetction中获取
         region为cn-north-1时可设置任意区域的桶标签
     :param bucket_name: This is bucket name you want to set bucket tagging.
-    :param tag_info: 桶标签配置 
+    :param tag_info: 桶标签配置
     """
 
     template_fields: Sequence[str] = ("bucket_name",)
@@ -301,7 +299,7 @@ class OBSCreateObjectOperator(BaseOperator):
     :param bucket_name: This is bucket name you want to create
     :param object_key: the OBS path of the object
     :param object_type: 上传对象类型，默认为content
-        file 
+        file
             data参数为待上传文件/文件夹的完整路径，如/aa/bb.txt，或/aa/。
         content
             data参数为使用字符串作为对象的数据源，上传文本到指定桶，
@@ -342,7 +340,7 @@ class OBSCreateObjectOperator(BaseOperator):
             storage_class: str | None = None,
             expires: int | None = None,
             **kwargs,
-    ) -> list | None:
+    ):
         super().__init__(**kwargs)
         self.region = region
         self.object_key = object_key
@@ -362,7 +360,6 @@ class OBSCreateObjectOperator(BaseOperator):
 
     def execute(self, context: Context):
         obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
-        print(self.data)
         obs_hook.create_object(
             bucket_name=self.bucket_name,
             object_key=self.object_key,
@@ -403,7 +400,7 @@ class OBSDownloadObjectOperator(BaseOperator):
             region: str | None = None,
             obs_conn_id: str | None = "obs_default",
             **kwargs,
-    ) -> bytes | None:
+    ):
         super().__init__(**kwargs)
         self.obs_conn_id = obs_conn_id
         self.region = region
@@ -549,7 +546,8 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
     :param bucket_name: OBS bucket name
     :param object_list: 待删除的对象列表
         对象非多版本表示方式 ['object_key1', 'object_key2', ...]
-        对象存在多版本表示方式[{'object_key': 'test_key', 'version_id': 'test_version'}, ...] or ['object_key1', 'object_key2', ...]
+        对象存在多版本表示方式[{'object_key': 'test_key', 'version_id': 'test_version'}, ...]
+        或者['object_key1', 'object_key2', ...]
     :param quiet: 批量删除对象的响应方式
         False表示详细模式，返回的删除成功和删除失败的所有结果
         True表示简单模式，只返回的删除过程中出错的结果。

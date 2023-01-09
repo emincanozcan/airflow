@@ -18,10 +18,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence
-from urllib.parse import urlsplit
 
-from airflow.compat.functools import cached_property
-from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
 from airflow.sensors.base import BaseSensorOperator
 
