@@ -65,7 +65,7 @@ def unify_bucket_name_and_key(func: T) -> T:
     in case no bucket name and at least a object_key has been passed to the function.
     """
     function_signature = signature(func)
-    
+
     @wraps(func)
     def wrapper(*args, **kwargs) -> T:
         bound_args = function_signature.bind(*args, **kwargs)
@@ -148,7 +148,7 @@ class OBSHook(BaseHook):
             )
 
         return bucket_name, object_key
-    
+
     def get_obs_client(self) -> ObsClient:
         """
         获取OBS客户端，用于管理桶和对象等OBS服务上的资源
@@ -183,7 +183,7 @@ class OBSHook(BaseHook):
         try:
             resp = self.get_bucket_client(bucket_name).createBucket(location=self.region)
             print(resp)
-            if resp.status < 300: 
+            if resp.status < 300:
                 self.log.info('Created OBS bucket with name: {self.bucket_name}')
             else:
                 self.log.error(f'创建桶错误信息：{resp.errorCode}\t{resp.errorMessage}')
@@ -199,11 +199,11 @@ class OBSHook(BaseHook):
         """
         try:
             resp = self.get_obs_client().listBuckets()
-            if resp.status < 300: 
+            if resp.status < 300:
                 self.log.info('桶列表详细信息', resp.body.buckets)
-                return [bucket.name for bucket in resp.body.buckets] 
-            else: 
-                self.log.error(f'查询桶列表错误信息：{resp.errorCode}\t{resp.errorMessage}') 
+                return [bucket.name for bucket in resp.body.buckets]
+            else:
+                self.log.error(f'查询桶列表错误信息：{resp.errorCode}\t{resp.errorMessage}')
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when list bucket")
@@ -215,11 +215,11 @@ class OBSHook(BaseHook):
 
         :param bucket_name: The name of the bucket
         """
-        resp = self.get_bucket_client(bucket_name).headBucket() 
+        resp = self.get_bucket_client(bucket_name).headBucket()
 
-        if resp.status < 300: 
+        if resp.status < 300:
             return True
-        elif resp.status == 404: 
+        elif resp.status == 404:
             self.log.info(f'Bucket {bucket_name} does not exist')
         elif resp.status == 403:
             self.log.error(f'{resp.errorCode}\t{resp.errorMessage}')
@@ -238,10 +238,10 @@ class OBSHook(BaseHook):
         """
         try:
             resp = self.get_bucket_client(bucket_name).deleteBucket()
-            if resp.status < 300: 
+            if resp.status < 300:
                 self.log.info(f'Deleted OBS bucket: {bucket_name}')
-            else: 
-                self.log.error(f'删除桶错误信息：{resp.errorCode}\t{resp.errorMessage}') 
+            else:
+                self.log.error(f'删除桶错误信息：{resp.errorCode}\t{resp.errorMessage}')
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when deleting: {bucket_name}")
@@ -258,8 +258,8 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info(resp.body.tagSet)
                 return resp.body.tagSet
-            else: 
-                self.log.error(f'获取桶标签错误信息：{resp.errorCode}\t{resp.errorMessage}') 
+            else:
+                self.log.error(f'获取桶标签错误信息：{resp.errorCode}\t{resp.errorMessage}')
                 return []
         except Exception as e:
             self.log.error(e)
@@ -267,7 +267,7 @@ class OBSHook(BaseHook):
 
     @provide_bucket_name
     def set_bucket_tagging(
-        self, 
+        self,
         tag_info: list[dict[str, str]] | None = None,
         bucket_name: str | None = None,
     ) -> None:
@@ -277,29 +277,29 @@ class OBSHook(BaseHook):
         :param bucket_name: the name of the bucket
         :param tag_info: 桶标签配置
         """
-        
+
 
         if not tag_info:
-            self.log.warning(f'未传入tag_info标签信息') 
+            self.log.warning(f'未传入tag_info标签信息')
             return
-            
+
         tags = [Tag(key=tag['key'], value=tag['value']) for tag in tag_info]
         tag_info = TagInfo(tags)
         self.log.info(f'tag_info: {tag_info}')
-        
+
         try:
             resp = self.get_bucket_client(bucket_name).setBucketTagging(tagInfo=tag_info)
             if resp.status < 300:
                 self.log.info('成功设置桶标签')
-            else: 
-                self.log.error(f'设置桶标签错误信息：{resp.errorCode}\t{resp.errorMessage}') 
+            else:
+                self.log.error(f'设置桶标签错误信息：{resp.errorCode}\t{resp.errorMessage}')
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when setting the bucket tagging of {bucket_name}")
 
     @provide_bucket_name
     def delete_bucket_tagging(
-        self, 
+        self,
         bucket_name: str | None = None,
     ) -> None:
         """
@@ -311,8 +311,8 @@ class OBSHook(BaseHook):
             resp = self.get_bucket_client(bucket_name).deleteBucketTagging()
             if resp.status < 300:
                 self.log.info('成功删除桶标签')
-            else: 
-                self.log.error(f'删除桶标签错误信息：{resp.errorCode}\t{resp.errorMessage}') 
+            else:
+                self.log.error(f'删除桶标签错误信息：{resp.errorCode}\t{resp.errorMessage}')
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when deletting the bucket tagging of {bucket_name}")
@@ -326,16 +326,14 @@ class OBSHook(BaseHook):
         判断桶对象是否存在
 
         :param bucket_name: 桶名
-        :param object_key: 桶对象名    
+        :param object_key: 桶对象名
         """
 
         bucket_name, object_key = OBSHook.get_obs_bucket_object_key(
             bucket_name, object_key, "bucket_name", "object_key"
         )
-        object_key = 'test/nginx'
         object_list = self.list_object(bucket_name=bucket_name, prefix=object_key, max_keys=1)
         return object_key in object_list
-        # return object_key in object_list['object_keys']
 
     @provide_bucket_name
     def list_object(
@@ -388,7 +386,7 @@ class OBSHook(BaseHook):
                 return None
         self.log.info(object_lists)
         return object_lists
-        
+
     def _list_object(self, bucket_client, **kwargs):
         return bucket_client.listObjects(**kwargs)
 
@@ -410,7 +408,7 @@ class OBSHook(BaseHook):
         :param bucket_name: the name of the bucket
         :param object_key: the OBS path of the object
         :param object_type: 上传对象类型，默认为content
-            file 
+            file
                 待上传文件/文件夹的完整路径，如/aa/bb.txt，或/aa/。
             content
                 使用字符串作为对象的数据源，上传文本到指定桶，
@@ -456,10 +454,10 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info(f'对象上传成功，对象链接：{resp.body.objectUrl}')
                 return resp.body.objectUrl
-            else: 
+            else:
                 self.log.error(f'对象上传错误信息：{resp.errorCode}\t{resp.errorMessage}')
             return None
-            
+
         except Exception as e:
             if object_type == 'content':
                 data.close()
@@ -505,7 +503,7 @@ class OBSHook(BaseHook):
                     self.log.info(type(resp.body.buffer))
                     return resp.body.buffer
                 self.log.info(f'文件下载成功，返回结果：{resp}')
-            else: 
+            else:
                 self.log.error(f'文件下载错误信息：{resp.errorCode}\t{resp.errorMessage}')
         except Exception as e:
             self.log.error(e)
@@ -548,15 +546,15 @@ class OBSHook(BaseHook):
                 sourceObjectKey = source_object_key,
                 destObjectKey = dest_object_key,
                 sourceBucketName = source_bucket_name,
-                destBucketName = dest_bucket_name, 
-                versionId = version_id, 
-                headers = headers, 
-                metadata = metadata, 
+                destBucketName = dest_bucket_name,
+                versionId = version_id,
+                headers = headers,
+                metadata = metadata,
             )
             self.log.info(resp)
             if resp.status < 300:
                 self.log.info(f'对象复制成功, 响应: {resp}')
-            else: 
+            else:
                 self.log.error(f'对象复制错误信息：{resp.errorCode}\t{resp.errorMessage}')
         except Exception as e:
             self.log.error(e)
@@ -588,7 +586,7 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 print(resp.deleteMarker)
                 self.log.info(resp)
-            else: 
+            else:
                 self.log.error(f'对象删除错误信息：{resp.errorCode}\t{resp.errorMessage}')
         except Exception as e:
             self.log.error(e)
@@ -652,7 +650,7 @@ class OBSHook(BaseHook):
             copy_resp = bucket.copyObject(
                 sourceObjectKey = source_object_key,
                 sourceBucketName = bucket_name,
-                destObjectKey = dest_object_key, 
+                destObjectKey = dest_object_key,
             )
             if copy_resp.status < 300:
                 delete_resp = bucket.deleteObject(
