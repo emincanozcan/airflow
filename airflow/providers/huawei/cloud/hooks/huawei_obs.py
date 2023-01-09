@@ -159,8 +159,6 @@ class OBSHook(BaseHook):
         auth = self.get_credential()
         access_key_id, secret_access_key = auth
         server = f'https://obs.{self.region}.myhuaweicloud.com'
-        print('region: ', self.region)
-        print('server: ', server)
         return ObsClient(access_key_id=access_key_id, secret_access_key=secret_access_key, server=server)
 
     @provide_bucket_name
@@ -437,7 +435,8 @@ class OBSHook(BaseHook):
                     metadata = metadata,
                     headers = headers,
                 )
-                data.close()
+                if getattr(data, 'read', None):
+                    data.close()
             else:
                 resp = self.get_bucket_client(bucket_name).putFile(
                     objectKey = object_key,
