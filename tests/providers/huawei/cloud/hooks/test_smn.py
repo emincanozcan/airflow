@@ -36,27 +36,27 @@ class TestSmnHook(unittest.TestCase):
             self.hook = SMNHook(huaweicloud_conn_id=MOCK_SMN_CONN_ID)
 
     def test_get_default_region(self):
-        assert self.hook.get_region() == "ap-southeast-3"
+        assert self.hook._get_region() == "ap-southeast-3"
 
     def test_get_smn_client(self):
-        client = self.hook.get_smn_client("project_id")
+        client = self.hook._get_smn_client("project_id")
         assert client.get_credentials().ak == "AK"
         assert client.get_credentials().sk == "SK"
         assert client.get_credentials().project_id == "project_id"
 
     def test_get_request_body(self):
-        req = self.hook.make_publish_app_message_request(
+        req = self.hook._make_publish_app_message_request(
             "test_urn", {"subject": "bar"})
         assert req.body.subject == "bar"
 
     @mock.patch(SMN_STRING.format("SmnSdk.smn_client.SmnClient.publish_message"))
     def test_send_request(self, publish_message):
-        var = self.hook.make_publish_app_message_request(
+        var = self.hook._make_publish_app_message_request(
             "test_urn", {"subject": "bar"})
-        self.hook.send_request("project_id", var)
+        self.hook._send_request("project_id", var)
         publish_message.assert_called_once_with(var)
 
-    @mock.patch(SMN_STRING.format("SMNHook.send_request"))
+    @mock.patch(SMN_STRING.format("SMNHook._send_request"))
     def test_publish_message(self, send_request):
         payload = {"message_structure": '{"default":"Merhaba", "sms":"Merhaba SMS", "email":"Merhaba EMail"}',
                    "tags": {"a": "1"},
@@ -64,4 +64,4 @@ class TestSmnHook(unittest.TestCase):
         self.hook.send_message(project_id="example-id",
                                topic_urn="example-urn", **payload)
         send_request.assert_called_once_with("example-id",
-                                             self.hook.make_publish_app_message_request("example-urn", payload))
+                                             self.hook._make_publish_app_message_request("example-urn", payload))

@@ -16,6 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 from __future__ import annotations
+import json
 
 import unittest
 from unittest import mock
@@ -34,8 +35,8 @@ MOCK_TOPIC_URN = "mock_topic_urn"
 MOCK_MESSAGE = "mock_message"
 MOCK_TEMPLATE_NAME = "mock_template_name"
 MOCK_TAGS = {"test_param" : "test"}
-MOCK_MESSAGE_STRUCTURE = '{"default":"Hello", "sms":"Hello SMS", "email":"Hello Email"}'
-
+MOCK_DEFAULT_MESSAGE = "Hello"
+MOCK_SMS_MESSAGE = "Sms Message"
 
 class TestSMNPublishTextMessageOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.smn.SMNHook")
@@ -65,7 +66,8 @@ class TestSMNPublishJsonMessageOperator(unittest.TestCase):
             huaweicloud_conn_id=MOCK_SMN_CONN_ID,
             project_id=MOCK_PROJECT_ID,
             topic_urn=MOCK_TOPIC_URN,
-            message_structure=MOCK_MESSAGE_STRUCTURE
+            default=MOCK_DEFAULT_MESSAGE,
+            sms=MOCK_SMS_MESSAGE
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
@@ -73,7 +75,7 @@ class TestSMNPublishJsonMessageOperator(unittest.TestCase):
         mock_hook.return_value.send_message.assert_called_once_with(
             topic_urn=MOCK_TOPIC_URN,
             project_id=MOCK_PROJECT_ID,
-            message_structure=MOCK_MESSAGE_STRUCTURE)
+            message_structure=json.dumps({"default" : MOCK_DEFAULT_MESSAGE, "sms" : MOCK_SMS_MESSAGE}))
         
 class TestSMNPublishMessageTemplateOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.smn.SMNHook")

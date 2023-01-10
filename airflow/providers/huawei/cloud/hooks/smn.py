@@ -18,7 +18,8 @@
 
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING, Any
+
+from typing import Any
 from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
 
@@ -28,11 +29,9 @@ from huaweicloudsdkcore.exceptions import exceptions
 
 import huaweicloudsdksmn.v2 as SmnSdk
 
-if TYPE_CHECKING:
-    from airflow.models.connection import Connection
-
-
 class SMNHook(BaseHook):
+    """Interact with Huawei Cloud SMN, using the huaweicloudsdksmn library."""
+    
     conn_name_attr = "huaweicloud_conn_id"
     default_conn_name = "huaweicloud_default"
     conn_type = "huaweicloud"
@@ -48,7 +47,8 @@ class SMNHook(BaseHook):
         self.smn_conn = self.get_connection(self.huaweicloud_conn_id)
         super().__init__(*args, **kwargs)
 
-    def get_region(self) -> str:
+    def _get_region(self) -> str:
+        """Returns region for the hook."""
         if hasattr(self,"preferred_region") and self.preferred_region is not None:
             return self.preferred_region
         if self.smn_conn.extra_dejson.get('region', None) is not None:
@@ -63,7 +63,18 @@ class SMNHook(BaseHook):
                         subject: str | None = None,
                         message_structure: str | None = None,
                         message: str | None = None, ):
+        """
+        This function is used to publish messages to a topic
 
+        :param project_id: Specifies the project ID.For details about how to obtain the project ID
+        :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource identifier.
+        :param tags: Specifies the dictionary consisting of variable parameters and values.
+        :param template_name: Specifies the message template name
+        :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
+        :param message_structure: Specifies the message structure, which contains JSON strings
+        :param message: Specifies the message content
+        """
+        
         kwargs = dict()
 
         if message_structure:
@@ -77,27 +88,23 @@ class SMNHook(BaseHook):
         if message:
             kwargs['message'] = message
 
-        self.send_request(project_id, self.make_publish_app_message_request(
+        self._send_request(project_id, self._make_publish_app_message_request(
             topic_urn=topic_urn, body=kwargs))
 
-    def send_request(self, project_id, request: SmnSdk.PublishMessageRequest) -> None:
+    def _send_request(self, project_id, request: SmnSdk.PublishMessageRequest) -> None:
         try:
-            response = self.get_smn_client(project_id).publish_message(request)
+            response = self._get_smn_client(project_id).publish_message(request)
             print(response)
         except exceptions.ClientRequestException as e:
-            print(e.status_code)
-            print(e.request_id)
-            print(e.error_code)
-            print(e.error_msg)
-            # TODO: Raise an exception!
+            raise AirflowException(f"Errors: {e}")
 
-    def make_publish_app_message_request(self, topic_urn, body: dict) -> SmnSdk.PublishMessageRequest:
+    def _make_publish_app_message_request(self, topic_urn, body: dict) -> SmnSdk.PublishMessageRequest:
         request = SmnSdk.PublishMessageRequest()
         request.topic_urn = topic_urn
         request.body = SmnSdk.PublishMessageRequestBody(**body)
         return request
 
-    def get_smn_client(self, project_id) -> SmnSdk.SmnClient:
+    def _get_smn_client(self, project_id) -> SmnSdk.SmnClient:
 
         ak = self.smn_conn.login
         sk = self.smn_conn.password
@@ -106,7 +113,7 @@ class SMNHook(BaseHook):
 
         return SmnSdk.SmnClient.new_builder() \
             .with_credentials(credentials) \
-            .with_region(SmnRegion.value_of(self.get_region())) \
+            .with_region(SmnRegion.value_of(self._get_region())) \
             .build()
 
     @staticmethod
