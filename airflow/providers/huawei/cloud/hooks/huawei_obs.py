@@ -373,7 +373,7 @@ class OBSHook(BaseHook):
         return object_lists
 
     @staticmethod
-    def _list_object(self, bucket_client, **kwargs):
+    def _list_object(bucket_client, **kwargs):
         return bucket_client.listObjects(**kwargs)
 
     @provide_bucket_name
@@ -448,7 +448,7 @@ class OBSHook(BaseHook):
             raise AirflowException(f"Errors when create object({e})")
 
     @staticmethod
-    def _get_encryption_header(self, encryption, key):
+    def _get_encryption_header(encryption, key):
         if encryption == 'kms':
             return SseKmsHeader(encryption=encryption, key=key)
 
