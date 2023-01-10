@@ -687,6 +687,8 @@ httplib
 HttpRequest
 https
 httpx
+huawei
+Huawei
 hvac
 hyperparameter
 hyperparameters
