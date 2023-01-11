@@ -157,7 +157,6 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
-        print(self.message_structure)
         # Connection parameter and kwargs parameter from Airflow UI
         smn_hook = SMNHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)

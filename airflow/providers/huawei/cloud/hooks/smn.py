@@ -93,10 +93,11 @@ class SMNHook(BaseHook):
 
     def _send_request(self, project_id, request: SmnSdk.PublishMessageRequest) -> None:
         try:
-            response = self._get_smn_client(project_id).publish_message(request)
-            print(response)
-        except exceptions.ClientRequestException as e:
-            raise AirflowException(f"Errors: {e}")
+            self._get_smn_client(project_id).publish_message(request)
+            self.log.info("The message is published successfully")
+        except Exception as e:
+            self.log.error(e)
+            raise AirflowException(f"Errors when publishing: {e}")
 
     def _make_publish_app_message_request(self, topic_urn, body: dict) -> SmnSdk.PublishMessageRequest:
         request = SmnSdk.PublishMessageRequest()
