@@ -1,4 +1,3 @@
-#
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,28 +14,3 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-from __future__ import annotations
-
-import json
-
-from airflow.models import Connection
-
-SMN_PROJECT_ID_HOOK_UNIT_TEST = "example-project"
-AK = "AK"
-SK = "SK"
-
-def mock_smn_hook_default_project_id(self, huaweicloud_conn_id="mock_smn_default", region="ap-southeast-3"):
-    self.huaweicloud_conn_id = huaweicloud_conn_id
-    #self.preferred_region = region
-    self.smn_conn = Connection(
-        login=AK,
-        password=SK,
-        extra=json.dumps(
-            {
-                "region": region,
-            }
-        )
-    )
-
-def response_text_message():
-    return
