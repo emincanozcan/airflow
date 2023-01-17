@@ -21,39 +21,15 @@ import json
 
 from typing import Any
 from airflow.exceptions import AirflowException
-from airflow.hooks.base import BaseHook
+from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
 
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
-from huaweicloudsdkcore.exceptions import exceptions
 
 import huaweicloudsdksmn.v2 as SmnSdk
 
-class SMNHook(BaseHook):
+class SMNHook(HuaweiBaseHook):
     """Interact with Huawei Cloud SMN, using the huaweicloudsdksmn library."""
-    
-    conn_name_attr = "huaweicloud_conn_id"
-    default_conn_name = "huaweicloud_default"
-    conn_type = "huaweicloud"
-    hook_name = "SMN"
-
-    def __init__(self,
-                 huaweicloud_conn_id="huaweicloud_default",
-                 region=None,
-                 *args,
-                 **kwargs) -> None:
-        self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.preferred_region = region
-        self.smn_conn = self.get_connection(self.huaweicloud_conn_id)
-        super().__init__(*args, **kwargs)
-
-    def _get_region(self) -> str:
-        """Returns region for the hook."""
-        if hasattr(self,"preferred_region") and self.preferred_region is not None:
-            return self.preferred_region
-        if self.smn_conn.extra_dejson.get('region', None) is not None:
-            return self.smn_conn.extra_dejson.get('region', None)
-        raise Exception(f"No region is specified for connection")
 
     def send_message(self,
                         project_id: str,
@@ -107,33 +83,12 @@ class SMNHook(BaseHook):
 
     def _get_smn_client(self, project_id) -> SmnSdk.SmnClient:
 
-        ak = self.smn_conn.login
-        sk = self.smn_conn.password
+        ak = self.conn.login
+        sk = self.conn.password
 
         credentials = BasicCredentials(ak, sk, project_id)
 
         return SmnSdk.SmnClient.new_builder() \
             .with_credentials(credentials) \
-            .with_region(SmnRegion.value_of(self._get_region())) \
+            .with_region(SmnRegion.value_of(self.get_region())) \
             .build()
-
-    @staticmethod
-    def get_ui_field_behaviour() -> dict[str, Any]:
-        """Returns custom UI field behaviour for Huawei Cloud Connection."""
-        return {
-            "hidden_fields": ["host", "schema", "port"],
-            "relabeling": {
-                "login": "Huawei Cloud Access Key ID",
-                "password": "Huawei Cloud Secret Access Key",
-            },
-            "placeholders": {
-                "login": "AKIAIOSFODNN7EXAMPLE",
-                "password": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-                "extra": json.dumps(
-                    {
-                        "region": "ap-southeast-3"
-                    },
-                    indent=2,
-                ),
-            },
-        }
