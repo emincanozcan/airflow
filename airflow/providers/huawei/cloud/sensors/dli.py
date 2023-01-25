@@ -58,13 +58,7 @@ class DLIShowBatchStateSensor(BaseSensorOperator):
         self.project_id = project_id
 
     def poke(self, context: Context) -> bool:
-        state = self.hook.show_batch_state(job_id=self.job_id, project_id=self.project_id)
-        """ import time
-        now = time.time()
-        if now < 1673943100:
-            return False
-        else:
-            return True """
+        state = self.get_hook.show_batch_state(job_id=self.job_id, project_id=self.project_id)
         if state in self.FAILURE_STATES:
             raise AirflowException("DLI sensor failed")
 
@@ -73,8 +67,8 @@ class DLIShowBatchStateSensor(BaseSensorOperator):
         return True
 
     @cached_property
-    def hook(self) -> DLIHook:
-        """Create and return an DLIHook"""
+    def get_hook(self) -> DLIHook:
+        """Create and return a DLIHook"""
         return DLIHook(self.huaweicloud_conn_id)
 
 class DLIShowJobStatusSensor(BaseSensorOperator):
@@ -110,17 +104,7 @@ class DLIShowJobStatusSensor(BaseSensorOperator):
         self.project_id = project_id
 
     def poke(self, context: Context) -> bool:
-        state = self.hook.show_job_status(job_id=self.job_id, project_id=self.project_id)
-        import time
-        now = time.time()
-        print(now)
-        return False
-        """ import time
-        now = time.time()
-        if now < 1673943100:
-            return False
-        else:
-            return True """
+        state = self.get_hook.show_job_status(job_id=self.job_id, project_id=self.project_id)
         if state in self.FAILURE_STATES:
             raise AirflowException("DLI sensor failed")
 
@@ -129,6 +113,6 @@ class DLIShowJobStatusSensor(BaseSensorOperator):
         return True
 
     @cached_property
-    def hook(self) -> DLIHook:
-        """Create and return an DLIHook"""
-        return DLIHook(self.huaweicloud_conn_id)
+    def get_hook(self) -> DLIHook:
+        """Create and return a DLIHook"""
+        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id)

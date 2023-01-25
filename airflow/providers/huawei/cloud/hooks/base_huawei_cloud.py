@@ -51,6 +51,8 @@ class HuaweiBaseHook(BaseHook):
             },
         }
     
-    @staticmethod
-    def emincan():
-        pass
+    def test_connection(self):
+        try:
+            return True, self.get_region()
+        except Exception as e:
+            return False, str(f"{type(e).__name__!r} error occurred while testing connection: {e}")
