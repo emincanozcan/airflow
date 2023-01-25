@@ -21,14 +21,12 @@ import json
 
 from airflow.models import Connection
 
-SMN_PROJECT_ID_HOOK_UNIT_TEST = "example-project"
 AK = "AK"
 SK = "SK"
 
-def mock_smn_hook_default_project_id(self, huaweicloud_conn_id="mock_smn_default", region="ap-southeast-3"):
+def mock_huawei_cloud_default(self, huaweicloud_conn_id="mock_default_connection", region="ap-southeast-3"):
     self.huaweicloud_conn_id = huaweicloud_conn_id
-    #self.preferred_region = region
-    self.smn_conn = Connection(
+    self.conn = Connection(
         login=AK,
         password=SK,
         extra=json.dumps(
@@ -37,6 +35,3 @@ def mock_smn_hook_default_project_id(self, huaweicloud_conn_id="mock_smn_default
             }
         )
     )
-
-def response_text_message():
-    return
