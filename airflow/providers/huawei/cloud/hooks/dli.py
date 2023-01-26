@@ -46,7 +46,7 @@ class DLIHook(HuaweiBaseHook):
         list_labels_body,
         cu_count,
     ) -> DliSdk.CreateQueueResponse:
-        if len(list_tags_body) > 10:
+        if list_tags_body != None and len(list_tags_body) > 10:
             raise AirflowException("You can add up to 10 tags.")
         try:
             return self._get_dli_client(project_id).create_queue(

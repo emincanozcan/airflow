@@ -35,15 +35,14 @@ class DLICreateQueueOperator(BaseOperator):
         queue_name: str,
         cu_count: int,
         platform: str | None = None,
-        enterprise_project_id: str
-        | None = None,  # basic or ai(Only the SQL x86_64 dedicated queue supports this option)
-        feature: str | None = None,
+        enterprise_project_id: str | None = None,
+        feature: str | None = None,  # basic or ai(Only the SQL x86_64 dedicated queue supports this option)
         resource_mode: int | None = None,  # 0 Shared or 1 Exclusive
         charging_mode: int | None = None,  # Set only 1
         description: str | None = None,
         queue_type: str = "general",  # sql or general
-        list_tags_body: dict | None = None,
-        list_labels_body: dict | None = None,  # TODO: Ask to HQ for detail
+        list_tags_body: list[object] | None = None,
+        list_labels_body: list[object] | None = None,  # TODO: Ask to HQ for detail
         elastic_resource_pool_name: str | None = None,  # TODO: Ask to HQ for detail.
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
@@ -199,15 +198,15 @@ class DLICreateBatchJobOperator(BaseOperator):
         driver_cores: int | None = None,
         driver_memory: str | None = None,
         name: str | None = None,
-        list_conf_body: dict | None = None,
-        list_groups_body: dict | None = None,
-        list_resources_body: dict | None = None,
-        list_modules_body: dict | None = None,
-        list_files_body: dict | None = None,
-        list_python_files_body: dict | None = None,
-        list_jars_body: dict | None = None,
+        list_conf_body: list[object] | None = None,
+        list_groups_body: list[object] | None = None,
+        list_resources_body: list[object] | None = None,
+        list_modules_body: list[object] | None = None,
+        list_files_body: list[object] | None = None,
+        list_python_files_body: list[object] | None = None,
+        list_jars_body: list[object] | None = None,
         sc_type: str | None = None,
-        list_args_body: dict | None = None,
+        list_args_body: list[object] | None = None,
         cluster_name: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
@@ -286,7 +285,7 @@ class DLIUploadFilesOperator(BaseOperator):
         self,
         project_id: str,
         group: str,
-        file_path: dict,
+        file_path: list[object],
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -316,8 +315,8 @@ class DLIRunjobOperator(BaseOperator):
         sql_query: str,
         database_name: str | None = None,
         queue_name: str | None = None,
-        list_tags_body: dict | None = None,
-        list_conf_body: dict | None = None,
+        list_tags_body: list[object] | None = None,
+        list_conf_body: list[object] | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
