@@ -152,8 +152,8 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         self.project_id = project_id
         self.topic_urn = topic_urn
         self.subject = subject
-        self.message_structure = {"default": default, "sms": sms, "email": email, "http": http, "https": https, "functionstage": functionstage}
-        self.message_structure = json.dumps({i:j for i,j in self.message_structure.items() if j != None})
+        msg = {"default": default, "sms": sms, "email": email, "http": http, "https": https, "functionstage": functionstage}
+        self.message_structure = json.dumps({i:j for i,j in msg.items() if j != None})
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):

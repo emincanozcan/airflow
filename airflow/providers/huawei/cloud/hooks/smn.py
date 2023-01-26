@@ -34,7 +34,7 @@ class SMNHook(HuaweiBaseHook):
     def send_message(self,
                         project_id: str,
                         topic_urn: str,
-                        tags: str | None = None,
+                        tags: dict | None = None,
                         template_name: str | None = None,
                         subject: str | None = None,
                         message_structure: str | None = None,
