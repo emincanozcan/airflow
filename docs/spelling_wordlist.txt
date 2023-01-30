@@ -1000,6 +1000,7 @@ OnFailure
 onkill
 Oozie
 openfaas
+openLooKeng
 oper
 Opsgenie
 opsgenie

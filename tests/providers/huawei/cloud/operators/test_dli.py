@@ -22,11 +22,11 @@ import unittest
 from unittest import mock
 
 from airflow.providers.huawei.cloud.operators.dli import (
-    DLICreateBatchJobOperator,
+    DLISparkCreateBatchJobOperator,
     DLICreateQueueOperator,
     DLIDeleteQueueOperator,
     DLIListQueuesOperator,
-    DLIRunjobOperator,
+    DLIRunSqlJobOperator,
     DLIUpdateQueueCidrOperator,
     DLIUploadFilesOperator
 )
@@ -44,6 +44,7 @@ MOCK_DRIVER_MEMORY = "2G"
 MOCK_EXECUTER_CORES = 4
 MOCK_EXECUTER_MEMORY = "executer_memory"
 MOCK_FEATURE = "feature"
+MOCK_FILE_PATHS = ["file_path"]
 MOCK_FILE_PATH = "file_path"
 MOCK_IMAGE = "image"
 MOCK_NAME = "name"
@@ -79,10 +80,10 @@ MOCK_CIDR_IN_VPC = "10.0.0.1/8"
 MOCK_GROUP = "mock_group"
 
 
-class TestDLICreateBatchJobOperator(unittest.TestCase):
+class TestDLISparkCreateBatchJobOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
     def test_execute(self, mock_hook):
-        operator = DLICreateBatchJobOperator(
+        operator = DLISparkCreateBatchJobOperator(
             task_id=MOCK_TASK_ID,
             region=MOCK_REGION,
             huaweicloud_conn_id=MOCK_DLI_CONN_ID,
@@ -96,7 +97,7 @@ class TestDLICreateBatchJobOperator(unittest.TestCase):
             executor_cores=MOCK_EXECUTER_CORES,
             executor_memory=MOCK_EXECUTER_MEMORY,
             feature=MOCK_FEATURE,
-            file_path=MOCK_FILE_PATH,
+            file=MOCK_FILE_PATH,
             image=MOCK_IMAGE,
             name=MOCK_NAME,
             obs_bucket=MOCK_OBS_BUCKET,
@@ -122,7 +123,7 @@ class TestDLICreateBatchJobOperator(unittest.TestCase):
             executor_cores=MOCK_EXECUTER_CORES,
             executor_memory=MOCK_EXECUTER_MEMORY,
             feature=MOCK_FEATURE,
-            file_path=MOCK_FILE_PATH,
+            file=MOCK_FILE_PATH,
             image=MOCK_IMAGE,
             name=MOCK_NAME,
             obs_bucket=MOCK_OBS_BUCKET,
@@ -221,10 +222,10 @@ class TestDLIListQueueOperator(unittest.TestCase):
             return_permission_info=MOCK_PERMISSION_INFO,
             tags=MOCK_TAGS)
 
-class TestDLIRunjobOperator(unittest.TestCase):
+class TestDLIRunSqlJobOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
     def test_execute(self, mock_hook):
-        operator = DLIRunjobOperator(
+        operator = DLIRunSqlJobOperator(
             task_id=MOCK_TASK_ID,
             region=MOCK_REGION,
             huaweicloud_conn_id=MOCK_DLI_CONN_ID,
@@ -273,7 +274,7 @@ class TestDLIUploadFilesOperator(unittest.TestCase):
             region=MOCK_REGION,
             huaweicloud_conn_id=MOCK_DLI_CONN_ID,
             project_id=MOCK_PROJECT_ID,
-            file_path=MOCK_FILE_PATH,
+            paths=MOCK_FILE_PATHS,
             group=MOCK_GROUP
         )
         operator.execute(None)
@@ -281,5 +282,5 @@ class TestDLIUploadFilesOperator(unittest.TestCase):
             huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.upload_files.assert_called_once_with(
             project_id=MOCK_PROJECT_ID,
-            file_path=MOCK_FILE_PATH,
+            paths=MOCK_FILE_PATHS,
             group=MOCK_GROUP)

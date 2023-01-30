@@ -105,7 +105,7 @@ class DLIHook(HuaweiBaseHook):
         self,
         project_id,
         queue_name,
-        file_path,
+        file,
         class_name,
         obs_bucket,
         catalog_name,
@@ -136,7 +136,7 @@ class DLIHook(HuaweiBaseHook):
             return self._get_dli_client(project_id).create_batch_job(
                 self.create_batch_job_request(
                     queue_name=queue_name,
-                    file_path=file_path,
+                    file=file,
                     class_name=class_name,
                     obs_bucket=obs_bucket,
                     catalog_name=catalog_name,
@@ -167,10 +167,10 @@ class DLIHook(HuaweiBaseHook):
             self.log.error(e)
             raise AirflowException(f"Errors when crating batch job: {e}")
 
-    def upload_files(self, project_id, file_path, group) -> DliSdk.UploadFilesResponse:
+    def upload_files(self, project_id, paths, group) -> DliSdk.UploadFilesResponse:
         try:
             return self._get_dli_client(project_id).upload_files(
-                self.upload_files_request(file_path=file_path, group=group)
+                self.upload_files_request(paths=paths, group=group)
             )
         except Exception as e:
             self.log.error(e)
@@ -242,15 +242,15 @@ class DLIHook(HuaweiBaseHook):
         )
         return request
 
-    def upload_files_request(self, file_path, group):
+    def upload_files_request(self, paths, group):
         request = DliSdk.UploadFilesRequest()
-        request.body = DliSdk.UploadGroupPackageReq(group=group, paths=file_path)
+        request.body = DliSdk.UploadGroupPackageReq(group=group, paths=paths)
         return request
 
     def create_batch_job_request(
         self,
         queue_name,
-        file_path,
+        file,
         class_name,
         obs_bucket,
         catalog_name,
@@ -279,7 +279,7 @@ class DLIHook(HuaweiBaseHook):
         request = DliSdk.CreateBatchJobRequest()
         request.body = DliSdk.CreateBatchJobReq(
             queue=queue_name,
-            file=file_path,
+            file=file,
             class_name=class_name,
             obs_bucket=obs_bucket,
             catalog_name=catalog_name,

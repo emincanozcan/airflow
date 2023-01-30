@@ -21,7 +21,7 @@ import unittest
 from unittest import mock
 from unittest.mock import PropertyMock
 
-from airflow.providers.huawei.cloud.sensors.dli import DLIShowJobStatusSensor, DLIShowBatchStateSensor
+from airflow.providers.huawei.cloud.sensors.dli import DLISqlShowJobStatusSensor, DLISparkShowBatchStateSensor
 
 DLI_SENSOR_STRING = "airflow.providers.huawei.cloud.sensors.dli.{}"
 MOCK_JOB_ID = "test-job"
@@ -32,13 +32,13 @@ MOCK_TASK_ID = "test-dli-operator"
 
 class TestDLISensor(unittest.TestCase):
     def setUp(self):
-        self.job_status_sensor = DLIShowJobStatusSensor(
+        self.job_status_sensor = DLISqlShowJobStatusSensor(
             task_id=MOCK_TASK_ID,
             job_id=MOCK_JOB_ID,
             project_id=MOCK_PROJECT_ID,
             huaweicloud_conn_id=MOCK_CONN_ID,
         )
-        self.batch_state_sensor = DLIShowBatchStateSensor(
+        self.batch_state_sensor = DLISparkShowBatchStateSensor(
             task_id=MOCK_TASK_ID,
             job_id=MOCK_JOB_ID,
             project_id=MOCK_PROJECT_ID,
@@ -50,7 +50,7 @@ class TestDLISensor(unittest.TestCase):
         self.job_status_sensor.get_hook()
         mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID)
 
-    @mock.patch(DLI_SENSOR_STRING.format("DLIShowJobStatusSensor.get_hook"), new_callable=PropertyMock)
+    @mock.patch(DLI_SENSOR_STRING.format("DLISqlShowJobStatusSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_job_status(self, mock_service):
         # Given
         mock_service.return_value.show_job_status.return_value = True
@@ -64,7 +64,7 @@ class TestDLISensor(unittest.TestCase):
             project_id=MOCK_PROJECT_ID, job_id=MOCK_JOB_ID
         )
 
-    @mock.patch(DLI_SENSOR_STRING.format("DLIShowBatchStateSensor.get_hook"), new_callable=PropertyMock)
+    @mock.patch(DLI_SENSOR_STRING.format("DLISparkShowBatchStateSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_batch_state(self, mock_service):
         # Given
         mock_service.return_value.show_batch_state.return_value = True

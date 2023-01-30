@@ -175,17 +175,17 @@ class TestDliHook(unittest.TestCase):
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.upload_files"))
     def test_upload_files(self, upload_files):
         project_id = "example-id"
-        file_path = "obs://bucketname/test"
+        paths = ["obs://bucketname/test"]
         group = "test-group"
-        self.hook.upload_files(project_id=project_id, file_path=file_path, group=group)
-        request = self.hook.upload_files_request(file_path=file_path, group=group)
+        self.hook.upload_files(project_id=project_id, paths=paths, group=group)
+        request = self.hook.upload_files_request(paths=paths, group=group)
         upload_files.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.create_batch_job"))
     def test_create_batch_job(self, create_batch_job):
         project_id = "example-id"
         queue_name = "test_queue"
-        file_path = "obs://bucketname/test"
+        file = "obs://bucketname/test"
         class_name = "com.packagename.ClassName"
         spark_version = "2.3.2"
         feature = "basic"
@@ -225,7 +225,7 @@ class TestDliHook(unittest.TestCase):
         self.hook.create_batch_job(
             project_id=project_id,
             queue_name=queue_name,
-            file_path=file_path,
+            file=file,
             class_name=class_name,
             obs_bucket=obs_bucket,
             catalog_name=catalog_name,
@@ -253,7 +253,7 @@ class TestDliHook(unittest.TestCase):
         )
         request = self.hook.create_batch_job_request(
             queue_name=queue_name,
-            file_path=file_path,
+            file=file,
             class_name=class_name,
             obs_bucket=obs_bucket,
             catalog_name=catalog_name,

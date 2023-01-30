@@ -28,7 +28,7 @@ from airflow.providers.huawei.cloud.hooks.dli import DLIHook
 from airflow.sensors.base import BaseSensorOperator
 
 
-class DLIShowBatchStateSensor(BaseSensorOperator):
+class DLISparkShowBatchStateSensor(BaseSensorOperator):
 
     INTERMEDIATE_STATES = (
         "starting",
@@ -71,7 +71,7 @@ class DLIShowBatchStateSensor(BaseSensorOperator):
         """Create and return a DLIHook"""
         return DLIHook(self.huaweicloud_conn_id)
 
-class DLIShowJobStatusSensor(BaseSensorOperator):
+class DLISqlShowJobStatusSensor(BaseSensorOperator):
     
     #Status of a job, including RUNNING, SCALING, LAUNCHING, FINISHED, FAILED, and CANCELLED.
     
