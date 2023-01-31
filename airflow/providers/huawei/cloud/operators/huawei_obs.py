@@ -63,10 +63,9 @@ class OBSCreateBucketOperator(BaseOperator):
 
 class OBSListBucketOperator(BaseOperator):
     """
-    This operator list all OBS buckets on region.
-    This operator returns a python list with the name of buckets which can be
+    This operator gets a list of bucket information.
+    This operator returns a python list with the information of buckets which can be
     used by `xcom` in the downstream task.
-
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
@@ -75,7 +74,6 @@ class OBSListBucketOperator(BaseOperator):
             maintained on each worker node).
     :param region: OBS region you want to list bucket
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
-        If cn-north-1 is used, buckets in all region can be listed.
     """
 
     def __init__(

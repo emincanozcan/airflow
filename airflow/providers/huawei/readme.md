@@ -2,21 +2,21 @@
 
 ## huawei.cloud.operators.huawei_obs
 
-| 类名                                                          | 功能         |
-|-------------------------------------------------------------|------------|
-| [OBSCreateBucketOperator](#obscreatebucketoperator)         | 创建OBS桶     |
-| [OBSListBucketOperator](#obslistbucketoperator)             | 列举OBS桶     |
-| [OBSDeleteBucketOperator](#obsdeletebucketoperator)         | 删除OBS桶     |
-| [OBSListObjectsOperator](#obslistobjectsoperator)     | 列举OBS桶中对象  |
-| [OBSGetBucketTaggingOperator](#obsgetbuckettaggingoperator) | 获取OBS桶标签   |
-| [OBSSetBucketTaggingOperator](#obssetbuckettaggingoperator) | 设置OBS桶标签   |
+| 类名                                                                | 功能         |
+|-------------------------------------------------------------------|------------|
+| [OBSCreateBucketOperator](#obscreatebucketoperator)               | 创建OBS桶     |
+| [OBSListBucketOperator](#obslistbucketoperator)                   | 列举OBS桶     |
+| [OBSDeleteBucketOperator](#obsdeletebucketoperator)               | 删除OBS桶     |
+| [OBSListObjectsOperator](#obslistobjectsoperator)                 | 列举OBS桶中对象  |
+| [OBSGetBucketTaggingOperator](#obsgetbuckettaggingoperator)       | 获取OBS桶标签   |
+| [OBSSetBucketTaggingOperator](#obssetbuckettaggingoperator)       | 设置OBS桶标签   |
 | [OBSDeleteBucketTaggingOperator](#obsdeletebuckettaggingoperator) | 删除OBS桶标签   |
-| [OBSCreateObjectOperator](#obscreateobjectoperator)         | 创建OBS桶对象  |
-| [OBSGetObjectOperator](#obsgetobjectoperator)               | 从OBS桶获取对象  |
-| [OBSCopyObjectOperator](#obscopyobjectoperator)             | 复制OBS桶对象   |
-| [OBSDeleteObjectOperator](#obsdeleteobjectoperator)         | 删除OBS桶对象   |
-| [OBSDeleteBatchObjectOperator](#obsdeletebatchobjectoperator) | 批量删除OBS桶对象 |
-| [OBSMoveObjectOperator](#obsmoveobjectoperator)             | 移动OBS桶对象   |
+| [OBSCreateObjectOperator](#obscreateobjectoperator)               | 创建OBS桶对象   |
+| [OBSGetObjectOperator](#obsgetobjectoperator)                     | 从OBS桶获取对象  |
+| [OBSCopyObjectOperator](#obscopyobjectoperator)                   | 复制OBS桶对象   |
+| [OBSDeleteObjectOperator](#obsdeleteobjectoperator)               | 删除OBS桶对象   |
+| [OBSDeleteBatchObjectOperator](#obsdeletebatchobjectoperator)     | 批量删除OBS桶对象 |
+| [OBSMoveObjectOperator](#obsmoveobjectoperator)                   | 移动OBS桶对象   |
 
 ____
 
@@ -27,7 +27,7 @@ Airflow连接信息配置： WebUI -> Admin -> Connections
 **参数描述：**
 > Connection Id: 连接id，填入huaweicloud_conn_id
 > Connection Type: 连接类型，选择OBS
-> Bucket Name: 默认OBS桶名
+> OBS Bucket Name: 默认OBS桶名
 > Huawei Cloud Access Key ID：AK
 > Huawei Cloud Secret Access Key：SK
 > Extra: {"region": "{yourself-region}"}
@@ -75,7 +75,17 @@ list_bucket = OBSListBucketOperator(
 **返回结果:**
 
 ```python
-['bucket1', 'bucket2']
+[
+  {"name": "mock_bucket1",
+   "region": "cn-south-1",
+   "create_date": "2023/01/13 10:00:00",
+   "bucket_type": "OBJECT",},
+  {"name": "mock_bucket2",
+   "region": "cn-south-1",
+   "create_date": "2023/01/14 10:00:00",
+   "bucket_type": "OBJECT",
+   }
+ ]
 ```
 
 ____

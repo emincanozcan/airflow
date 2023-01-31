@@ -197,18 +197,23 @@ class ObsHook(BaseHook):
         except Exception as e:
             raise AirflowException(f"Errors when create bucket {bucket_name}({e}).")
 
-    def list_bucket(self) -> list[str] | None:
+    def list_bucket(self) -> list[dict[str, Any]] | None:
         """
-        Gets a list of OBS bucket names.
-        If the region is cn-north-1, obtain the bucket names of all regions,
-        other regions only obtain the bucket names of the corresponding regions.
+        Gets a list of bucket information.
         """
         try:
             resp = self.get_obs_client().listBuckets()
             if resp.status < 300:
-                return [bucket.name for bucket in resp.body.buckets]
+                buckets = []
+                for bucket in resp.body.buckets:
+                    buckets.append({"name": bucket.name,
+                                    "region": bucket.location,
+                                    "create_date": bucket.create_date,
+                                    "bucket_type": bucket.bucket_type,
+                                    })
+                return buckets
             else:
-                self.log.error(f'查询桶列表错误信息：{get_err_info(resp)}')
+                self.log.error(f"Error message when getting a list of bucket information: {get_err_info(resp)}.")
         except Exception as e:
             raise AirflowException(f"Errors when list bucket({e}).")
 
@@ -503,7 +508,7 @@ class ObsHook(BaseHook):
         try:
             resp = self.get_bucket_client(bucket_name).getObject(
                 objectKey=object_key,
-                download_path=download_path,
+                downloadPath=download_path,
                 loadStreamInMemory=load_stream_in_memory
             )
             if resp.status < 300:

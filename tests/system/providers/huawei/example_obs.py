@@ -187,6 +187,14 @@ with DAG(
     )
     # [END howto_operator_obs_delete_batch_object]
 
+    # [START howto_operator_obs_delete_batch_object]
+    delete_batch_object_2 = OBSDeleteBatchObjectOperator(
+        task_id="delete_batch_object",
+        bucket_name=bucket_name_2,
+        object_list=[object_key_content, object_key_file],
+    )
+    # [END howto_operator_obs_delete_batch_object]
+
     # [START howto_operator_obs_delete_bucket]
     delete_bucket = OBSDeleteBucketOperator(
         task_id="delete_bucket",
@@ -218,5 +226,6 @@ with DAG(
         delete_object,
         delete_batch_object,
         delete_bucket,
+        delete_batch_object_2,
         delete_bucket_2,
     )

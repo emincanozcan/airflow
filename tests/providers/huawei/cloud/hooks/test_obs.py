@@ -144,17 +144,32 @@ class TestObsHook(unittest.TestCase):
 
         resp_bucket_list = copy.deepcopy(RESP_200)
         mock_list_bucket.return_value = resp_bucket_list
+        expect_buckets = [
+            {"name": "mock_bucket1",
+             "region": "cn-south-1",
+             "create_date": "2023/01/13 10:00:00",
+             "bucket_type": "OBJECT",
+             },
+            {"name": "mock_bucket2",
+             "region": "cn-south-1",
+             "create_date": "2023/01/14 10:00:00",
+             "bucket_type": "OBJECT",
+             },
+        ]
+
         bucket1 = mock.Mock()
         bucket2 = mock.Mock()
-        bucket1.configure_mock(name="mock_bucket1")
-        bucket2.configure_mock(name="mock_bucket2")
+        bucket1.configure_mock(name="mock_bucket1", location="cn-south-1",
+                               create_date="2023/01/13 10:00:00", bucket_type="OBJECT")
+        bucket2.configure_mock(name="mock_bucket2", location="cn-south-1",
+                               create_date="2023/01/14 10:00:00", bucket_type="OBJECT")
         resp_bucket_list.body = mock.Mock(buckets=[bucket1, bucket2])
 
         res = self.hook.list_bucket()
 
         mock_obs_client.assert_called_once_with()
         mock_list_bucket.assert_called_once_with()
-        self.assertListEqual(["mock_bucket1", "mock_bucket2"], res)
+        self.assertListEqual(expect_buckets, res)
 
     @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
     def test_list_bucket_if_status_ge_300(self, mock_obs_client):
