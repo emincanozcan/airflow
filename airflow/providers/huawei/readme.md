@@ -61,7 +61,7 @@ ____
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
 |huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可列举所有区域的OBS桶|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取|
 
 **示例：**
 
