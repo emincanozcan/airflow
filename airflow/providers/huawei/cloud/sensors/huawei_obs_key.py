@@ -19,8 +19,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence
 
-from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
 from airflow.sensors.base import BaseSensorOperator
+from airflow.exceptions import AirflowException
+from airflow.providers.huawei.cloud.hooks.huawei_obs import ObsHook
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -30,9 +31,9 @@ class OBSObjectKeySensor(BaseSensorOperator):
     """
     Waits for a object key (a file-like instance on OBS) to be present in a OBS bucket.
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可判断任意区域的桶中对象
     :param object_key: The key being waited on. Supports full obs:// style url
         or relative path from root level. When it's specified as a full obs://
@@ -47,24 +48,29 @@ class OBSObjectKeySensor(BaseSensorOperator):
         object_key: str | list[str],
         region: str | None = None,
         bucket_name: str | None = None,
-        obs_conn_id: str | None = "obs_default",
+        huaweicloud_conn_id: str | None = "obs_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
 
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.bucket_name = bucket_name
         self.object_key = [object_key] if isinstance(object_key, str) else object_key
-        self.hook: OBSHook | None = None
+        self.hook: ObsHook | None = None
         self.object_list = None
-    
+
     def _check_object_key(self, object_key):
-        bucket_name, object_key = OBSHook.get_obs_bucket_object_key(
+        bucket_name, object_key = ObsHook.get_obs_bucket_object_key(
             self.bucket_name, object_key, "bucket_name", "object_key"
         )
-        res = self.get_hook().exist_object(object_key=object_key, bucket_name=bucket_name)
-        return res
+        obs_hook = self.hook if self.hook else self.get_hook()
+
+        if not obs_hook.exist_bucket(bucket_name):
+            raise AirflowException(
+                f"OBS Bucket with name: {bucket_name} doesn't exist on region: {obs_hook.region}")
+
+        return obs_hook.exist_object(object_key=object_key, bucket_name=bucket_name)
 
     def poke(self, context: Context):
         """
@@ -75,10 +81,8 @@ class OBSObjectKeySensor(BaseSensorOperator):
         """
         return all(self._check_object_key(object_key) for object_key in self.object_key)
 
-    def get_hook(self) -> OBSHook:
-        """Create and return an OBSHook"""
-        if self.hook:
-            return self.hook
-
-        self.hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+    def get_hook(self) -> ObsHook:
+        """Create and return an ObsHook"""
+        if not self.hook:
+            self.hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         return self.hook

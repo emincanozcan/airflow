@@ -2,21 +2,21 @@
 
 ## huawei.cloud.operators.huawei_obs
 
-| 类名  | 功能 |
-| ---- | ---- |
-| [OBSCreateBucketOperator](#obscreatebucketoperator)  | 创建OBS桶 |
-| [OBSListBucketOperator](#obslistbucketoperator)  | 列举OBS桶 |
-| [OBSDeleteBucketOperator](#obsdeletebucketoperator)  | 删除OBS桶 |
-| [OBSListBucketObjectsOperator](#obslistbucketobjectsoperator)  | 列举OBS桶中对象 |
-| [OBSGetBucketTaggingOperator](#obsgetbuckettaggingoperator)  | 获取OBS桶标签 |
-| [OBSSetBucketTaggingOperator](#obssetbuckettaggingoperator)  | 设置OBS桶标签 |
-| [OBSDeleteBucketTaggingOperator](#obsdeletebuckettaggingoperator)  | 删除OBS桶标签 |
-| [OBSCreateObjectOperator](#obscreateobjectoperator)  | 上传对象到OBS桶 |
-| [OBSDownloadObjectOperator](#obsdownloadobjectoperator)  | 从OBS桶下载对象 |
-| [OBSCopyObjectOperator](#obscopyobjectoperator)  | 复制OBS桶对象 |
-| [OBSDeleteObjectOperator](#obsdeleteobjectoperator)  | 删除OBS桶对象 |
-| [OBSDeleteBatchObjectOperator](#obsdeletebatchobjectoperator)  | 批量删除OBS桶对象 |
-| [OBSMoveObjectOperator](#obsmoveobjectoperator)  | 移动OBS桶对象 |
+| 类名                                                          | 功能         |
+|-------------------------------------------------------------|------------|
+| [OBSCreateBucketOperator](#obscreatebucketoperator)         | 创建OBS桶     |
+| [OBSListBucketOperator](#obslistbucketoperator)             | 列举OBS桶     |
+| [OBSDeleteBucketOperator](#obsdeletebucketoperator)         | 删除OBS桶     |
+| [OBSListObjectsOperator](#obslistobjectsoperator)     | 列举OBS桶中对象  |
+| [OBSGetBucketTaggingOperator](#obsgetbuckettaggingoperator) | 获取OBS桶标签   |
+| [OBSSetBucketTaggingOperator](#obssetbuckettaggingoperator) | 设置OBS桶标签   |
+| [OBSDeleteBucketTaggingOperator](#obsdeletebuckettaggingoperator) | 删除OBS桶标签   |
+| [OBSCreateObjectOperator](#obscreateobjectoperator)         | 上传对象到OBS桶  |
+| [OBSGetObjectOperator](#obsgetobjectoperator)               | 从OBS桶获取对象  |
+| [OBSCopyObjectOperator](#obscopyobjectoperator)             | 复制OBS桶对象   |
+| [OBSDeleteObjectOperator](#obsdeleteobjectoperator)         | 删除OBS桶对象   |
+| [OBSDeleteBatchObjectOperator](#obsdeletebatchobjectoperator) | 批量删除OBS桶对象 |
+| [OBSMoveObjectOperator](#obsmoveobjectoperator)             | 移动OBS桶对象   |
 
 ____
 
@@ -25,7 +25,7 @@ ____
 Airflow连接信息配置： WebUI -> Admin -> Connections
 
 **参数描述：**
-> Connection Id: 连接id，填入obs_conn_id
+> Connection Id: 连接id，填入huaweicloud_conn_id
 > Connection Type: 连接类型，选择OBS
 > Schema: 默认OBS桶名
 > Extra: {"auth_type": "AK", "access_key_id": "{youreself-ak}", "access_key_secret": "{yourself-sk}", "region": "{yourself-region}"}
@@ -38,8 +38,8 @@ ____
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
 |bucket_name|str|必选|将被创建的OBS桶名|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取|
 
 **示例：**
 
@@ -47,7 +47,7 @@ ____
 create_bucket = OBSCreateBucketOperator(
   task_id='create_bucket',
   bucket_name = 'obs-yourself-bucket',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
 )
 ```
 
@@ -58,15 +58,15 @@ ____
 ***列举OBS桶***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可列举所有区域的OBS桶|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可列举所有区域的OBS桶|
 
 **示例：**
 
 ```python
 list_bucket = OBSListBucketOperator(
   task_id='list_bucket',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
 )
 ```
 
@@ -83,8 +83,8 @@ ____
 ***删除OBS桶***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶|
 |bucket_name|str|可选|将被删除的OBS桶名|
 
 > 无法直接删除非空桶
@@ -94,21 +94,21 @@ ____
 ```python
 delete_bucket = OBSDeleteBucketOperator(
   task_id='delete_bucket',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-yourself-bucket',
 )
 ```
 
 ____
 
-### OBSListBucketObjectsOperator
+### OBSListObjectsOperator
 
 ***列举OBS桶中对象***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可列举任意区域的OBS桶对象|
-|bucket_name|str|可选|被列举对象的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可列举任意区域的OBS桶对象|
+|bucket_name|str|可选|被列举对象的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 |prefix|str|可选|限定返回的对象名必须带有prefix前缀。|
 |marker|str|可选|列举桶内对象列表时，指定一个标识符，从该标识符以后按字典顺序返回对象列表。|
 |max_keys|int|可选|列举对象的最大数目，取值范围为1~1000，当超出范围时，按照默认的1000进行处理。|
@@ -120,9 +120,9 @@ ____
 以下代码展示如何简单列举对象，最多返回1000个对象：
 
 ```python
-list_object = OBSListBucketObjectsOperator(
+list_object = OBSListObjectsOperator(
   task_id='list_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
 )
 ```
@@ -131,9 +131,9 @@ list_object = OBSListBucketObjectsOperator(
 以下代码展示如何指定数目列举对象：
 
 ```python
-list_object = OBSListBucketObjectsOperator(
+list_object = OBSListObjectsOperator(
   task_id='list_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   # 只列举100个对象
   max_keys = '100',
@@ -144,9 +144,9 @@ list_object = OBSListBucketObjectsOperator(
 以下代码展示如何指定前缀列举对象：
 
 ```python
-list_object = OBSListBucketObjectsOperator(
+list_object = OBSListObjectsOperator(
   task_id='list_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   # 列举100个带prefix前缀的对象
   prefix = 'prefix',
@@ -158,9 +158,9 @@ list_object = OBSListBucketObjectsOperator(
 以下代码展示如何指定起始位置列举对象：
 
 ```python
-list_object = OBSListBucketObjectsOperator(
+list_object = OBSListObjectsOperator(
   task_id='list_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   # 列举对象名字典序在"test"之后的100个对象
   marker = 'test',
@@ -172,9 +172,9 @@ list_object = OBSListBucketObjectsOperator(
 以下代码展示分页列举全部对象:
 
 ```python
-list_object = OBSListBucketObjectsOperator(
+list_object = OBSListObjectsOperator(
   task_id='list_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   # 开启分页查询，设置每页100个对象
   max_keys = '100',
@@ -186,9 +186,9 @@ list_object = OBSListBucketObjectsOperator(
 OBS本身是没有文件夹的概念的，桶中存储的元素只有对象。文件夹对象实际上是一个大小为0且对象名以“/”结尾的对象，将这个文件夹对象名作为前缀，即可模拟列举文件夹中对象的功能。以下代码展示如何列举文件夹中的对象：
 
 ```python
-list_object = OBSListBucketObjectsOperator(
+list_object = OBSListObjectsOperator(
   task_id='list_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   # 开启分页查询，设置文件夹对象名"dir/"为前缀
   prefix = 'dir/',
@@ -214,16 +214,16 @@ ____
 ***获取OBS桶标签***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可获取任意区域的OBS桶标签|
-|bucket_name|str|可选|将被获取桶标签的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可获取任意区域的OBS桶标签|
+|bucket_name|str|可选|将被获取桶标签的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 
 **示例：**
 
 ```python
 get_bucket_tagging = OBSGetBucketTaggingOperator(
   task_id='get_bucket_tagging',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
 )
 ```
@@ -241,22 +241,22 @@ ____
 ***设置OBS桶标签***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|tag_info|list|必选|桶标签配置|
-|bucket_name|str|可选|将被设置桶标签的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可设置任意区域的OBS桶标签|
+|tag_info|dict|必选|桶标签配置|
+|bucket_name|str|可选|将被设置桶标签的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可设置任意区域的OBS桶标签|
 
 **示例：**
 
 ```python
 set_bucket_tagging = OBSSetBucketTaggingOperator(
   task_id='list_bucket',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
-  tag_ingo = [
-    {"key": 'app1', "value": 'test1'},
-    {"key": 'app2', "value": 'test2'},
-  ]
+  tag_ingo = {
+    "key1": 'value1',
+    "key2": 'value2',
+  }
 )
 ```
 
@@ -267,16 +267,16 @@ ____
 ***删除OBS桶标签***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶标签|
-|bucket_name|str|可选|将被删除桶标签的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶标签|
+|bucket_name|str|可选|将被删除桶标签的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 
 **示例：**
 
 ```python
 delete_bucket_tagging = OBSDeleteBucketTaggingOperator(
   task_id='delete_bucket_tagging',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
 )
 ```
@@ -288,12 +288,12 @@ ____
 ***上传文件对象到OBS桶***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|object_key|str|必选|对象的OBS路径|
+|object_key|str|必选|对象的OBS路径, 如配置参数Connections中提供桶名，应为相对路径|
 |data|str\|object|必选|待上传数据。 </br>使用字符串作为对象的数据源，上传文本到指定桶。 </br>流式上传使用包含“read”属性的可读对象作为对象的数据源，以网络流或文件流方式上传数据到指定桶。 </br>待上传文件/文件夹的完整路径，如/aa/bb.txt，或/aa/。 </br>如果data是文件夹，则md5会被忽略。|
 |object_type|str|可选|上传对象类型，默认为content，类型如下 </br>file: data参数为待上传文件/文件夹的完整路径，如/aa/bb.txt，或/aa/。 </br>content: data参数为使用字符串作为对象的数据源，上传文本到指定桶，或者使用包含“read”属性的可读对象作为对象的数据源，以网络流或文件流方式上传数据到指定桶。|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取|
-|bucket_name|str|可选|将被删除桶标签的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取|
+|bucket_name|str|可选|将被删除桶标签的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 |metadata|dict|可选|上传文件的自定义元数据。|
 |md5|str|可选|待上传对象数据的MD5值（经过Base64编码），提供给OBS服务端，校验数据完整性。|
 |acl|str|可选|上传对象时可指定的预定义访问策略，访问策略如下：</br> PRIVATE，私有读写</br> PUBLIC_READ，公共读</br> PUBLIC_READ_WRITE，公共读写</br> BUCKET_OWNER_FULL_CONTROL，桶或对象所有者拥有完全控制权限。|
@@ -306,9 +306,9 @@ ____
 将本地文件 /tmp/readme.md 上传为OBS桶对象，对象名为 test/upload/readme.md
 
 ```python
-create_object = OBSUploadObjectOperator(
+create_object = OBSCreateObjectOperator(
   task_id='create_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/upload/readme.md',
   object_type = 'file',
@@ -320,13 +320,13 @@ create_object = OBSUploadObjectOperator(
 将本地文件 /tmp/readme.md 上传为OBS桶对象，对象名为 test/upload/readme.md
 
 ```python
-create_object = OBSUploadObjectOperator(
+create_object = OBSCreateObjectOperator(
   task_id='create_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/upload/readme.md',
   object_type = 'file',
-  data = '/tmp/readme.md'
+  data = '/tmp/readme.md',
   # 数据加密服务 DEW中密钥管理下对应秘钥ID，默认秘钥为obs/default的ID
   encryption = 'kms',
   key = 'DEW-yourself-secret',
@@ -338,9 +338,9 @@ create_object = OBSUploadObjectOperator(
 如果有文件上传失败，返回失败对象列表
 
 ```python
-create_object = OBSUploadObjectOperator(
+create_object = OBSCreateObjectOperator(
   task_id='create_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/upload/demo',
   object_type = 'file',
@@ -353,9 +353,9 @@ create_object = OBSUploadObjectOperator(
 
 ```python
 data = 'upload a string'
-create_object = OBSUploadObjectOperator(
+create_object = OBSCreateObjectOperator(
   task_id='create_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/text.txt',
   object_type = 'content',
@@ -367,10 +367,10 @@ create_object = OBSUploadObjectOperator(
 将文件流 /tmp/stream.txt 上传为OBS桶对象，对象名为 /tmp/stream.txt,
 
 ```python
-data = open('/tmp/readme.md', rb)
-create_object = OBSUploadObjectOperator(
+data = open('/tmp/readme.md', 'rb')
+create_object = OBSCreateObjectOperator(
   task_id='create_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = '/tmp/stream.txt',
   data = data
@@ -385,9 +385,9 @@ import http.client as httplib
 conn = httplib.HTTPConnection('www.huaweicloud.com', 80)
 conn.request('GET', '/')
 data = conn.getresponse()
-create_object = OBSUploadObjectOperator(
+create_object = OBSCreateObjectOperator(
   task_id='create_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/netstream.html',
   object_type = 'content',
@@ -397,17 +397,17 @@ create_object = OBSUploadObjectOperator(
 
 ____
 
-### OBSDownloadObjectOperator
+### OBSGetObjectOperator
 
 ***从OBS桶下载对象***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|object_key|str|必选|key of the object to download.|
+|object_key|str|必选|key of the object to get, 如配置参数Connections中提供桶名，应为相对路径|
 |download_path|str|可选|下载对象的目标路径，包含文件名，如aa/bb.txt.|
 |load_stream_in_memory|str|可选|是否将对象的数据流加载到内存。 </br>默认值为False，如果该值为True，会忽略download_path参数，并返回将获取的数据流。|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可从任意区域的OBS桶下载对象|
-|bucket_name|str|可选|下载对象的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可从任意区域的OBS桶下载对象|
+|bucket_name|str|可选|下载对象的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 
 **示例：**
 
@@ -415,9 +415,9 @@ ____
 以文件形式下载指定桶中的对象
 
 ```python
-download_object = OBSDownloadObjectOperator(
+download_object = OBSGetObjectOperator(
   task_id='download_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/upload/readme.md',
   download_path = 'tmp/download/readme.md',
@@ -428,9 +428,9 @@ download_object = OBSDownloadObjectOperator(
 返回指定桶中的对象的数据流
 
 ```python
-download_object = OBSDownloadObjectOperator(
+download_object = OBSGetObjectOperator(
   task_id='download_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/upload/readme.md',
   load_stream_in_memory = True,
@@ -447,8 +447,8 @@ ____
 | -- | -- | -- | -- |
 |source_object_key|str|必选|源对象名|
 |dest_object_key|str|必选|目标对象名|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可复制任意区域的OBS桶对象|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可复制任意区域的OBS桶对象|
 |source_bucket_name|str|可选|源OBS桶名|
 |dest_bucket_name|str|可选|目标OBS桶名|
 |versionId|str|可选|源对象版本号，非多版本桶不考虑|
@@ -463,7 +463,7 @@ ____
 ```python
 copy_object = OBSCopyObjectOperator(
   task_id='copy_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   source_object_key = 'obs-youself-bucket',
   dest_object_key = 'obs-youself-bucket',
   source_bucket_name = 'obs-youself-bucket',
@@ -478,10 +478,10 @@ ____
 ***删除OBS桶对象***
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
-|object_key|str|必选|将被删除的对象名|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶对象|
-|bucket_name|str|可选|将被删除对象的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|object_key|str|必选|将被删除的对象名, 如配置参数Connections中提供桶名，应为相对路径|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶对象|
+|bucket_name|str|可选|将被删除对象的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 |version_id|str|可选|对象版本号，非多版本桶不考虑|
 
 **示例：**
@@ -489,7 +489,7 @@ ____
 ```python
 delete_object = OBSDeleteObjectOperator(
   task_id='delete_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_key = 'test/upload/readme.md',
 )
@@ -503,9 +503,9 @@ ____
 |参数|类型|约束|描述|
 | -- | -- | -- | -- |
 |object_list|list|必选|待删除的对象列表</br> 对象非多版本表示方式 ['object_key1', 'object_key2', ...]</br> 对象存在多版本表示方式[{'object_key': 'test_key', 'version_id': 'test_version'}, ...] or ['object_key1', 'object_key2', ...]|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶对象|
-|bucket_name|str|可选|将被删除桶标签的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可删除任意区域的OBS桶对象|
+|bucket_name|str|可选|将被删除桶标签的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 |quiet|str|可选|批量删除对象的响应方式</br> False表示详细模式，返回的删除成功和删除失败的所有结果</br> True表示简单模式，只返回的删除过程中出错的结果。|
 
 **示例：**
@@ -513,7 +513,7 @@ ____
 ```python
 delete_objects = OBSDeleteBatchObjectOperator(
   task_id='delete_objects',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   object_list = ['test/a.txt', 'test/b.txt'],
 )
@@ -528,9 +528,9 @@ ____
 | -- | -- | -- | -- |
 |source_object_key|str|必选|源对象名|
 |dest_object_key|str|必选|目标对象名|
-|obs_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用obs_default连接（需提前创建）|
-|region|str|可选|OBS区域，默认从obs_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可移动任意区域的OBS桶对象|
-|bucket_name|str|可选|将进行移动对象操作的OBS桶名，默认从obs_conn_id连接中的shema选项获取|
+|huaweicloud_conn_id|str|可选|用于OBS凭据的Airflow连接，需在Airflow中配置。默认使用huaweicloud_default连接（需提前创建）|
+|region|str|可选|OBS区域，默认从huaweicloud_conn_id连接中选项Extra下region参数获取</br> 设为"cn-north-1"时可移动任意区域的OBS桶对象|
+|bucket_name|str|可选|将进行移动对象操作的OBS桶名，默认从huaweicloud_conn_id连接中的shema选项获取|
 
 > 不支持跨区域移动
 
@@ -539,7 +539,7 @@ ____
 ```python
 move_object = OBSMoveObjectOperator(
   task_id='move_object',
-  obs_conn_id = 'obs-yourself-conn',
+  huaweicloud_conn_id = 'obs-yourself-conn',
   bucket_name = 'obs-youself-bucket',
   source_object_key = 'test/upload/readme.md',
   dest_object_key = 'test/move/readme.md',

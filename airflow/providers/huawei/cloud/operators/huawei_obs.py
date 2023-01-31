@@ -21,7 +21,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Sequence
 
 from airflow.models import BaseOperator
-from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
+from airflow.providers.huawei.cloud.hooks.huawei_obs import ObsHook
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -29,15 +29,15 @@ if TYPE_CHECKING:
 
 class OBSCreateBucketOperator(BaseOperator):
     """
-    This operator creates an OBS bucket on the region which in the obs_conn_id
+    This operator creates an OBS bucket on the region which in the huaweicloud_conn_id
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
             running Airflow in a distributed manner and aws_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可创建任意区域的桶
     :param bucket_name: This is bucket name you want to create.
     """
@@ -48,16 +48,16 @@ class OBSCreateBucketOperator(BaseOperator):
             self,
             region: str | None = None,
             bucket_name: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.bucket_name = bucket_name
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         obs_hook.create_bucket(bucket_name=self.bucket_name)
 
 
@@ -68,24 +68,24 @@ class OBSListBucketOperator(BaseOperator):
     used by `xcom` in the downstream task.
 
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to list bucket
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可列出所有区域的桶名
     """
 
     def __init__(
             self,
             region: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         return obs_hook.list_bucket()
 
 
@@ -93,9 +93,9 @@ class OBSDeleteBucketOperator(BaseOperator):
     """
     This operator to delete an OBS bucket
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to delete bucket
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可删除任意区域的桶名
     :param bucket_name: This is bucket name you want to delete
     """
@@ -106,31 +106,31 @@ class OBSDeleteBucketOperator(BaseOperator):
             self,
             region: str | None = None,
             bucket_name: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.bucket_name = bucket_name
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket(bucket_name=self.bucket_name)
         else:
-            self.log.warning("OBS Bucket with name: %s doesn't exist on region: %s", self.bucket_name, obs_hook.region)
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
 
 
-class OBSListBucketObjectsOperator(BaseOperator):
+class OBSListObjectsOperator(BaseOperator):
     """
     List all objects from the bucket with the given string prefix in name.
     This operator returns a python list with the name of objects which can be
     used by `xcom` in the downstream task.
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to list the objects for the bucket
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可列举任意区域的桶对象名
     :param bucket_name: This is bucket name you want to list all objects
     :param prefix: 限定返回的对象名必须带有prefix前缀。
@@ -150,11 +150,11 @@ class OBSListBucketObjectsOperator(BaseOperator):
             marker: str | None = None,
             max_keys: int | None = None,
             is_truncated: bool | None = False,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ):
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.bucket_name = bucket_name
         self.prefix = prefix
@@ -163,7 +163,7 @@ class OBSListBucketObjectsOperator(BaseOperator):
         self.is_truncated = is_truncated
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
 
         if obs_hook.exist_bucket(self.bucket_name):
 
@@ -175,7 +175,7 @@ class OBSListBucketObjectsOperator(BaseOperator):
                 is_truncated=self.is_truncated,
             )
         else:
-            self.log.warning("OBS Bucket with name: %s doesn't exist on region: %s", self.bucket_name, obs_hook.region)
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
             return None
 
 
@@ -183,9 +183,9 @@ class OBSGetBucketTaggingOperator(BaseOperator):
     """
     This operator get OBS bucket tagging
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to get bucket tagging
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可获取任意区域的桶标签
     :param bucket_name: This is bucket name you want to get bucket tagging.
     """
@@ -194,23 +194,23 @@ class OBSGetBucketTaggingOperator(BaseOperator):
 
     def __init__(
             self,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             region: str | None = None,
             bucket_name: str | None = None,
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.bucket_name = bucket_name
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
 
         if obs_hook.exist_bucket(self.bucket_name):
             return obs_hook.get_bucket_tagging(self.bucket_name)
         else:
-            self.log.warning("OBS Bucket with name: %s doesn't exist on region: %s", self.bucket_name, obs_hook.region)
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
             return None
 
 
@@ -219,9 +219,9 @@ class OBSSetBucketTaggingOperator(BaseOperator):
     This operator set OBS bucket tagging
     进行该操作，会重置桶标签
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to set bucket tagging
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可设置任意区域的桶标签
     :param bucket_name: This is bucket name you want to set bucket tagging.
     :param tag_info: 桶标签配置
@@ -232,33 +232,33 @@ class OBSSetBucketTaggingOperator(BaseOperator):
 
     def __init__(
             self,
-            tag_info: list[dict[str, str]] | None = None,
+            tag_info: dict[str, str] | None = None,
             bucket_name: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             region: str | None = None,
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.bucket_name = bucket_name
         self.tag_info = tag_info
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.set_bucket_tagging(bucket_name=self.bucket_name, tag_info=self.tag_info)
         else:
-            self.log.warning("OBS Bucket with name: %s doesn't exist on region: %s", self.bucket_name, obs_hook.region)
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
 
 
 class OBSDeleteBucketTaggingOperator(BaseOperator):
     """
     This operator delete OBS bucket tagging
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to set bucket tagging
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可删除任意区域的桶标签
     :param bucket_name: This is bucket name you want to delete bucket tagging.
     """
@@ -267,22 +267,22 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
 
     def __init__(
             self,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             region: str | None = None,
             bucket_name: str | None = None,
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.bucket_name = bucket_name
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket_tagging(bucket_name=self.bucket_name)
         else:
-            self.log.warning("OBS Bucket with name: %s doesn't exist on region: %s", self.bucket_name, obs_hook.region)
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
 
 
 class OBSCreateObjectOperator(BaseOperator):
@@ -292,9 +292,9 @@ class OBSCreateObjectOperator(BaseOperator):
     This operator returns a python list containing the names of failed upload objects,
     which can be used by 'xcom' in downstream tasks.
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region you want to upload an file-like object to bucket
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可将对象上传任意区域的桶中
     :param bucket_name: This is bucket name you want to create
     :param object_key: the OBS path of the object
@@ -331,7 +331,7 @@ class OBSCreateObjectOperator(BaseOperator):
             object_type: str | None = 'content',
             region: str | None = None,
             bucket_name: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             metadata: dict | None = None,
             md5: str | None = None,
             acl: str | None = None,
@@ -347,7 +347,7 @@ class OBSCreateObjectOperator(BaseOperator):
         self.object_type = object_type
         self.data = data
         self.bucket_name = bucket_name
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.metadata = metadata
         self.headers = {
             'md5': md5,
@@ -359,8 +359,8 @@ class OBSCreateObjectOperator(BaseOperator):
         }
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
-        obs_hook.create_object(
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        return obs_hook.create_object(
             bucket_name=self.bucket_name,
             object_key=self.object_key,
             object_type=self.object_type,
@@ -370,17 +370,18 @@ class OBSCreateObjectOperator(BaseOperator):
         )
 
 
-class OBSDownloadObjectOperator(BaseOperator):
+class OBSGetObjectOperator(BaseOperator):
     """
     This operator to Download an OBS object
 
     If load_stream_in_memory is True,
     this operator returns the byte stream of an object,
+    and it will be serialized as a string of utf-8
     which can be used by 'xcom' in downstream tasks.
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可下载任意区域的桶中对象到本地
     :param bucket_name: OBS bucket name
     :param object_key: key of the object to download.
@@ -398,11 +399,11 @@ class OBSDownloadObjectOperator(BaseOperator):
             bucket_name: str | None = None,
             load_stream_in_memory: str | None = False,
             region: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ):
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.bucket_name = bucket_name
         self.object_key = object_key
@@ -410,8 +411,8 @@ class OBSDownloadObjectOperator(BaseOperator):
         self.download_path = download_path
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
-        obs_hook.download_file_object(
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        return obs_hook.get_object(
             bucket_name=self.bucket_name,
             object_key=self.object_key,
             download_path=self.download_path,
@@ -423,9 +424,9 @@ class OBSCopyObjectOperator(BaseOperator):
     """
     This operator to copy an OBS object
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可复制任意区域的桶中对象
     :param source_object_key: 源对象名。
     :param dest_object_key: 目标对象名
@@ -458,14 +459,14 @@ class OBSCopyObjectOperator(BaseOperator):
             dest_bucket_name: str | None = None,
             version_id: str | None = None,
             metadata: dict | None = None,
-            directive: str | None = 'COPY',
+            directive: str | None = None,
             acl: str | None = None,
             region: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.source_object_key = source_object_key
         self.dest_object_key = dest_object_key
@@ -479,7 +480,7 @@ class OBSCopyObjectOperator(BaseOperator):
         self.metadata = metadata
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         obs_hook.copy_object(
             source_object_key=self.source_object_key,
             dest_object_key=self.dest_object_key,
@@ -495,9 +496,9 @@ class OBSDeleteObjectOperator(BaseOperator):
     """
     This operator to delete an OBS object
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可删除任意区域的桶中对象
     :param bucket_name: OBS bucket name
     :param object_key: object name
@@ -516,18 +517,18 @@ class OBSDeleteObjectOperator(BaseOperator):
             bucket_name: str | None = None,
             version_id: str | None = None,
             region: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.object_key = object_key
         self.bucket_name = bucket_name
         self.version_id = version_id
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         obs_hook.delete_object(
             object_key=self.object_key,
             bucket_name=self.bucket_name,
@@ -539,9 +540,9 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
     """
     This operator to delete OBS objects
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可删除任意区域的桶中对象
     :param bucket_name: OBS bucket name
     :param object_list: 待删除的对象列表
@@ -559,18 +560,18 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
             bucket_name: str,
             quiet: bool | None = True,
             region: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.obs_conn_id = obs_conn_id
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
         self.bucket_name = bucket_name
         self.object_list = object_list
         self.quiet = quiet
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_objects(
                 bucket_name=self.bucket_name,
@@ -578,24 +579,26 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
                 quiet=self.quiet,
             )
         else:
-            self.log.warning("OBS Bucket with name: %s doesn't exist on region: %s", self.bucket_name, obs_hook.region)
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
 
 
 class OBSMoveObjectOperator(BaseOperator):
     """
     This operator to move OBS object
 
-    :param obs_conn_id: The Airflow connection used for OBS credentials.
+    :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
     :param region: OBS region
-        默认从obs_conn_id对应的connetction中获取
+        默认从huaweicloud_conn_id对应的connetction中获取
         region为cn-north-1时可移动任意区域的桶中对象
-    :param bucket_name: OBS bucket name
+    :param dest_bucket_name: 目标桶名
+    :param source_bucket_name: 源桶名
     :param source_object_key: 源对象名
     :param dest_object_key: 目标对象名
     """
 
     template_fields: Sequence[str] = (
-        "bucket_name",
+        "source_bucket_name",
+        "dest_bucket_name",
         "source_object_key",
         "dest_object_key",
     )
@@ -604,25 +607,33 @@ class OBSMoveObjectOperator(BaseOperator):
             self,
             source_object_key: str,
             dest_object_key: str,
-            bucket_name: str | None = None,
+            dest_bucket_name: str,
+            source_bucket_name: str | None = None,
             region: str | None = None,
-            obs_conn_id: str | None = "obs_default",
+            huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
     ) -> None:
         super().__init__(**kwargs)
+        source_bucket_name = source_bucket_name if source_bucket_name else dest_bucket_name
         self.source_object_key = source_object_key
         self.dest_object_key = dest_object_key
-        self.bucket_name = bucket_name
-        self.obs_conn_id = obs_conn_id
+        self.source_bucket_name = source_bucket_name
+        self.dest_bucket_name = dest_bucket_name
+        self.huaweicloud_conn_id = huaweicloud_conn_id
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = OBSHook(obs_conn_id=self.obs_conn_id, region=self.region)
-        if obs_hook.exist_bucket(self.bucket_name):
-            obs_hook.move_object(
-                bucket_name=self.bucket_name,
-                source_object_key=self.source_object_key,
-                dest_object_key=self.dest_object_key
-            )
-        else:
-            self.log.warning("OBS Bucket with name: %s doesn't exist on region: %s", self.bucket_name, obs_hook.region)
+        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        if not obs_hook.exist_bucket(self.dest_bucket_name):
+            self.log.warning(f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.region}")
+            return
+        if not obs_hook.exist_bucket(self.source_bucket_name):
+            self.log.warning(f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.region}")
+            return
+
+        obs_hook.move_object(
+            source_bucket_name=self.source_bucket_name,
+            dest_bucket_name=self.dest_bucket_name,
+            source_object_key=self.source_object_key,
+            dest_object_key=self.dest_object_key
+        )
