@@ -11,7 +11,7 @@
 | [OBSGetBucketTaggingOperator](#obsgetbuckettaggingoperator) | 获取OBS桶标签   |
 | [OBSSetBucketTaggingOperator](#obssetbuckettaggingoperator) | 设置OBS桶标签   |
 | [OBSDeleteBucketTaggingOperator](#obsdeletebuckettaggingoperator) | 删除OBS桶标签   |
-| [OBSCreateObjectOperator](#obscreateobjectoperator)         | 上传对象到OBS桶  |
+| [OBSCreateObjectOperator](#obscreateobjectoperator)         | 创建OBS桶对象  |
 | [OBSGetObjectOperator](#obsgetobjectoperator)               | 从OBS桶获取对象  |
 | [OBSCopyObjectOperator](#obscopyobjectoperator)             | 复制OBS桶对象   |
 | [OBSDeleteObjectOperator](#obsdeleteobjectoperator)         | 删除OBS桶对象   |
@@ -27,8 +27,10 @@ Airflow连接信息配置： WebUI -> Admin -> Connections
 **参数描述：**
 > Connection Id: 连接id，填入huaweicloud_conn_id
 > Connection Type: 连接类型，选择OBS
-> Schema: 默认OBS桶名
-> Extra: {"auth_type": "AK", "access_key_id": "{youreself-ak}", "access_key_secret": "{yourself-sk}", "region": "{yourself-region}"}
+> Bucket Name: 默认OBS桶名
+> Huawei Cloud Access Key ID：AK
+> Huawei Cloud Secret Access Key：SK
+> Extra: {"region": "{yourself-region}"}
 
 ____
 

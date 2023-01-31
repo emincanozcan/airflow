@@ -29,26 +29,30 @@ if TYPE_CHECKING:
 
 class OBSObjectKeySensor(BaseSensorOperator):
     """
-    Waits for a object key (a file-like instance on OBS) to be present in a OBS bucket.
+    Waits for a object key (a file-like instance on OBS) to be present in an OBS bucket.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可判断任意区域的桶中对象
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, you can determine whether objects in a bucket in any region exist.
+    :param bucket_name: OBS bucket name.
     :param object_key: The key being waited on. Supports full obs:// style url
         or relative path from root level. When it's specified as a full obs://
         url, please leave bucket_name as `None`.
-    :param bucket_name: OBS bucket name
     """
 
-    template_fields: Sequence[str] = ("object_key", "bucket_name")
+    template_fields: Sequence[str] = ("bucket_name", "object_key")
 
     def __init__(
         self,
         object_key: str | list[str],
         region: str | None = None,
         bucket_name: str | None = None,
-        huaweicloud_conn_id: str | None = "obs_default",
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -68,21 +72,21 @@ class OBSObjectKeySensor(BaseSensorOperator):
 
         if not obs_hook.exist_bucket(bucket_name):
             raise AirflowException(
-                f"OBS Bucket with name: {bucket_name} doesn't exist on region: {obs_hook.region}")
+                f"OBS Bucket with name: {bucket_name} doesn't exist on region: {obs_hook.region}.")
 
         return obs_hook.exist_object(object_key=object_key, bucket_name=bucket_name)
 
     def poke(self, context: Context):
         """
         Check if the object exists in the bucket to pull key.
-        :param self - the object itself
-        :param context - the context of the object
-        :returns True if the object exists, False otherwise
+        :param self: the object itself.
+        :param context: the context of the object.
+        :returns True if the object exists, False otherwise.
         """
         return all(self._check_object_key(object_key) for object_key in self.object_key)
 
     def get_hook(self) -> ObsHook:
-        """Create and return an ObsHook"""
+        """Create and return an ObsHook."""
         if not self.hook:
             self.hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         return self.hook

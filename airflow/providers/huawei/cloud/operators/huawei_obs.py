@@ -37,8 +37,8 @@ class OBSCreateBucketOperator(BaseOperator):
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可创建任意区域的桶
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If cn-north-1 is used, a bucket in any region can be created.
     :param bucket_name: This is bucket name you want to create.
     """
 
@@ -69,9 +69,13 @@ class OBSListBucketOperator(BaseOperator):
 
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
     :param region: OBS region you want to list bucket
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可列出所有区域的桶名
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If cn-north-1 is used, buckets in all region can be listed.
     """
 
     def __init__(
@@ -91,13 +95,17 @@ class OBSListBucketOperator(BaseOperator):
 
 class OBSDeleteBucketOperator(BaseOperator):
     """
-    This operator to delete an OBS bucket
+    This operator to delete an OBS bucket.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region you want to delete bucket
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可删除任意区域的桶名
-    :param bucket_name: This is bucket name you want to delete
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If cn-north-1 is used, a bucket in any region can be deleted.
+    :param bucket_name: This is bucket name you want to delete.
     """
 
     template_fields: Sequence[str] = ("bucket_name",)
@@ -119,7 +127,7 @@ class OBSDeleteBucketOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket(bucket_name=self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
 
 
 class OBSListObjectsOperator(BaseOperator):
@@ -129,14 +137,20 @@ class OBSListObjectsOperator(BaseOperator):
     used by `xcom` in the downstream task.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region you want to list the objects for the bucket
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可列举任意区域的桶对象名
-    :param bucket_name: This is bucket name you want to list all objects
-    :param prefix: 限定返回的对象名必须带有prefix前缀。
-    :param marker: 列举桶内对象列表时，指定一个标识符，从该标识符以后按字典顺序返回对象列表。
-    :param max_keys: 列举对象的最大数目，取值范围为1~1000，当超出范围时，按照默认的1000进行处理。
-    :param is_truncated: 是否开启分页查询，列举符合条件的所有对象
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, you can list the names of objects in a bucket in any region.
+    :param bucket_name: This is bucket name you want to list all objects.
+    :param prefix: Name prefix that the objects to be listed must contain.
+    :param marker: Object name to start with when listing objects in a bucket.
+        All objects are listed in the lexicographical order.
+    :param max_keys: Maximum number of objects returned in the response. The value ranges from 1 to 1000.
+        If the value is not in this range, 1000 is returned by default.
+    :param is_truncated: Whether to enable paging query and list all objects that meet the conditions.
     """
 
     template_fields: Sequence[str] = ("bucket_name", "prefix", "marker", "max_keys",)
@@ -175,18 +189,22 @@ class OBSListObjectsOperator(BaseOperator):
                 is_truncated=self.is_truncated,
             )
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
             return None
 
 
 class OBSGetBucketTaggingOperator(BaseOperator):
     """
-    This operator get OBS bucket tagging
+    This operator get OBS bucket tagging.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region you want to get bucket tagging
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可获取任意区域的桶标签
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, you can obtain bucket tagging for any region.
     :param bucket_name: This is bucket name you want to get bucket tagging.
     """
 
@@ -210,21 +228,25 @@ class OBSGetBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             return obs_hook.get_bucket_tagging(self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
             return None
 
 
 class OBSSetBucketTaggingOperator(BaseOperator):
     """
-    This operator set OBS bucket tagging
-    进行该操作，会重置桶标签
+    This operator set OBS bucket tagging.
+    This operator will reset the original bucket tagging.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region you want to set bucket tagging
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可设置任意区域的桶标签
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, you can set bucket tagging for any region.
     :param bucket_name: This is bucket name you want to set bucket tagging.
-    :param tag_info: 桶标签配置
+    :param tag_info: bucket tagging information.
     """
 
     template_fields: Sequence[str] = ("bucket_name",)
@@ -249,7 +271,7 @@ class OBSSetBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.set_bucket_tagging(bucket_name=self.bucket_name, tag_info=self.tag_info)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
 
 
 class OBSDeleteBucketTaggingOperator(BaseOperator):
@@ -257,9 +279,13 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
     This operator delete OBS bucket tagging
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region you want to set bucket tagging
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可删除任意区域的桶标签
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, you can delete bucket tagging for any region.
     :param bucket_name: This is bucket name you want to delete bucket tagging.
     """
 
@@ -282,44 +308,59 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket_tagging(bucket_name=self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
 
 
 class OBSCreateObjectOperator(BaseOperator):
     """
-    This operator to create object
+    This operator to create object.
 
     This operator returns a python list containing the names of failed upload objects,
     which can be used by 'xcom' in downstream tasks.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region you want to upload an file-like object to bucket
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可将对象上传任意区域的桶中
-    :param bucket_name: This is bucket name you want to create
-    :param object_key: the OBS path of the object
-    :param object_type: 上传对象类型，默认为content
-        file
-            data参数为待上传文件/文件夹的完整路径，如/aa/bb.txt，或/aa/。
-        content
-            data参数为使用字符串作为对象的数据源，上传文本到指定桶，
-            或者使用包含“read”属性的可读对象作为对象的数据源，以网络流或文件流方式上传数据到指定桶。
-    :param data: 待上传数据，结合object_type使用
-        如果data是文件夹，则md5会被忽略。
-    :param metadata: 上传文件的自定义元数据
-    :param md5: 待上传对象数据的MD5值（经过Base64编码），提供给OBS服务端，校验数据完整性。
-    :param acl: 上传对象时可指定的预定义访问策略，访问策略如下:
-            PRIVATE 私有读写。
-            PUBLIC_READ 公共读。
-            PUBLIC_READ_WRITE   公共读写。
-            BUCKET_OWNER_FULL_CONTROL   桶或对象所有者拥有完全控制权限。
-    :param storage_class: 上传对象时可指定的对象的存储类型, 存储类型如下:
-            STANDARD    标准存储    标准存储拥有低访问时延和较高的吞吐量，适用于有大量热点对象（平均一个月多次）或小对象（<1MB），且需要频繁访问数据的业务场景。
-            WARM    低频访问存储    低频访问存储适用于不频繁访问（平均一年少于12次）但在需要时也要求能够快速访问数据的业务场景。
-            COLD    归档存储    归档存储适用于很少访问（平均一年访问一次）数据的业务场景。
-    :param expires: 待上传对象的生命周期，单位：天
-    :param encryption: 以SSE-KMS方式加密对象，支持的值：kms
-    :param key: SSE-KMS方式下加密的主密钥，可为空。
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, you can create objects in a bucket in any region.
+    :param bucket_name: This is bucket name you want to create.
+    :param object_key: Object name or the name of the uploaded file.
+    :param object_type: The type of the object，default is content.
+        - file
+            Full path of the file/folder to be uploaded, for example, /aa/bb.txt, or /aa/.
+        - content
+            Upload text to the specified bucket using a string as the data source of the object,
+            or upload data to the specified bucket as a network stream or file stream using a
+            readable object with a "read" attribute as the data source of the object.
+    :param data: Object to be uploaded.
+        If data is a folder type, the md5 parameter is ignored.
+    :param metadata: Upload custom metadata for the object.
+    :param md5: Base64-encoded MD5 value of the object data to be uploaded.
+        It is provided for the OBS server to verify data integrity.
+    :param acl: Pre-defined Access Control Policies specified during the object upload，
+        The access policy is as follows:
+            - PRIVATE: Private read/write.
+            - PUBLIC_READ: Public read.
+            - PUBLIC_READ_WRITE: Public read/write.
+            - BUCKET_OWNER_FULL_CONTROL: The owner of a bucket or object has the full control permission
+                                        on the bucket or object.
+    :param storage_class: Storage Classes, which can be specified during the object creation.
+        The access policy is as follows:
+            - STANDARD: Standard storage class
+                Features low access latency and high throughput and is applicable
+                to storing frequently-accessed (multiple times per month) hotspot
+                or small objects (< 1 MB) requiring quick response.
+            - WARM: Infrequent Access storage class
+                Applicable to storing semi-frequently accessed (less than 12 times a year) data
+                requiring quick response.
+            - COLD: Archive storage class
+                Applicable to archiving rarely-accessed (once a year) data.
+    :param expires: Expiration time of an object to be uploaded, in days.
+    :param encryption: Algorithm used in SSE-KMS encryption. The value can be:kms
+    :param key: Master key used in SSE-KMS encryption. The value can be None.
     """
 
     template_fields: Sequence[str] = ("bucket_name", "object_key", "object_type", "data", "metadata")
@@ -328,7 +369,7 @@ class OBSCreateObjectOperator(BaseOperator):
             self,
             object_key: str,
             data: str | object,
-            object_type: str | None = 'content',
+            object_type: str | None = "content",
             region: str | None = None,
             bucket_name: str | None = None,
             huaweicloud_conn_id: str | None = "huaweicloud_default",
@@ -372,7 +413,7 @@ class OBSCreateObjectOperator(BaseOperator):
 
 class OBSGetObjectOperator(BaseOperator):
     """
-    This operator to Download an OBS object
+    This operator to Download an OBS object.
 
     If load_stream_in_memory is True,
     this operator returns the byte stream of an object,
@@ -380,14 +421,21 @@ class OBSGetObjectOperator(BaseOperator):
     which can be used by 'xcom' in downstream tasks.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可下载任意区域的桶中对象到本地
-    :param bucket_name: OBS bucket name
-    :param object_key: key of the object to download.
-    :param download_path: 下载对象的目标路径，包含文件名，如aa/bb.txt.
-    :param load_stream_in_memory: 是否将对象的数据流加载到内存。
-        默认值为False，如果该值为True，会忽略downloadPath参数，并返回将获取的数据流。
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, you can download an object in a bucket in any region.
+    :param bucket_name: The name of the bucket.
+    :param object_key: Object name or the name of the file to be downloaded.
+    :param download_path: The target path to which the object is downloaded, including the file name,
+        for example, aa/bb.txt.When selecting the current directory,
+        the path format must specify the current directory, for example, ./xxx.
+    :param load_stream_in_memory: Whether to load the data stream of the object to the memory.
+        The default value is False. If the value is True, the downloadPath parameter will be ineffective
+        and the obtained data stream will be directly loaded to the memory.
     """
     ui_color = "#3298ff"
     template_fields: Sequence[str] = ("bucket_name", "object_key", "download_path", "load_stream_in_memory")
@@ -422,26 +470,34 @@ class OBSGetObjectOperator(BaseOperator):
 
 class OBSCopyObjectOperator(BaseOperator):
     """
-    This operator to copy an OBS object
+    This operator to create a copy for an object in a specified bucket.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可复制任意区域的桶中对象
-    :param source_object_key: 源对象名。
-    :param dest_object_key: 目标对象名
-    :param source_bucket_name: 源桶名
-    :param dest_bucket_name: 目标桶名
-    :param versionId: 源对象版本号
-    :param metadata: 目标对象的自定义元数据(需要指定directive为'REPLACE')
-    :param directive: 目标对象的属性是否从源对象中复制，支持的值：
-        COPY: 默认值，从源对象复制
-        REPLACE: 以请求参数中指定的值替换
-    :param acl: 复制对象时可指定的预定义访问策略。
-        PRIVATE 私有读写。
-        PUBLIC_READ 公共读。
-        PUBLIC_READ_WRITE   公共读写。
-        BUCKET_OWNER_FULL_CONTROL   桶或对象所有者拥有完全控制权限。
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        Inter-region copy is not supported.
+    :param source_object_key: Source object name.
+    :param dest_object_key: Target object name.
+    :param source_bucket_name: Source bucket name.
+    :param dest_bucket_name: Target bucket name.
+    :param version_id: Source object version ID.
+    :param metadata: Customized metadata of the target object,
+        directive in headers needs to be specified as 'REPLACE'.
+    :param directive: Whether to copy source object attributes to the target object.
+        Possible values are:
+            - COPY: Default value; Attributes of the target object are copied from the source object.
+            - REPLACE: Attributes of the target object are replaced with values specified in the request parameter.
+    :param acl: Pre-set access policies, which can be specified during object copy.
+        The access policy is as follows:
+                - PRIVATE: Private read/write.
+                - PUBLIC_READ: Public read.
+                - PUBLIC_READ_WRITE: Public read/write.
+                - BUCKET_OWNER_FULL_CONTROL: The owner of a bucket or object has the full control permission
+                                            on the bucket or object.
     """
 
     template_fields: Sequence[str] = (
@@ -474,8 +530,8 @@ class OBSCopyObjectOperator(BaseOperator):
         self.dest_bucket_name = dest_bucket_name
         self.version_id = version_id
         self.headers = {
-            'directive': directive,
-            'acl': acl,
+            "directive": directive,
+            "acl": acl,
         }
         self.metadata = metadata
 
@@ -494,12 +550,16 @@ class OBSCopyObjectOperator(BaseOperator):
 
 class OBSDeleteObjectOperator(BaseOperator):
     """
-    This operator to delete an OBS object
+    This operator to delete an object from bucket.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可删除任意区域的桶中对象
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, an object in a bucket in any region can be deleted.
     :param bucket_name: OBS bucket name
     :param object_key: object name
     :param version_id: object version id
@@ -538,20 +598,21 @@ class OBSDeleteObjectOperator(BaseOperator):
 
 class OBSDeleteBatchObjectOperator(BaseOperator):
     """
-    This operator to delete OBS objects
+    This operator to delete objects from a specified bucket in a batch.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可删除任意区域的桶中对象
-    :param bucket_name: OBS bucket name
-    :param object_list: 待删除的对象列表
-        对象非多版本表示方式 ['object_key1', 'object_key2', ...]
-        对象存在多版本表示方式[{'object_key': 'test_key', 'version_id': 'test_version'}, ...]
-        或者['object_key1', 'object_key2', ...]
-    :param quiet: 批量删除对象的响应方式
-        False表示详细模式，返回的删除成功和删除失败的所有结果
-        True表示简单模式，只返回的删除过程中出错的结果。
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        If region is cn-north-1, objects in a bucket in any region can be deleted.
+    :param bucket_name: OBS bucket name.
+    :param object_list: List of objects to be deleted.
+    :param quiet: Response mode of a batch deletion request.
+        If this field is set to False, objects involved in the deletion will be returned.
+        If this field is set to True, only objects failed to be deleted will be returned.
     """
 
     def __init__(
@@ -579,21 +640,25 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
                 quiet=self.quiet,
             )
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
 
 
 class OBSMoveObjectOperator(BaseOperator):
     """
-    This operator to move OBS object
+    This operator to create a move for an object in a specified bucket.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
-    :param region: OBS region
-        默认从huaweicloud_conn_id对应的connetction中获取
-        region为cn-north-1时可移动任意区域的桶中对象
-    :param dest_bucket_name: 目标桶名
-    :param source_bucket_name: 源桶名
-    :param source_object_key: 源对象名
-    :param dest_object_key: 目标对象名
+        If this is None or empty then the default obs behaviour is used. If
+            running Airflow in a distributed manner and aws_conn_id is None or
+            empty, then default obs configuration would be used (and must be
+            maintained on each worker node).
+    :param region: OBS region you want to create bucket.
+        By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
+        Inter-region move is not supported.
+    :param source_object_key: Source object name.
+    :param dest_object_key: Target object name.
+    :param source_bucket_name: Source bucket name.
+    :param dest_bucket_name: Target bucket name.
     """
 
     template_fields: Sequence[str] = (
@@ -625,10 +690,10 @@ class OBSMoveObjectOperator(BaseOperator):
     def execute(self, context: Context):
         obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if not obs_hook.exist_bucket(self.dest_bucket_name):
-            self.log.warning(f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.region}.")
             return
         if not obs_hook.exist_bucket(self.source_bucket_name):
-            self.log.warning(f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.region}")
+            self.log.warning(f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.region}.")
             return
 
         obs_hook.move_object(

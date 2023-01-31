@@ -19,8 +19,7 @@
 Huawei Cloud OBS Operators
 ==========================
 
-管理OBS桶及对象的生命周期
-Airflow to Huawei Cloud Object Storage Service (OBS) integration provides several operators to create  with OBS.
+Airflow to Huawei Cloud Object Storage Service (OBS) integration provides several operators to manage the life cycle of OBS buckets and objects.
 
 Operators
 ---------
@@ -60,6 +59,8 @@ Delete a Huawei Cloud OBS bucket
 
 To delete a Huawei Cloud OBS bucket you can use
 :class:`~airflow.providers.huawei.operators.huawei_obs.OBSDeleteBucketOperator`.
+
+Non-empty buckets cannot be deleted directly.
 
 .. exampleinclude:: /../../tests/system/providers/huawei/example_obs.py
     :language: python
@@ -145,6 +146,7 @@ Copy a Huawei Cloud OBS object
 To copy a Huawei Cloud OBS object from one bucket to another you can use
 :class:`~airflow.providers.huawei.operators.huawei_obs.OBSCopyObjectOperator`.
 The Huawei Cloud OBS connection used here needs to have access to both source and destination bucket/key.
+Inter-region copy is not supported.
 
 .. exampleinclude:: /../../tests/system/providers/huawei/example_obs.py
     :language: python
@@ -157,6 +159,7 @@ The Huawei Cloud OBS connection used here needs to have access to both source an
 To move a Huawei Cloud OBS object from one bucket to another you can use
 :class:`~airflow.providers.huawei.operators.huawei_obs.OBSMoveObjectOperator`.
 The Huawei Cloud OBS connection used here needs to have access to both source and destination bucket/key.
+Inter-region move is not supported.
 
 .. exampleinclude:: /../../tests/system/providers/huawei/example_obs.py
     :language: python
