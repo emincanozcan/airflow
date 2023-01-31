@@ -428,7 +428,6 @@ class ObsHook(BaseHook):
         if object_type not in ["content", "file"]:
             raise AirflowException(f"invalid object_type(choices 'content', 'file')")
         try:
-            from _io import BufferedReader
             headers = headers if headers else {}
             sse_header = self._get_encryption_header(
                 encryption=headers.pop("encryption", None),
