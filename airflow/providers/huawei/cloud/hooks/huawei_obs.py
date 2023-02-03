@@ -76,7 +76,7 @@ def unify_bucket_name_and_key(func: T) -> T:
 
         key_name = get_key()
         if "bucket_name" not in bound_args.arguments or bound_args.arguments["bucket_name"] is None:
-            bound_args.arguments["bucket_name"], bound_args.arguments["object_key"] = ObsHook.parse_obs_url(
+            bound_args.arguments["bucket_name"], bound_args.arguments["object_key"] = OBSHook.parse_obs_url(
                 bound_args.arguments[key_name]
             )
 
@@ -94,7 +94,7 @@ def get_err_info(resp):
     })
 
 
-class ObsHook(BaseHook):
+class OBSHook(BaseHook):
     """Interact with Huawei Cloud OBS, using the obs library."""
 
     conn_name_attr = "huaweicloud_conn_id"
@@ -146,7 +146,7 @@ class ObsHook(BaseHook):
         :return: the parsed bucket name and object key.
         """
         if bucket_name is None:
-            return ObsHook.parse_obs_url(object_key)
+            return OBSHook.parse_obs_url(object_key)
 
         parsed_url = urlsplit(object_key)
         if parsed_url.scheme != "" or parsed_url.netloc != "":
@@ -329,7 +329,7 @@ class ObsHook(BaseHook):
         :param object_key: object key.
         """
 
-        bucket_name, object_key = ObsHook.get_obs_bucket_object_key(
+        bucket_name, object_key = OBSHook.get_obs_bucket_object_key(
             bucket_name, object_key, "bucket_name", "object_key"
         )
         resp = self.get_bucket_client(bucket_name).listObjects(prefix=object_key, max_keys=1)
@@ -398,7 +398,6 @@ class ObsHook(BaseHook):
         return bucket_client.listObjects(**kwargs)
 
     @provide_bucket_name
-    @unify_bucket_name_and_key
     def create_object(
         self,
         object_key: str,
@@ -483,8 +482,8 @@ class ObsHook(BaseHook):
             else:
                 yield item
 
-    @provide_bucket_name
     @unify_bucket_name_and_key
+    @provide_bucket_name
     def get_object(
         self,
         object_key: str,
@@ -512,8 +511,7 @@ class ObsHook(BaseHook):
             )
             if resp.status < 300:
                 if load_stream_in_memory:
-                    self.log.info('The object was converted to a string type and loaded into Xcom.')
-                    return str(resp.body.buffer, 'utf-8')
+                    return resp.body.buffer
                 self.log.info('Object download succeeded.')
             else:
                 self.log.error(f"Error message when getting the object: {get_err_info(resp)}.")
@@ -569,8 +567,8 @@ class ObsHook(BaseHook):
         except Exception as e:
             raise AirflowException(f"Errors when copying: {source_object_key}({e}).")
 
-    @provide_bucket_name
     @unify_bucket_name_and_key
+    @provide_bucket_name
     def delete_object(
         self,
         object_key: str,

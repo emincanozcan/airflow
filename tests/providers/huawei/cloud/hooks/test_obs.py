@@ -22,7 +22,7 @@ import unittest
 from unittest import mock
 
 from airflow.exceptions import AirflowException
-from airflow.providers.huawei.cloud.hooks.huawei_obs import ObsHook
+from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
 from tests.providers.huawei.cloud.utils.obs_mock import mock_obs_hook_default_conn, MOCK_BUCKET_NAME
 
 OBS_STRING = "airflow.providers.huawei.cloud.hooks.huawei_obs.{}"
@@ -38,13 +38,13 @@ RESP_404 = mock.Mock(status=404, reason="Not Found", errorCode=None, errorMessag
 RESP_403 = mock.Mock(status=403, reason="Forbidden", errorCode="AccessDenied", errorMessage="Access Denied")
 
 
-class TestObsHook(unittest.TestCase):
+class TestOBSHook(unittest.TestCase):
     def setUp(self):
         with mock.patch(
-            OBS_STRING.format("ObsHook.__init__"),
+            OBS_STRING.format("OBSHook.__init__"),
             new=mock_obs_hook_default_conn,
         ):
-            self.hook = ObsHook(huaweicloud_conn_id=MOCK_OBS_CONN_ID)
+            self.hook = OBSHook(huaweicloud_conn_id=MOCK_OBS_CONN_ID)
 
     def test_get_conn(self):
         assert self.hook.get_conn() is not None
@@ -53,7 +53,7 @@ class TestObsHook(unittest.TestCase):
         parsed = self.hook.parse_obs_url(f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}")
         self.assertTupleEqual((MOCK_BUCKET_NAME, MOCK_OBJECT_KEY), parsed)
 
-    @mock.patch(OBS_STRING.format("ObsHook.parse_obs_url"))
+    @mock.patch(OBS_STRING.format("OBSHook.parse_obs_url"))
     def test_get_obs_bucket_object_key_if_not_bucket_name(self, mock_parse_obs_url):
         object_key = f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}"
         mock_parse_obs_url.return_value = (MOCK_BUCKET_NAME, MOCK_OBJECT_KEY)
@@ -68,7 +68,7 @@ class TestObsHook(unittest.TestCase):
         mock_parse_obs_url.assert_called_once_with(object_key)
 
     @mock.patch(OBS_STRING.format("urlsplit"))
-    @mock.patch(OBS_STRING.format("ObsHook"))
+    @mock.patch(OBS_STRING.format("OBSHook"))
     def test_get_obs_bucket_object_key_if_relative_object_key(self, mock_hook, mock_urlsplit):
         # mock_urlsplit.return_value = mock.Mock(scheme="obs", netloc=MOCK_BUCKET_NAME)
         mock_urlsplit.return_value = mock.Mock(scheme="", netloc="")
@@ -84,7 +84,7 @@ class TestObsHook(unittest.TestCase):
         self.assertEqual(MOCK_OBJECT_KEY, object_key)
 
     @mock.patch(OBS_STRING.format("urlsplit"))
-    @mock.patch(OBS_STRING.format("ObsHook"))
+    @mock.patch(OBS_STRING.format("OBSHook"))
     def test_get_obs_bucket_object_key_if_not_relative_object_key(self, mock_hook, mock_urlsplit):
         mock_urlsplit.return_value = mock.Mock(scheme="obs", netloc=MOCK_BUCKET_NAME)
 
@@ -97,7 +97,7 @@ class TestObsHook(unittest.TestCase):
             )
             mock_hook.return_value.parse_obs_url.assert_not_called()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_credential"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_credential"))
     @mock.patch(OBS_STRING.format("ObsClient"))
     def test_get_obs_client(self, mock_obs_client, mock_get_credential):
         mock_get_credential.return_value = ('AK', 'SK')
@@ -111,14 +111,14 @@ class TestObsHook(unittest.TestCase):
             server=f'https://obs.{self.hook.region}.myhuaweicloud.com'
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_get_bucket_client(self, mock_get_obs_client):
         self.hook.get_bucket_client(MOCK_BUCKET_NAME)
 
         mock_get_obs_client.assert_called_once_with()
         mock_get_obs_client.return_value.bucketClient.assert_called_once_with(MOCK_BUCKET_NAME)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_bucket_if_status_lt_300(self, mock_bucket_client):
         mock_create_bucket = mock_bucket_client.return_value.createBucket
         mock_create_bucket.return_value = RESP_200
@@ -128,7 +128,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_create_bucket.assert_called_once_with(location=self.hook.region)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_bucket_if_status_ge_300(self, mock_bucket_client):
         mock_create_bucket = mock_bucket_client.return_value.createBucket
         mock_create_bucket.return_value = RESP_404
@@ -138,7 +138,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_create_bucket.assert_called_once_with(location=self.hook.region)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_list_bucket_if_status_lt_300(self, mock_obs_client):
         mock_list_bucket = mock_obs_client.return_value.listBuckets
 
@@ -171,7 +171,7 @@ class TestObsHook(unittest.TestCase):
         mock_list_bucket.assert_called_once_with()
         self.assertListEqual(expect_buckets, res)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_list_bucket_if_status_ge_300(self, mock_obs_client):
         mock_list_bucket = mock_obs_client.return_value.listBuckets
         mock_list_bucket.return_value = RESP_404
@@ -181,7 +181,7 @@ class TestObsHook(unittest.TestCase):
         mock_obs_client.assert_called_once_with()
         mock_list_bucket.assert_called_once_with()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_exist_bucket_if_status_lt_300(self, mock_bucket_client):
         mock_head_bucket = mock_bucket_client.return_value.headBucket
         mock_head_bucket.return_value = RESP_200
@@ -189,7 +189,7 @@ class TestObsHook(unittest.TestCase):
         res = self.hook.exist_bucket(MOCK_BUCKET_NAME)
         self.assertEqual(True, res)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_exist_bucket_if_status_eq_404(self, mock_bucket_client):
         mock_head_bucket = mock_bucket_client.return_value.headBucket
         mock_head_bucket.return_value = RESP_404
@@ -197,7 +197,7 @@ class TestObsHook(unittest.TestCase):
         res = self.hook.exist_bucket(MOCK_BUCKET_NAME)
         self.assertEqual(False, res)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_exist_bucket_if_status_eq_403(self, mock_bucket_client):
         mock_head_bucket = mock_bucket_client.return_value.headBucket
         mock_head_bucket.return_value = RESP_403
@@ -205,7 +205,7 @@ class TestObsHook(unittest.TestCase):
         res = self.hook.exist_bucket(MOCK_BUCKET_NAME)
         self.assertEqual(False, res)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_bucket_if_status_ge_300(self, mock_bucket_client):
         mock_delete_bucket = mock_bucket_client.return_value.deleteBucket
         mock_delete_bucket.return_value = RESP_404
@@ -215,7 +215,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_delete_bucket.assert_called_once_with()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_bucket_if_status_lt_300(self, mock_bucket_client):
         mock_delete_bucket = mock_bucket_client.return_value.deleteBucket
         mock_delete_bucket.return_value = RESP_200
@@ -225,7 +225,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_delete_bucket.assert_called_once_with()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_bucket_tagging_if_status_ge_300(self, mock_bucket_client):
         mock_get_bucket_tagging = mock_bucket_client.return_value.getBucketTagging
         resp_no_tagging = copy.deepcopy(RESP_404)
@@ -238,7 +238,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_get_bucket_tagging.assert_called_once_with()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_bucket_tagging_if_status_lt_300(self, mock_bucket_client):
         mock_get_bucket_tagging = mock_bucket_client.return_value.getBucketTagging
 
@@ -253,7 +253,7 @@ class TestObsHook(unittest.TestCase):
         mock_get_bucket_tagging.assert_called_once_with()
         self.assertListEqual(body['tagSet'], tag_set)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_set_bucket_tagging_if_not_tag_info(self, mock_bucket_client):
         mock_set_bucket_tagging = mock_bucket_client.return_value.setBucketTagging
 
@@ -266,7 +266,7 @@ class TestObsHook(unittest.TestCase):
         mock_set_bucket_tagging.assert_not_called()
 
     @mock.patch(OBS_STRING.format("TagInfo"))
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_set_bucket_tagging_if_status_ge_300(self, mock_bucket_client, MockTagInfo):
         mock_set_bucket_tagging = mock_bucket_client.return_value.setBucketTagging
         mock_set_bucket_tagging.return_value = RESP_404
@@ -280,7 +280,7 @@ class TestObsHook(unittest.TestCase):
         mock_set_bucket_tagging.assert_called_once_with(tagInfo=MockTagInfo(MOCK_TAG_INFO))
 
     @mock.patch(OBS_STRING.format("TagInfo"))
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_set_bucket_tagging_if_status_lt_300(self, mock_bucket_client, MockTagInfo):
         mock_set_bucket_tagging = mock_bucket_client.return_value.setBucketTagging
         mock_set_bucket_tagging.return_value = RESP_200
@@ -293,7 +293,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_set_bucket_tagging.assert_called_once_with(tagInfo=MockTagInfo(MOCK_TAG_INFO))
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_bucket_tagging_if_status_lt_300(self, mock_bucket_client):
         mock_delete_bucket_tagging = mock_bucket_client.return_value.deleteBucketTagging
         mock_delete_bucket_tagging.return_value = RESP_200
@@ -303,7 +303,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_delete_bucket_tagging.assert_called_once_with()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_bucket_tagging_if_status_ge_300(self, mock_bucket_client):
         mock_delete_bucket_tagging = mock_bucket_client.return_value.deleteBucketTagging
         mock_delete_bucket_tagging.return_value = RESP_404
@@ -313,8 +313,8 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_delete_bucket_tagging.assert_called_once_with()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_bucket_object_key"))
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_bucket_object_key"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_exist_object_if_provided_bucket(self, mock_bucket_client, mock_get_obs_bucket_object_key):
         mock_get_obs_bucket_object_key.return_value = (MOCK_BUCKET_NAME, MOCK_OBJECT_KEY)
         mock_list_object = mock_bucket_client.return_value.listObjects
@@ -332,8 +332,8 @@ class TestObsHook(unittest.TestCase):
         mock_list_object.assert_called_once_with(prefix=MOCK_OBJECT_KEY, max_keys=1)
         self.assertEqual(True, exist)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_bucket_object_key"))
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_bucket_object_key"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_exist_object_if_not_provided_bucket(self, mock_bucket_client, mock_get_obs_bucket_object_key):
         object_key = f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}"
         mock_get_obs_bucket_object_key.return_value = (MOCK_BUCKET_NAME, MOCK_OBJECT_KEY)
@@ -352,8 +352,8 @@ class TestObsHook(unittest.TestCase):
         mock_list_object.assert_called_once_with(prefix=MOCK_OBJECT_KEY, max_keys=1)
         self.assertEqual(True, exist)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_bucket_object_key"))
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_bucket_object_key"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_exist_object_if_status_ge_300(self, mock_bucket_client, mock_get_obs_bucket_object_key):
         object_key = f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}"
         mock_get_obs_bucket_object_key.return_value = (MOCK_BUCKET_NAME, MOCK_OBJECT_KEY)
@@ -368,7 +368,7 @@ class TestObsHook(unittest.TestCase):
         mock_list_object.assert_called_once_with(prefix=MOCK_OBJECT_KEY, max_keys=1)
         self.assertEqual(False, exist)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_list_object_if_status_lt_300(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
         body = {
@@ -384,7 +384,7 @@ class TestObsHook(unittest.TestCase):
         mock_list_object.assert_called_once_with(prefix=None, marker=None, max_keys=None)
         self.assertListEqual(MOCK_OBJECT_KEYS, object_list)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_list_object_if_status_ge_300(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
         mock_list_object.return_value = RESP_404
@@ -395,7 +395,7 @@ class TestObsHook(unittest.TestCase):
         mock_list_object.assert_called_once_with(prefix=None, marker=None, max_keys=None)
         self.assertIsNone(object_list)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_list_object_if_is_truncated(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
         body = {
@@ -423,7 +423,7 @@ class TestObsHook(unittest.TestCase):
         self.assertEqual(2, mock_list_object.call_count)
         self.assertListEqual([MOCK_OBJECT_KEYS[:4], MOCK_OBJECT_KEYS[4:]], object_list)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_list_object_if_max_keys(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
         body = {
@@ -439,7 +439,7 @@ class TestObsHook(unittest.TestCase):
         mock_list_object.assert_called_once_with(prefix=None, marker=None, max_keys=2)
         self.assertListEqual(MOCK_OBJECT_KEYS[:2], object_list)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_list_object_if_max_keys_and_prefix(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
 
@@ -471,7 +471,7 @@ class TestObsHook(unittest.TestCase):
                 data='test data'
             )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_object_if_object_type_content(self, mock_bucket_client):
         mock_create_object = mock_bucket_client.return_value.putContent
         data = mock.Mock()
@@ -500,7 +500,7 @@ class TestObsHook(unittest.TestCase):
             headers={}
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_object_if_object_type_file(self, mock_bucket_client):
         mock_create_object = mock_bucket_client.return_value.putFile
         data = '/tmp/mock_file'
@@ -528,7 +528,7 @@ class TestObsHook(unittest.TestCase):
             headers={'sseHeader': {'encryption': 'kms', 'key': None}}
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_object_if_object_type_folder(self, mock_bucket_client):
         mock_create_object = mock_bucket_client.return_value.putFile
         data = '/tmp/mock_folder/'
@@ -574,7 +574,7 @@ class TestObsHook(unittest.TestCase):
         )
         self.assertListEqual(['/tmp/mock_folder/mock1.py'], expect_err_object)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_object(self, mock_bucket_client):
         mock_get_object = mock_bucket_client.return_value.getObject
         resp_object = copy.deepcopy(RESP_200)
@@ -587,17 +587,17 @@ class TestObsHook(unittest.TestCase):
         self.hook.get_object(
             object_key=MOCK_OBJECT_KEY,
             bucket_name=MOCK_BUCKET_NAME,
-            download_path='mock/download/test'
+            download_path='/mock/download/test'
         )
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_get_object.assert_called_once_with(
             objectKey=MOCK_OBJECT_KEY,
-            download_path='mock/download/test',
+            downloadPath='/mock/download/test',
             loadStreamInMemory=False
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_object_if_load_stream_in_memory(self, mock_bucket_client):
         mock_get_object = mock_bucket_client.return_value.getObject
         resp_object = copy.deepcopy(RESP_200)
@@ -616,11 +616,11 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_get_object.assert_called_once_with(
             objectKey=MOCK_OBJECT_KEY,
-            download_path=None,
+            downloadPath=None,
             loadStreamInMemory=True
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_object_if_status_ge_300(self, mock_bucket_client):
         mock_get_object = mock_bucket_client.return_value.getObject
         resp_object = copy.deepcopy(RESP_404)
@@ -637,11 +637,11 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_get_object.assert_called_once_with(
             objectKey=MOCK_OBJECT_KEY,
-            download_path=None,
+            downloadPath=None,
             loadStreamInMemory=True
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_copy_object_if_status_lt_300(self, mock_obs_client):
         mock_copy_object = mock_obs_client.return_value.copyObject
         mock_copy_object.return_value = RESP_200
@@ -664,7 +664,7 @@ class TestObsHook(unittest.TestCase):
             metadata=None,
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_copy_object_if_status_ge_300(self, mock_obs_client):
         mock_copy_object = mock_obs_client.return_value.copyObject
         mock_copy_object.return_value = RESP_404
@@ -687,7 +687,7 @@ class TestObsHook(unittest.TestCase):
             metadata=None,
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_object_if_status_lt_300(self, mock_bucket_client):
         mock_delete_object = mock_bucket_client.return_value.deleteObject
         mock_delete_object.return_value = RESP_200
@@ -703,7 +703,7 @@ class TestObsHook(unittest.TestCase):
             versionId=None
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_object_if_status_ge_300(self, mock_bucket_client):
         mock_delete_object = mock_bucket_client.return_value.deleteObject
         mock_delete_object.return_value = RESP_404
@@ -719,7 +719,7 @@ class TestObsHook(unittest.TestCase):
             versionId=None
         )
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_objects_if_not_object_list(self, mock_bucket_client):
         mock_delete_objects = mock_bucket_client.return_value.deleteObjects
 
@@ -731,7 +731,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.not_called()
         mock_delete_objects.not_called()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_objects_if_object_list_gt_1000(self, mock_bucket_client):
         mock_delete_objects = mock_bucket_client.return_value.deleteObjects
         mock_delete_objects.return_value = RESP_404
@@ -745,7 +745,7 @@ class TestObsHook(unittest.TestCase):
         mock_delete_objects.not_called()
 
     @mock.patch(OBS_STRING.format("DeleteObjectsRequest"))
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_objects_if_status_lt_300(self, mock_bucket_client, mock_delete_objects_request):
         mock_delete_objects = mock_bucket_client.return_value.deleteObjects
         mock_delete_objects.return_value = RESP_200
@@ -765,7 +765,7 @@ class TestObsHook(unittest.TestCase):
         mock_delete_objects.assert_called_once_with(mock_delete_objects_request.return_value)
 
     @mock.patch(OBS_STRING.format("DeleteObjectsRequest"))
-    @mock.patch(OBS_STRING.format("ObsHook.get_bucket_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_objects_if_object_list_contains_dict(self, mock_bucket_client, mock_delete_objects_request):
         mock_delete_objects = mock_bucket_client.return_value.deleteObjects
         mock_delete_objects.return_value = RESP_200
@@ -785,7 +785,7 @@ class TestObsHook(unittest.TestCase):
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_delete_objects.assert_called_once_with(mock_delete_objects_request.return_value)
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_move_object(self, mock_obs_client):
         mock_copy_object = mock_obs_client.return_value.copyObject
         mock_delete_object = mock_obs_client.return_value.deleteObject
@@ -808,7 +808,7 @@ class TestObsHook(unittest.TestCase):
         )
         mock_delete_object.assert_called()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_move_object_if_copy_status_ge_300(self, mock_obs_client):
         mock_copy_object = mock_obs_client.return_value.copyObject
         mock_delete_object = mock_obs_client.return_value.deleteObject
@@ -830,7 +830,7 @@ class TestObsHook(unittest.TestCase):
         )
         mock_delete_object.not_called()
 
-    @mock.patch(OBS_STRING.format("ObsHook.get_obs_client"))
+    @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_move_object_if_delete_status_ge_300(self, mock_obs_client):
         mock_copy_object = mock_obs_client.return_value.copyObject
         mock_delete_object = mock_obs_client.return_value.deleteObject

@@ -21,7 +21,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Sequence
 
 from airflow.models import BaseOperator
-from airflow.providers.huawei.cloud.hooks.huawei_obs import ObsHook
+from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -57,7 +57,7 @@ class OBSCreateBucketOperator(BaseOperator):
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         obs_hook.create_bucket(bucket_name=self.bucket_name)
 
 
@@ -87,7 +87,7 @@ class OBSListBucketOperator(BaseOperator):
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         return obs_hook.list_bucket()
 
 
@@ -121,7 +121,7 @@ class OBSDeleteBucketOperator(BaseOperator):
         self.bucket_name = bucket_name
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket(bucket_name=self.bucket_name)
         else:
@@ -175,7 +175,7 @@ class OBSListObjectsOperator(BaseOperator):
         self.is_truncated = is_truncated
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
 
         if obs_hook.exist_bucket(self.bucket_name):
 
@@ -221,7 +221,7 @@ class OBSGetBucketTaggingOperator(BaseOperator):
         self.bucket_name = bucket_name
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
 
         if obs_hook.exist_bucket(self.bucket_name):
             return obs_hook.get_bucket_tagging(self.bucket_name)
@@ -265,7 +265,7 @@ class OBSSetBucketTaggingOperator(BaseOperator):
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.set_bucket_tagging(bucket_name=self.bucket_name, tag_info=self.tag_info)
         else:
@@ -302,7 +302,7 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket_tagging(bucket_name=self.bucket_name)
         else:
@@ -398,7 +398,7 @@ class OBSCreateObjectOperator(BaseOperator):
         }
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         return obs_hook.create_object(
             bucket_name=self.bucket_name,
             object_key=self.object_key,
@@ -457,7 +457,7 @@ class OBSGetObjectOperator(BaseOperator):
         self.download_path = download_path
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         return obs_hook.get_object(
             bucket_name=self.bucket_name,
             object_key=self.object_key,
@@ -534,7 +534,7 @@ class OBSCopyObjectOperator(BaseOperator):
         self.metadata = metadata
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         obs_hook.copy_object(
             source_object_key=self.source_object_key,
             dest_object_key=self.dest_object_key,
@@ -586,7 +586,7 @@ class OBSDeleteObjectOperator(BaseOperator):
         self.version_id = version_id
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         obs_hook.delete_object(
             object_key=self.object_key,
             bucket_name=self.bucket_name,
@@ -630,7 +630,7 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
         self.quiet = quiet
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_objects(
                 bucket_name=self.bucket_name,
@@ -686,7 +686,7 @@ class OBSMoveObjectOperator(BaseOperator):
         self.region = region
 
     def execute(self, context: Context):
-        obs_hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if not obs_hook.exist_bucket(self.dest_bucket_name):
             self.log.warning(f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.region}.")
             return

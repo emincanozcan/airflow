@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Sequence
 
 from airflow.sensors.base import BaseSensorOperator
 from airflow.exceptions import AirflowException
-from airflow.providers.huawei.cloud.hooks.huawei_obs import ObsHook
+from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -61,11 +61,11 @@ class OBSObjectKeySensor(BaseSensorOperator):
         self.region = region
         self.bucket_name = bucket_name
         self.object_key = [object_key] if isinstance(object_key, str) else object_key
-        self.hook: ObsHook | None = None
+        self.hook: OBSHook | None = None
         self.object_list = None
 
     def _check_object_key(self, object_key):
-        bucket_name, object_key = ObsHook.get_obs_bucket_object_key(
+        bucket_name, object_key = OBSHook.get_obs_bucket_object_key(
             self.bucket_name, object_key, "bucket_name", "object_key"
         )
         obs_hook = self.hook if self.hook else self.get_hook()
@@ -85,8 +85,8 @@ class OBSObjectKeySensor(BaseSensorOperator):
         """
         return all(self._check_object_key(object_key) for object_key in self.object_key)
 
-    def get_hook(self) -> ObsHook:
-        """Create and return an ObsHook."""
+    def get_hook(self) -> OBSHook:
+        """Create and return an OBSHook."""
         if not self.hook:
-            self.hook = ObsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            self.hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         return self.hook

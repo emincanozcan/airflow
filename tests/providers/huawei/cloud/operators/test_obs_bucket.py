@@ -41,7 +41,7 @@ class TestOBSCreateBucketOperator(unittest.TestCase):
             bucket_name=MOCK_BUCKET_NAME,
         )
 
-    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.ObsHook")
+    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
     def test_execute(self, mock_hook):
         self.operator.execute(MOCK_CONTEXT)
 
@@ -58,7 +58,7 @@ class TestOBSDeleteBucketOperator(unittest.TestCase):
             bucket_name=MOCK_BUCKET_NAME,
         )
 
-    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.ObsHook")
+    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
     def test_execute_if_bucket_exist(self, mock_hook):
         mock_hook.return_value.exist_bucket.return_value = True
 
@@ -68,7 +68,7 @@ class TestOBSDeleteBucketOperator(unittest.TestCase):
         mock_hook.return_value.exist_bucket.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_hook.return_value.delete_bucket.assert_called_once_with(bucket_name=MOCK_BUCKET_NAME)
 
-    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.ObsHook")
+    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
     def test_execute_if_not_bucket_exist(self, mock_hook):
         mock_hook.return_value.exist_bucket.return_value = False
         mock_hook.return_value.region = MOCK_REGION
@@ -88,7 +88,7 @@ class TestOBSListBucketOperator(unittest.TestCase):
             region=MOCK_REGION,
         )
 
-    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.ObsHook")
+    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
     def test_execute(self, mock_hook):
 
         self.operator.execute(MOCK_CONTEXT)
