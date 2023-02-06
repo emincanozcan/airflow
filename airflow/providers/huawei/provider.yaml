@@ -29,6 +29,7 @@ dependencies:
   - huaweicloudsdkcore>=3.1.19
   - huaweicloudsdksmn>=3.1.19
   - huaweicloudsdkdli>=3.1.19
+  - huaweicloudsdkcdm>=3.1.19
 
 operators:
   - integration-name: Huawei Cloud SMN
@@ -37,10 +38,18 @@ operators:
   - integration-name: Huawei Cloud DLI
     python-modules:
       - airflow.providers.huawei.cloud.operators.dli
-#
-# sensors:
-#   -
-#
+  - integration-name: Huawei Cloud CDM
+    python-modules:
+      - airflow.providers.huawei.cloud.operators.cdm
+
+sensors:
+  - integration-name: Huawei Cloud DLI
+    python-modules:
+      - airflow.providers.huawei.cloud.sensors.dli
+  - integration-name: Huawei Cloud CDM
+    python-modules:
+      - airflow.providers.huawei.cloud.sensors.cdm
+
 hooks:
   - integration-name: Huawei Cloud SMN
     python-modules:
@@ -48,6 +57,9 @@ hooks:
   - integration-name: Huawei Cloud DLI
     python-modules:
       - airflow.providers.huawei.cloud.hooks.dli
+  - integration-name: Huawei Cloud CDM
+    python-modules:
+      - airflow.providers.huawei.cloud.hooks.cdm
 
 connection-types:
   - hook-class-name: airflow.providers.huawei.cloud.hooks.base_huawei_cloud.HuaweiBaseHook
