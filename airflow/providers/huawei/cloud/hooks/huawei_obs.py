@@ -264,7 +264,9 @@ class OBSHook(BaseHook):
         try:
             resp = self.get_bucket_client(bucket_name).getBucketTagging()
             if resp.status < 300:
-                return resp.body.tagSet
+                tag_info = [{"tag": tag.key, "value": tag.value} for tag in resp.body.tagSet]
+                self.log.info(f"Getting the bucket tagging succeeded. {tag_info}")
+                return tag_info
             else:
                 self.log.error(f"Error message when obtaining the bucket label: {get_err_info(resp)}.")
         except Exception as e:
@@ -511,7 +513,7 @@ class OBSHook(BaseHook):
             )
             if resp.status < 300:
                 if load_stream_in_memory:
-                    return resp.body.buffer
+                    return str(resp.body.buffer, encoding='utf-8')
                 self.log.info('Object download succeeded.')
             else:
                 self.log.error(f"Error message when getting the object: {get_err_info(resp)}.")

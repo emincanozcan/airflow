@@ -241,8 +241,9 @@ class TestOBSHook(unittest.TestCase):
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_bucket_tagging_if_status_lt_300(self, mock_bucket_client):
         mock_get_bucket_tagging = mock_bucket_client.return_value.getBucketTagging
-
-        body = {'tagSet': [{'key': 'version', 'value': 'v2.0'}, {'key': 'name', 'value': 'airflow'}]}
+        tag1 = {'key': 'version', 'value': 'v2.0'}
+        tag2 = {'key': 'name', 'value': 'airflow'}
+        body = {'tagSet': [mock.Mock(**tag1), mock.Mock(**tag2)]}
         resp_tagging = copy.deepcopy(RESP_200)
         resp_tagging.body = mock.Mock(**body)
         mock_get_bucket_tagging.return_value = resp_tagging
