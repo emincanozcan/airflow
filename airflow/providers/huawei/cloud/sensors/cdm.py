@@ -29,7 +29,16 @@ from airflow.sensors.base import BaseSensorOperator
 
 
 class CDMShowJobStatusSensor(BaseSensorOperator):
+    """
+    Waits for the process to complete
 
+    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param cluster_id: Cluster ID.
+    :param job_name: Job name.
+    :param region: Regions where the API is available.
+    :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
+    """
+    
     INTERMEDIATE_STATES = (
         "BOOTING",
         "RUNNING",
@@ -62,18 +71,25 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
         self.project_id = project_id
 
     def poke(self, context: Context) -> bool:
+        """
+        Query the job status.
+        @param self - the object itself
+        @param context - the context of the object
+        @returns True if the job status succeeded, False otherwise
+        """
+        
         submissions = self.get_hook.show_job_status(project_id=self.project_id, cluster_id=self.cluster_id, job_name=self.job_name)
         
         for submission in submissions:
-            if submission.status in self.FAILURE_STATES:
+            if submission["status"] in self.FAILURE_STATES:
                 raise AirflowException("CDM sensor failed")
 
-            if submission.status in self.INTERMEDIATE_STATES:
+            if submission["status"] in self.INTERMEDIATE_STATES:
                 return False
         return True
 
     @cached_property
     def get_hook(self) -> CDMHook:
         """Create and return a CDMHook"""
-        return CDMHook(self.huaweicloud_conn_id)
+        return CDMHook(huaweicloud_conn_id=self.huaweicloud_conn_id)
 

@@ -88,6 +88,7 @@ PIP package                 Version required
 ``apache-airflow``          ``>=2.3.0``
 ``huaweicloudsdksmn``       ``>=3.1.19``
 ``huaweicloudsdkdli``       ``>=3.1.19``
+``huaweicloudsdkcdm``       ``>=3.1.19``
 ``huaweicloudsdkcore``      ``>=3.1.19``
 ======================      ==================
 

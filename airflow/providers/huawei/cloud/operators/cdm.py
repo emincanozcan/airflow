@@ -19,18 +19,25 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-import json
 
 from airflow.models import BaseOperator
 from airflow.providers.huawei.cloud.hooks.cdm import CDMHook
-from airflow.providers.http.hooks.http import HttpHook
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
 
 
 class CDMCreateJobOperator(BaseOperator):
+    """
+    This operator is used to create a job in a specified cluster.
 
+    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param cluster_id: Cluster ID.
+    :param jobs: Job list.
+    :param region: Regions where the API is available.
+    :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
+    """
+    
     def __init__(
         self,
         project_id: str,
@@ -62,7 +69,18 @@ class CDMCreateJobOperator(BaseOperator):
 
 
 class CDMCreateAndExecuteJobOperator(BaseOperator):
+    """
+    This operator is used to create and execute a job in a random cluster.
 
+    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param clusters: IDs of CDM clusters. The system selects a random cluster in running 
+        state from the specified clusters and creates and executes a migration job in the cluster.
+    :param x_language: Request language
+    :param jobs: Job list.
+    :param region: Regions where the API is available.
+    :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
+    """
+    
     def __init__(
         self,
         project_id: str,
@@ -97,7 +115,16 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
 
 
 class CDMStartJobOperator(BaseOperator):
+    """
+    This operator is used to start a job.
 
+    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param cluster_id: Cluster ID.
+    :param job_name: Job name.
+    :param region: Regions where the API is available.
+    :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
+    """
+    
     def __init__(
         self,
         project_id: str,
@@ -129,7 +156,16 @@ class CDMStartJobOperator(BaseOperator):
 
 
 class CDMDeleteJobOperator(BaseOperator):
+    """
+    This operator is used to delete a job.
 
+    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param cluster_id: Cluster ID.
+    :param job_name: Job name.
+    :param region: Regions where the API is available.
+    :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
+    """
+    
     def __init__(
         self,
         project_id: str,
@@ -161,7 +197,16 @@ class CDMDeleteJobOperator(BaseOperator):
 
 
 class CDMStopJobOperator(BaseOperator):
+    """
+    This operator is used to stop a job.
 
+    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param cluster_id: Cluster ID.
+    :param job_name: Job name.
+    :param region: Regions where the API is available.
+    :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
+    """
+    
     def __init__(
         self,
         project_id: str,
