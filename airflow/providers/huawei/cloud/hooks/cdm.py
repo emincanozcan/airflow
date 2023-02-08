@@ -82,8 +82,8 @@ class CDMHook(HuaweiBaseHook):
     def show_job_status(self, project_id, cluster_id, job_name) -> CdmSdk.ShowJobStatusResponse:
         try:
             response = self._get_cdm_client(project_id).show_job_status(
-                self.show_job_status_request(cluster_id=cluster_id, job_name=job_name))
-            return response.submissions
+                self.show_job_status_request(cluster_id=cluster_id, job_name=job_name)).to_json_object()
+            return response["submissions"]
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when get job status: {e}")
