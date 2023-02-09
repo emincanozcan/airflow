@@ -18,7 +18,7 @@
 """This module contains Huawei Cloud SMN operators."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 import json
 
 from airflow.models import BaseOperator
@@ -40,7 +40,10 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
-
+    template_fields: Sequence[str] = ("tags",)
+    template_ext: Sequence[str] = ()
+    ui_color = "#66c3ff"
+    
     def __init__(
         self,
         project_id: str,

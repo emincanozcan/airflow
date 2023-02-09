@@ -32,6 +32,7 @@ Now, working with streaming and batch data and interactive analysis in data lake
  - :class:`~airflow.providers.huawei.cloud.operators.dli.DLIUploadFilesOperator`
  - :class:`~airflow.providers.huawei.cloud.operators.dli.DLIRunSqlJobOperator`
  - :class:`~airflow.providers.huawei.cloud.operators.dli.DLIUpdateQueueCidrOperator`
+ - :class:`~airflow.providers.huawei.cloud.operators.dli.DLIGetSqlJobResultOperator`
 
 Operators
 ---------
@@ -109,6 +110,18 @@ To submit jobs to a queue using SQL statements you can use.
    :language: python
    :start-after: [START howto_operator_dli_run_job]
    :end-before: [END howto_operator_dli_run_job]
+
+Get Sql job result
+==================
+
+To view the job execution result after a job is executed using SQL query statements you can use.
+:class:`~airflow.providers.huawei.cloud.operators.dli.DLIGetSqlJobResultOperator`.
+
+.. exampleinclude:: /../../tests/system/providers/huawei/example_dli.py
+   :dedent: 4
+   :language: python
+   :start-after: [START howto_operator_dli_get_job_result]
+   :end-before: [END howto_operator_dli_get_job_result]
 
 Update queue CIDR
 =================

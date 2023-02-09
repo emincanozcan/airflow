@@ -18,7 +18,7 @@
 """This module contains Huawei Cloud SMN operators."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 import json
 
 from airflow.models import BaseOperator
@@ -488,4 +488,52 @@ class DLIRunSqlJobOperator(BaseOperator):
             queue_name=self.queue_name,
             list_tags_body=self.list_tags_body,
             list_conf_body=self.list_conf_body,
+        ).to_json_object()
+
+class DLIGetSqlJobResultOperator(BaseOperator):
+    """
+    This operator is used to view the job execution result after a job is executed using SQL query statements. 
+    Currently, you can only query execution results of jobs of the QUERY type.
+
+    This API can be used to view only the first 1000 result records and does not support pagination query. 
+    To view all query results, you need to export the query results first
+
+    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param job_id: Job ID
+    :param queue_name: Name of the queue to which a job to be submitted belongs.
+        The name can contain only digits, letters, and underscores (_), but cannot contain only digits or start with an underscore (_).
+    :param region: Regions where the API is available.
+    :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
+    """
+    
+    template_fields: Sequence[str] = ("job_id",)
+    template_ext: Sequence[str] = ()
+    ui_color = "#66c3ff"
+    
+    def __init__(
+        self,
+        project_id: str,
+        job_id: str,
+        queue_name: str | None = None,
+        region: str | None = None,
+        huaweicloud_conn_id: str = "huaweicloud_default",
+        **kwargs,
+    ) -> None:
+        super().__init__(**kwargs)
+
+        self.region = region
+        self.project_id = project_id
+        self.job_id = job_id
+        self.queue_name = queue_name
+        self.huaweicloud_conn_id = huaweicloud_conn_id
+
+    def execute(self, context):
+
+        # Connection parameter and kwargs parameter from Airflow UI
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+
+        return dli_hook.get_job_result(
+            project_id=self.project_id,
+            job_id=self.job_id,
+            queue_name=self.queue_name
         ).to_json_object()

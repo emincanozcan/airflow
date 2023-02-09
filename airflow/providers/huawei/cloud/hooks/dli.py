@@ -355,3 +355,15 @@ class DLIHook(HuaweiBaseHook):
             queue_name=queue_name,
         )
         return request
+    
+    def get_job_result(self, project_id, job_id, queue_name) -> DliSdk.ShowJobResultResponse:
+        try:
+            response = self._get_dli_client(project_id).show_job_result(self.get_job_result_request(job_id, queue_name))
+            return response
+        except Exception as e:
+            self.log.error(e)
+            raise AirflowException(f"Errors when get job result: {e}")
+    
+    def get_job_result_request(self, job_id, queue_name):
+        request = DliSdk.ShowJobResultRequest(job_id=job_id, queue_name=queue_name)
+        return request

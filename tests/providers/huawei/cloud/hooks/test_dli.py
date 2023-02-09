@@ -130,6 +130,22 @@ class TestDliHook(unittest.TestCase):
             return_permission_info=return_permission_info,
         )
         list_queues.assert_called_once_with(request)
+    
+    @mock.patch(DLI_STRING.format("DliSdk.DliClient.show_job_result"))
+    def test_get_job_result(self, show_job_result):
+        project_id = "example-id"
+        job_id = "job-id"
+        queue_name = "queue_name"
+        self.hook.get_job_result(
+            project_id=project_id,
+            queue_name=queue_name,
+            job_id=job_id
+        )
+        request = self.hook.get_job_result_request(
+            queue_name=queue_name,
+            job_id=job_id
+        )
+        show_job_result.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.show_job_status"))
     def test_show_job_status(self, show_job_status):

@@ -28,13 +28,15 @@ from airflow.providers.huawei.cloud.operators.dli import (
     DLIListQueuesOperator,
     DLIRunSqlJobOperator,
     DLIUpdateQueueCidrOperator,
-    DLIUploadFilesOperator
+    DLIUploadFilesOperator,
+    DLIGetSqlJobResultOperator
 )
 
 MOCK_TASK_ID = "test-dli-operator"
 MOCK_REGION = "mock_region"
 MOCK_DLI_CONN_ID = "mock_dli_conn_default"
 MOCK_PROJECT_ID = "mock_project_id"
+MOCK_JOB_ID = "mock_job_id"
 MOCK_AUTO_RECOVERY = False
 MOCK_CATALOG_NAME = "catalog_name"
 MOCK_CLASS_NAME = "com.packagename.ClassName"
@@ -198,6 +200,25 @@ class TestDLIDeleteQueueOperator(unittest.TestCase):
         mock_hook.return_value.delete_queue.assert_called_once_with(
             project_id=MOCK_PROJECT_ID,
             queue_name=MOCK_QUEUE_NAME)
+
+class TestDLIGetSqlJobResultOperator(unittest.TestCase):
+    @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
+    def test_execute(self, mock_hook):
+        operator = DLIGetSqlJobResultOperator(
+            task_id=MOCK_TASK_ID,
+            region=MOCK_REGION,
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID,
+            project_id=MOCK_PROJECT_ID,
+            queue_name=MOCK_QUEUE_NAME,
+            job_id=MOCK_JOB_ID
+        )
+        operator.execute(None)
+        mock_hook.assert_called_once_with(
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+        mock_hook.return_value.get_job_result.assert_called_once_with(
+            project_id=MOCK_PROJECT_ID,
+            queue_name=MOCK_QUEUE_NAME,
+            job_id=MOCK_JOB_ID)
 
 class TestDLIListQueueOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")

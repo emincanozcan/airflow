@@ -9,6 +9,7 @@ from airflow.providers.huawei.cloud.operators.dli import (
     DLIUploadFilesOperator,
     DLIRunSqlJobOperator,
     DLIUpdateQueueCidrOperator,
+    DLIGetSqlJobResultOperator
 )
 
 from airflow.providers.huawei.cloud.sensors.dli import DLISparkShowBatchStateSensor, DLISqlShowJobStatusSensor
@@ -58,7 +59,7 @@ with DAG(
     
     # [START howto_operator_dli_upload_files]
     upload_files = DLIUploadFilesOperator(
-        task_id="dli_task_test_4",
+        task_id="dli_upload_file_task",
         project_id=project_id,
         group="airflow",
         paths=[
@@ -102,7 +103,7 @@ with DAG(
     
     # [START howto_sensor_dli_show_batch_state]
     batch_state_sensor = DLISparkShowBatchStateSensor(
-        task_id="dli_batch_state_task", project_id=project_id, job_id="{{ti.xcom_pull(task_ids=['dli_create_batch_job_task'])[0]['id']}}"
+        task_id="dli_batch_state_task", project_id=project_id, job_id="{{ti.xcom_pull(task_ids='dli_create_batch_job_task')['id']}}"
     )
     # [END howto_sensor_dli_show_batch_state]
     
@@ -126,7 +127,14 @@ with DAG(
     
     # [START howto_sensor_dli_show_job_status]
     job_status_sensor = DLISqlShowJobStatusSensor(
-        task_id="dli_show_job_status", project_id=project_id, job_id="{{ti.xcom_pull(task_ids=['dli_run_job_task'])[0]['job_id']}}"
+        task_id="dli_show_job_status", project_id=project_id, job_id="{{ti.xcom_pull(task_ids='dli_run_job_task')['job_id']}}"
     )
     # [END howto_sensor_dli_show_job_status]
+    # [START howto_operator_dli_get_job_result]
+    sql_job_result = DLIGetSqlJobResultOperator(
+        task_id="dli_get_job_result", project_id=project_id, queue_name=queue_name, job_id="{{ti.xcom_pull(task_ids='dli_run_job_task')['job_id']}}"
+    )
+    # [END howto_operator_dli_get_job_result]
     create_queue >> update_cidr >> upload_files >> create_batch_job >> batch_state_sensor >> delete_queue
+
+    run_job >> job_status_sensor >> sql_job_result
