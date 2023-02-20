@@ -29,6 +29,18 @@ from airflow.sensors.base import BaseSensorOperator
 
 
 class DLFShowJobStatusSensor(BaseSensorOperator):
+    """
+    Used to view running status of a real-time job
+    
+    :param job_name: The name of the job.
+    :type job_name: str
+    :param project_id: The ID of the project.
+    :type project_id: str
+    :param workspace: The name of the workspace.
+    :type workspace: str
+    :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
+    :type huaweicloud_conn_id: str
+    """
     
     #Status of a job, including STARTING, NORMAL, EXCEPTION, STOPPING, STOPPED.
     
@@ -59,6 +71,13 @@ class DLFShowJobStatusSensor(BaseSensorOperator):
         self.project_id = project_id
 
     def poke(self, context: Context) -> bool:
+        """
+        Query the job status.
+        @param self - the object itself
+        @param context - the context of the object
+        @returns True if the job status stopped, False otherwise
+        """
+        
         state = self.get_hook.show_job_status(job_name=self.job_name, workspace=self.workspace, project_id=self.project_id)
         if state in self.FAILURE_STATES:
             raise AirflowException("DLF sensor failed")
