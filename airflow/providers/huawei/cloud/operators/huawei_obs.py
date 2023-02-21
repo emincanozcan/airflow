@@ -33,7 +33,7 @@ class OBSCreateBucketOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -69,7 +69,7 @@ class OBSListBucketOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to list bucket
@@ -97,7 +97,7 @@ class OBSDeleteBucketOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -136,7 +136,7 @@ class OBSListObjectsOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -197,7 +197,7 @@ class OBSGetBucketTaggingOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -237,7 +237,7 @@ class OBSSetBucketTaggingOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -278,7 +278,7 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -318,7 +318,7 @@ class OBSCreateObjectOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -420,7 +420,7 @@ class OBSGetObjectOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -472,7 +472,7 @@ class OBSCopyObjectOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -552,7 +552,7 @@ class OBSDeleteObjectOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -600,7 +600,7 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.
@@ -647,7 +647,7 @@ class OBSMoveObjectOperator(BaseOperator):
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and aws_conn_id is None or
+            running Airflow in a distributed manner and huaweicloud_conn_id is None or
             empty, then default obs configuration would be used (and must be
             maintained on each worker node).
     :param region: OBS region you want to create bucket.

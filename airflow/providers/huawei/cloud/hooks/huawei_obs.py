@@ -193,7 +193,9 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info(f"Created OBS bucket with name: {bucket_name}.")
             else:
-                self.log.error(f"Error message when creating a bucket: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when creating a bucket: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when create bucket {bucket_name}({e}).")
 
@@ -213,7 +215,9 @@ class OBSHook(BaseHook):
                                     })
                 return buckets
             else:
-                self.log.error(f"Error message when getting a list of bucket information: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when getting a list of bucket information: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when list bucket({e}).")
 
@@ -250,7 +254,9 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info(f"Deleted OBS bucket: {bucket_name}.")
             else:
-                self.log.error(f"Error message when deleting a bucket: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when deleting a bucket: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting {bucket_name}({e})")
 
@@ -268,7 +274,9 @@ class OBSHook(BaseHook):
                 self.log.info(f"Getting the bucket tagging succeeded. {tag_info}")
                 return tag_info
             else:
-                self.log.error(f"Error message when obtaining the bucket label: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when obtaining the bucket label: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when getting the bucket tagging of {bucket_name}({e}).")
 
@@ -296,7 +304,9 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info("Setting the bucket tagging succeeded.")
             else:
-                self.log.error(f'Error message when setting the bucket tagging: {get_err_info(resp)}.')
+                e = get_err_info(resp)
+                self.log.error(f'Error message when setting the bucket tagging: {e}.')
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when setting the bucket tagging of {bucket_name}({e}).")
 
@@ -315,7 +325,9 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info("Deleting the bucket label succeeded.")
             else:
-                self.log.error(f"Error message when Deleting the bucket tagging: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when Deleting the bucket tagging: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting the bucket tagging of {bucket_name}({e}).")
 
@@ -463,8 +475,9 @@ class OBSHook(BaseHook):
                 self.log.info(f"Object uploaded successfully, the url of object is {resp.body.objectUrl}.")
                 return None
             else:
-                self.log.error(f"Error message when uploading the object: {get_err_info(resp)}.")
-            return None
+                e = get_err_info(resp)
+                self.log.error(f"Error message when uploading the object: {e}.")
+                raise AirflowException(e)
 
         except Exception as e:
             if object_type == 'content' and getattr(data, "read", None):
@@ -516,9 +529,11 @@ class OBSHook(BaseHook):
                     return str(resp.body.buffer, encoding='utf-8')
                 self.log.info('Object download succeeded.')
             else:
-                self.log.error(f"Error message when getting the object: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when getting the object: {e}.")
+                raise AirflowException(e)
         except Exception as e:
-            raise AirflowException(f"Errors when download: {object_key}({e})")
+            raise AirflowException(f"Errors when get: {object_key}({e})")
 
     def copy_object(
         self,
@@ -565,7 +580,9 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info("Object replication succeeded")
             else:
-                self.log.error(f"Error message when copying object: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when copying object: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when copying: {source_object_key}({e}).")
 
@@ -595,7 +612,9 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info("Object deleted successfully")
             else:
-                self.log.error(f"Error message when deleting object: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when deleting object: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting: {object_key}({e})")
 
@@ -633,7 +652,9 @@ class OBSHook(BaseHook):
             if resp.status < 300:
                 self.log.info('Succeeded in deleting objects in batches.')
             else:
-                self.log.error(f"Error message when deleting batch objects: {get_err_info(resp)}.")
+                e = get_err_info(resp)
+                self.log.error(f"Error message when deleting batch objects: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting: {object_list}({e}).")
 
@@ -673,9 +694,13 @@ class OBSHook(BaseHook):
                         objectKey=dest_object_key,
                         bucketName=dest_bucket_name
                     )
-                    self.log.error(f"Error message when moving objects: {get_err_info(delete_resp)}.")
+                    e = get_err_info(delete_resp)
+                    self.log.error(f"Error message when moving objects: {e}.")
+                    raise AirflowException(e)
             else:
-                self.log.error(f"Error message when moving objects: {get_err_info(copy_resp)}.")
+                e = get_err_info(copy_resp)
+                self.log.error(f"Error message when getting the object: {e}.")
+                raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when Moving: {source_object_key}({e}).")
 
