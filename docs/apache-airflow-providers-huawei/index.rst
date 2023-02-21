@@ -88,6 +88,8 @@ PIP package                 Version required
 ``apache-airflow``          ``>=2.3.0``
 ``huaweicloudsdksmn``       ``>=3.1.19``
 ``huaweicloudsdkcore``      ``>=3.1.19``
+``huaweicloudsdkdws``       ``>=3.1.21``
+``esdk-obs-python``         ``>=3.22.2``
 ======================      ==================
 
 .. include:: ../../airflow/providers/huawei/CHANGELOG.rst

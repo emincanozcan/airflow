@@ -15,8 +15,10 @@
     specific language governing permissions and limitations
     under the License.
 
-Huawei Cloud Connection
-========================
+.. _howto/connection:dws:
+
+Huawei Cloud DWS Connection
+============================
 
 Authenticating to Huawei Cloud
 -------------------------------
@@ -26,30 +28,38 @@ Authentication may be performed using access key/secret key `for more informatio
 Default Connection IDs
 ----------------------
 
-The default connection ID is ``huaweicloud_default``.
+The default connection ID is ``dws_default``.
 
 Configuring the Connection
 --------------------------
 
-Huawei Cloud Access Key ID
-    Specify the Huawei Cloud access key ID used for the initial connection.
+Host (optional)
+  Specify the Huawei Cloud DWS cluster endpoint.
 
-Huawei Cloud Secret Access Key
-    Specify the Huawei Cloud secret access key used for the initial connection.
+Schema (optional)
+  Specify the Huawei Cloud DWS database name.
+
+Login (optional)
+  Specify the username to use for authentication with Huawei Cloud DWS.
+
+Password (optional)
+  Specify the password to use for authentication with Huawei Cloud DWS.
+
+Port (optional)
+  Specify the port to use to interact with Huawei Cloud DWS.
 
 Extra (optional)
-    Specify the extra parameters (as json dictionary) that can be used in Huawei Cloud
-    connection. The following parameters are all optional:
-
-    * ``region``: Regions where the API is available. It can be entered Airflow connection UI.
+    Specify the extra parameters (as json dictionary) that can be used in
+    Huawei Cloud DWS connection. For a complete list of supported parameters
 
 
-Examples for the **Extra** field
+Examples
 --------------------------------
 
-.. code-block:: json
+**Database Authentication**
 
-    {
-      "region": "cn-east-2",
-      "project_id": "yourself-project-id"
-    }
+* **Schema**: ``gaussdb``
+* **Host**: ``example-cluster.dws.myhuaweiclouds.com``
+* **Login**: ``dwsuser``
+* **Password**: ``********``
+* **Port**: ``8000``

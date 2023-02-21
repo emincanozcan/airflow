@@ -1,1 +1,1 @@
-connections/index.rst connections/huawei.rst
+connections/index.rst connections/huawei.rst connections/dws.rst
