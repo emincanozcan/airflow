@@ -23,16 +23,14 @@ from inspect import signature
 from typing import TYPE_CHECKING, Callable, TypeVar, cast, Any
 from urllib.parse import urlsplit
 
+from airflow.exceptions import AirflowException
+from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
+
 from obs.bucket import BucketClient
 from obs import (ObsClient, Tag, TagInfo, Object,
                  PutObjectHeader, CopyObjectHeader,
                  DeleteObjectsRequest, SseKmsHeader)
 
-from airflow.exceptions import AirflowException
-from airflow.hooks.base import BaseHook
-
-if TYPE_CHECKING:
-    from airflow.models.connection import Connection
 
 T = TypeVar("T", bound=Callable)
 
@@ -50,7 +48,7 @@ def provide_bucket_name(func: T) -> T:
         self = args[0]
         if bound_args.arguments.get("bucket_name") is None and self.huaweicloud_conn_id:
             connection = self.get_connection(self.huaweicloud_conn_id)
-            if connection.schema:
+            if connection.extra_dejson.get('obs_bucket', None):
                 bound_args.arguments["bucket_name"] = connection.schema
 
         return func(*bound_args.args, **bound_args.kwargs)
@@ -94,24 +92,8 @@ def get_err_info(resp):
     })
 
 
-class OBSHook(BaseHook):
+class OBSHook(HuaweiBaseHook):
     """Interact with Huawei Cloud OBS, using the obs library."""
-
-    conn_name_attr = "huaweicloud_conn_id"
-    default_conn_name = "huaweicloud_default"
-    conn_type = "huaweicloud"
-    hook_name = "OBS"
-
-    def __init__(self, region: str | None = None, huaweicloud_conn_id="huaweicloud_default", *args,
-                 **kwargs) -> None:
-        self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.obs_conn = self.get_connection(huaweicloud_conn_id)
-        self.region = self.get_default_region() if region is None else region
-        super().__init__(*args, **kwargs)
-
-    def get_conn(self) -> Connection:
-        """Returns connection for the hook."""
-        return self.obs_conn
 
     @staticmethod
     def parse_obs_url(obsurl: str) -> tuple:
@@ -166,7 +148,8 @@ class OBSHook(BaseHook):
         """
         auth = self.get_credential()
         access_key_id, secret_access_key = auth
-        server = f"https://obs.{self.region}.myhuaweicloud.com"
+        region = self.get_region()
+        server = f"https://obs.{region}.myhuaweicloud.com"
         return ObsClient(access_key_id=access_key_id, secret_access_key=secret_access_key, server=server)
 
     @provide_bucket_name
@@ -189,7 +172,7 @@ class OBSHook(BaseHook):
         """
 
         try:
-            resp = self.get_bucket_client(bucket_name).createBucket(location=self.region)
+            resp = self.get_bucket_client(bucket_name).createBucket(location=self.get_region())
             if resp.status < 300:
                 self.log.info(f"Created OBS bucket with name: {bucket_name}.")
             else:
@@ -504,8 +487,7 @@ class OBSHook(BaseHook):
         object_key: str,
         download_path: str | None = None,
         bucket_name: str | None = None,
-        load_stream_in_memory: bool | None = False,
-    ) -> str | None:
+    ) -> str:
         """
         Downloads an object in a specified bucket.
 
@@ -514,20 +496,15 @@ class OBSHook(BaseHook):
         :param download_path: The target path to which the object is downloaded, including the file name,
             for example, aa/bb.txt.When selecting the current directory,
             the path format must specify the current directory, for example, ./xxx.
-        :param load_stream_in_memory: Whether to load the data stream of the object to the memory.
-            The default value is False. If the value is True, the downloadPath parameter will be ineffective
-            and the obtained data stream will be directly loaded to the memory.
         """
         try:
             resp = self.get_bucket_client(bucket_name).getObject(
                 objectKey=object_key,
                 downloadPath=download_path,
-                loadStreamInMemory=load_stream_in_memory
             )
             if resp.status < 300:
-                if load_stream_in_memory:
-                    return str(resp.body.buffer, encoding='utf-8')
-                self.log.info('Object download succeeded.')
+                self.log.info(f"The {object_key} is successfully downloaded and saved to the {download_path}")
+                return download_path
             else:
                 e = get_err_info(resp)
                 self.log.error(f"Error message when getting the object: {e}.")
@@ -708,8 +685,8 @@ class OBSHook(BaseHook):
         """
         Gets user authentication information from connection.
         """
-        access_key_id = self.obs_conn.login
-        access_key_secret = self.obs_conn.password
+        access_key_id = self.conn.login
+        access_key_secret = self.conn.password
         if not access_key_id:
             raise Exception(f"No access_key_id is specified for connection: {self.huaweicloud_conn_id}.")
 
@@ -718,15 +695,15 @@ class OBSHook(BaseHook):
 
         return access_key_id, access_key_secret
 
-    def get_default_region(self) -> str | None:
-        """
-        Gets region from the extra_config option in connection.
-        """
-        extra_config = self.obs_conn.extra_dejson
-        default_region = extra_config.get("region", None)
-        if not default_region:
-            raise Exception(f"No region is specified for connection: {self.huaweicloud_conn_id}.")
-        return default_region
+    # def get_default_region(self) -> str | None:
+    #     """
+    #     Gets region from the extra_config option in connection.
+    #     """
+    #     extra_config = self.conn.extra_dejson
+    #     default_region = extra_config.get("region", None)
+    #     if not default_region:
+    #         raise Exception(f"No region is specified for connection: {self.huaweicloud_conn_id}.")
+    #     return default_region
 
     @staticmethod
     def get_ui_field_behaviour() -> dict[str, Any]:

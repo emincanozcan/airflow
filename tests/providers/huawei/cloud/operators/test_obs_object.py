@@ -108,24 +108,7 @@ class TestOBSGetObjectOperator(unittest.TestCase):
         )
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
-    def test_execute_if_load_stream_in_memory(self, mock_hook):
-        self.operator.load_stream_in_memory = True
-        self.operator.download_path = None
-        mock_hook.return_value.get_object.return_value = 'stream of an object'
-
-        self.operator.execute(MOCK_CONTEXT)
-
-        mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
-        mock_hook.return_value.get_object.assert_called_once_with(
-            bucket_name=MOCK_BUCKET_NAME,
-            object_key=MOCK_OBJECT_KEY,
-            download_path=None,
-            load_stream_in_memory=self.operator.load_stream_in_memory,
-        )
-        self.assertIsInstance(mock_hook.return_value.get_object.return_value, str)
-
-    @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
-    def test_execute_if_not_load_stream_in_memory(self, mock_hook):
+    def test_execute(self, mock_hook):
         self.operator.load_stream_in_memory = False
         self.operator.download_path = MOCK_DOWNLOAD_PATH
         self.operator.execute(MOCK_CONTEXT)
@@ -136,7 +119,6 @@ class TestOBSGetObjectOperator(unittest.TestCase):
             bucket_name=MOCK_BUCKET_NAME,
             object_key=MOCK_OBJECT_KEY,
             download_path=MOCK_DOWNLOAD_PATH,
-            load_stream_in_memory=self.operator.load_stream_in_memory,
         )
         self.assertIsNone(mock_hook.return_value.get_object.return_value)
 

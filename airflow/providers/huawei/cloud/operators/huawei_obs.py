@@ -431,9 +431,6 @@ class OBSGetObjectOperator(BaseOperator):
     :param download_path: The target path to which the object is downloaded, including the file name,
         for example, aa/bb.txt.When selecting the current directory,
         the path format must specify the current directory, for example, ./xxx.
-    :param load_stream_in_memory: Whether to load the data stream of the object to the memory.
-        The default value is False. If the value is True, the downloadPath parameter will be ineffective
-        and the obtained data stream will be directly loaded to the memory.
     """
     ui_color = "#3298ff"
     template_fields: Sequence[str] = ("bucket_name", "object_key", "download_path", "load_stream_in_memory")
@@ -443,7 +440,6 @@ class OBSGetObjectOperator(BaseOperator):
             object_key: str,
             download_path: str | None = None,
             bucket_name: str | None = None,
-            load_stream_in_memory: str | None = False,
             region: str | None = None,
             huaweicloud_conn_id: str | None = "huaweicloud_default",
             **kwargs,
@@ -453,7 +449,6 @@ class OBSGetObjectOperator(BaseOperator):
         self.region = region
         self.bucket_name = bucket_name
         self.object_key = object_key
-        self.load_stream_in_memory = load_stream_in_memory
         self.download_path = download_path
 
     def execute(self, context: Context):
@@ -462,7 +457,6 @@ class OBSGetObjectOperator(BaseOperator):
             bucket_name=self.bucket_name,
             object_key=self.object_key,
             download_path=self.download_path,
-            load_stream_in_memory=self.load_stream_in_memory,
         )
 
 

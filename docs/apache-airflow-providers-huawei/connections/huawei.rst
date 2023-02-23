@@ -42,6 +42,8 @@ Extra (optional)
     connection. The following parameters are all optional:
 
     * ``region``: Regions where the API is available. It can be entered Airflow connection UI.
+    * ``project_id``: `Project ID <https://support.huaweicloud.com/intl/en-us/api-dws/dws_02_0011.html>`__ where the API is available. It can be entered Airflow connection UI.
+    * ``obs_bucket``: OBS bucket name. It can be entered Airflow connection UI.
 
 
 Examples for the **Extra** field
@@ -51,5 +53,6 @@ Examples for the **Extra** field
 
     {
       "region": "cn-east-2",
-      "project_id": "yourself-project-id"
+      "project_id": "yourself-project-id",
+      "obs_bucket": "yourself-bucket-name"
     }

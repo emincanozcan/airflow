@@ -19,7 +19,8 @@
 Huawei Cloud DWS Operators
 ==========================
 
-Airflow to Data Warehouse Service (DWS) integration provides several operators to manages all the work of setting up, operating, and scaling a data warehouse.
+Airflow to `Data Warehouse Service (DWS) <https://support.huaweicloud.com/intl/en-us/dws/>`__ integration provides
+several operators to manages all the work of setting up, operating, and scaling a data warehouse.
 
 Operators
 ---------

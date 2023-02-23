@@ -19,7 +19,7 @@
 Huawei Cloud OBS Operators
 ==========================
 
-Airflow to Huawei Cloud Object Storage Service (OBS) integration provides several operators to manage the life cycle of OBS buckets and objects.
+Airflow to `Object Storage Service (OBS) <https://support.huaweicloud.com/intl/en-us/obs/>`__ integration provides several operators to manage the life cycle of OBS buckets and objects.
 
 Operators
 ---------

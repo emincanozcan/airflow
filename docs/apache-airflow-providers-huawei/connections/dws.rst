@@ -58,7 +58,7 @@ Examples
 
 **Database Authentication**
 
-* **Schema**: ``gaussdb``
+* **Schema**: ``yourself-database``
 * **Host**: ``example-cluster.dws.myhuaweiclouds.com``
 * **Login**: ``dwsuser``
 * **Password**: ``********``

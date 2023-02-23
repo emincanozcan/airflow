@@ -20,7 +20,7 @@ import json
 from typing import TYPE_CHECKING, Any, List
 
 from airflow.exceptions import AirflowException
-from airflow.hooks.base import BaseHook
+from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
 
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdkcore.exceptions.exceptions import ClientRequestException
@@ -40,37 +40,28 @@ if TYPE_CHECKING:
     from airflow.models.connection import Connection
 
 
-class DWSHook(BaseHook):
+class DWSHook(HuaweiBaseHook):
     """
     Interact with Huawei Cloud DWS, using the huaweicloudsdkdws library
     """
 
-    conn_name_attr = "huaweicloud_conn_id"
-    default_conn_name = "huaweicloud_default"
-    conn_type = "huaweicloud"
-    hook_name = "Huaweicloud"
-
     def __init__(
         self,
+        huaweicloud_conn_id="huaweicloud_default",
         region: str | None = None,
         project_id: str | None = None,
-        huaweicloud_conn_id="huaweicloud_default",
         *args,
         **kwargs
     ) -> None:
-        self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.dws_conn = self.get_connection(huaweicloud_conn_id)
-        self.region = self.get_default_region() if region is None else region
         self.project_id = self.get_default_project_id() if project_id is None else project_id
-
-        super().__init__(*args, **kwargs)
+        super().__init__(huaweicloud_conn_id, region, *args, **kwargs)
 
     def get_credential(self) -> tuple:
         """
         Gets user authentication information from connection.
         """
-        access_key_id = self.dws_conn.login
-        access_key_secret = self.dws_conn.password
+        access_key_id = self.conn.login
+        access_key_secret = self.conn.password
         if not access_key_id:
             raise Exception(f"No access_key_id is specified for connection: {self.huaweicloud_conn_id}.")
 
@@ -79,30 +70,16 @@ class DWSHook(BaseHook):
 
         return access_key_id, access_key_secret
 
-    def get_default_region(self) -> str | None:
-        """
-        Gets region from the extra_config option in connection.
-        """
-        extra_config = self.dws_conn.extra_dejson
-        default_region = extra_config.get("region", None)
-        if not default_region:
-            raise Exception(f"No region is specified for connection: {self.huaweicloud_conn_id}")
-        return default_region
-
     def get_default_project_id(self) -> str | None:
         """
         Gets project_id from the extra_config option in connection.
         """
-        extra_config = self.dws_conn.extra_dejson
+        extra_config = self.conn.extra_dejson
 
         default_project_id = extra_config.get("project_id", None)
         if not default_project_id:
             raise Exception(f"No project_id is specified for connection: {self.huaweicloud_conn_id}")
         return default_project_id
-
-    def get_conn(self) -> Connection:
-        """Returns connection for the hook."""
-        return self.dws_conn
 
     def get_dws_client(self) -> DwsClient:
         ak, sk = self.get_credential()
@@ -113,7 +90,7 @@ class DWSHook(BaseHook):
         )
         client = DwsClient.new_builder() \
             .with_credentials(credentials=credentials) \
-            .with_region(region=DwsRegion.value_of(region_id=self.region)) \
+            .with_region(region=DwsRegion.value_of(region_id=self.get_region())) \
             .build()
         return client
 

@@ -23,7 +23,8 @@ from unittest import mock
 
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
-from tests.providers.huawei.cloud.utils.obs_mock import mock_obs_hook_default_conn, MOCK_BUCKET_NAME
+from tests.providers.huawei.cloud.utils.hw_mock import (mock_huawei_cloud_default, MOCK_BUCKET_NAME,
+                                                        MOCK_REGION)
 
 OBS_STRING = "airflow.providers.huawei.cloud.hooks.huawei_obs.{}"
 MOCK_OBS_CONN_ID = "mock_obs_conn_id"
@@ -42,12 +43,9 @@ class TestOBSHook(unittest.TestCase):
     def setUp(self):
         with mock.patch(
             OBS_STRING.format("OBSHook.__init__"),
-            new=mock_obs_hook_default_conn,
+            new=mock_huawei_cloud_default,
         ):
             self.hook = OBSHook(huaweicloud_conn_id=MOCK_OBS_CONN_ID)
-
-    def test_get_conn(self):
-        assert self.hook.get_conn() is not None
 
     def test_parse_obs_url(self):
         parsed = self.hook.parse_obs_url(f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}")
@@ -108,7 +106,7 @@ class TestOBSHook(unittest.TestCase):
         mock_obs_client.assert_called_once_with(
             access_key_id='AK',
             secret_access_key='SK',
-            server=f'https://obs.{self.hook.region}.myhuaweicloud.com'
+            server=f'https://obs.{MOCK_REGION}.myhuaweicloud.com'
         )
 
     @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
@@ -126,7 +124,7 @@ class TestOBSHook(unittest.TestCase):
         self.hook.create_bucket(MOCK_BUCKET_NAME)
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
-        mock_create_bucket.assert_called_once_with(location=self.hook.region)
+        mock_create_bucket.assert_called_once_with(location=MOCK_REGION)
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_bucket_if_status_ge_300(self, mock_bucket_client):
@@ -137,7 +135,7 @@ class TestOBSHook(unittest.TestCase):
             self.hook.create_bucket(MOCK_BUCKET_NAME)
 
             mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
-            mock_create_bucket.assert_called_once_with(location=self.hook.region)
+            mock_create_bucket.assert_called_once_with(location=MOCK_REGION)
 
     @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
     def test_list_bucket_if_status_lt_300(self, mock_obs_client):
@@ -147,12 +145,12 @@ class TestOBSHook(unittest.TestCase):
         mock_list_bucket.return_value = resp_bucket_list
         expect_buckets = [
             {"name": "mock_bucket1",
-             "region": "cn-south-1",
+             "region": MOCK_REGION,
              "create_date": "2023/01/13 10:00:00",
              "bucket_type": "OBJECT",
              },
             {"name": "mock_bucket2",
-             "region": "cn-south-1",
+             "region": MOCK_REGION,
              "create_date": "2023/01/14 10:00:00",
              "bucket_type": "OBJECT",
              },
@@ -160,9 +158,9 @@ class TestOBSHook(unittest.TestCase):
 
         bucket1 = mock.Mock()
         bucket2 = mock.Mock()
-        bucket1.configure_mock(name="mock_bucket1", location="cn-south-1",
+        bucket1.configure_mock(name="mock_bucket1", location=MOCK_REGION,
                                create_date="2023/01/13 10:00:00", bucket_type="OBJECT")
-        bucket2.configure_mock(name="mock_bucket2", location="cn-south-1",
+        bucket2.configure_mock(name="mock_bucket2", location=MOCK_REGION,
                                create_date="2023/01/14 10:00:00", bucket_type="OBJECT")
         resp_bucket_list.body = mock.Mock(buckets=[bucket1, bucket2])
 
@@ -487,7 +485,7 @@ class TestOBSHook(unittest.TestCase):
         data.close.return_value = None
         body = {
             'objectUrl':
-                f'https://{MOCK_BUCKET_NAME}.obs.{self.hook.region}.myhuaweicloud.com/{MOCK_OBJECT_KEY}'
+                f'https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com/{MOCK_OBJECT_KEY}'
         }
         resp_object = copy.deepcopy(RESP_200)
         resp_object.body = mock.Mock(**body)
@@ -514,7 +512,7 @@ class TestOBSHook(unittest.TestCase):
         data = '/tmp/mock_file'
         body = {
             'objectUrl':
-                f'https://{MOCK_BUCKET_NAME}.obs.{self.hook.region}.myhuaweicloud.com/{MOCK_OBJECT_KEY}'
+                f'https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com/{MOCK_OBJECT_KEY}'
         }
         resp_object_list = copy.deepcopy(RESP_200)
         resp_object_list.body = mock.Mock(**body)
@@ -540,7 +538,7 @@ class TestOBSHook(unittest.TestCase):
     def test_create_object_if_object_type_folder(self, mock_bucket_client):
         mock_create_object = mock_bucket_client.return_value.putFile
         data = '/tmp/mock_folder/'
-        prefix_object_url = f'https://{MOCK_BUCKET_NAME}.obs.{self.hook.region}.myhuaweicloud.com'
+        prefix_object_url = f'https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com'
         resp = [
             (f'{data}test', [
                 (f'{data}test/a', {'status': 200, 'reason': 'OK',
@@ -580,53 +578,30 @@ class TestOBSHook(unittest.TestCase):
             metadata=None,
             headers={}
         )
-        self.assertListEqual(['/tmp/mock_folder/mock1.py'], expect_err_object)
+        self.assertListEqual(["/tmp/mock_folder/mock1.py"], expect_err_object)
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_object(self, mock_bucket_client):
         mock_get_object = mock_bucket_client.return_value.getObject
         resp_object = copy.deepcopy(RESP_200)
         body = {
-            'buffer': b'test get object\nxxx xxxx \nxxx xxxx'
+            "buffer": b"test get object\nxxx xxxx \nxxx xxxx"
         }
         resp_object.body = mock.Mock(**body)
         mock_get_object.return_value = resp_object
 
-        self.hook.get_object(
+        download_path = self.hook.get_object(
             object_key=MOCK_OBJECT_KEY,
             bucket_name=MOCK_BUCKET_NAME,
-            download_path='/mock/download/test'
+            download_path="/mock/download/test"
         )
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_get_object.assert_called_once_with(
             objectKey=MOCK_OBJECT_KEY,
-            downloadPath='/mock/download/test',
-            loadStreamInMemory=False
+            downloadPath="/mock/download/test",
         )
-
-    @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
-    def test_get_object_if_load_stream_in_memory(self, mock_bucket_client):
-        mock_get_object = mock_bucket_client.return_value.getObject
-        resp_object = copy.deepcopy(RESP_200)
-        body = {
-            'buffer': b'test get object\nxxx xxxx \nxxx xxxx'
-        }
-        resp_object.body = mock.Mock(**body)
-        mock_get_object.return_value = resp_object
-
-        self.hook.get_object(
-            object_key=MOCK_OBJECT_KEY,
-            bucket_name=MOCK_BUCKET_NAME,
-            load_stream_in_memory=True
-        )
-
-        mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
-        mock_get_object.assert_called_once_with(
-            objectKey=MOCK_OBJECT_KEY,
-            downloadPath=None,
-            loadStreamInMemory=True
-        )
+        self.assertEqual("/mock/download/test", download_path)
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_object_if_status_ge_300(self, mock_bucket_client):
@@ -640,14 +615,12 @@ class TestOBSHook(unittest.TestCase):
             self.hook.get_object(
                 object_key=MOCK_OBJECT_KEY,
                 bucket_name=MOCK_BUCKET_NAME,
-                load_stream_in_memory=True
             )
 
             mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
             mock_get_object.assert_called_once_with(
                 objectKey=MOCK_OBJECT_KEY,
                 downloadPath=None,
-                loadStreamInMemory=True
             )
 
     @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
@@ -777,7 +750,8 @@ class TestOBSHook(unittest.TestCase):
 
     @mock.patch(OBS_STRING.format("DeleteObjectsRequest"))
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
-    def test_delete_objects_if_object_list_contains_dict(self, mock_bucket_client, mock_delete_objects_request):
+    def test_delete_objects_if_object_list_contains_dict(self, mock_bucket_client,
+                                                         mock_delete_objects_request):
         mock_delete_objects = mock_bucket_client.return_value.deleteObjects
         mock_delete_objects.return_value = RESP_200
         mock_delete_objects_request.return_value = {'quiet': True,
@@ -868,6 +842,3 @@ class TestOBSHook(unittest.TestCase):
 
     def test_get_credential(self):
         self.assertTupleEqual(('AK', 'SK'), self.hook.get_credential())
-
-    def test_get_default_region(self):
-        self.assertEqual("cn-south-1", self.hook.get_default_region())

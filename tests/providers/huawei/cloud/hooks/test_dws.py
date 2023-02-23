@@ -1,8 +1,27 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+from __future__ import annotations
+
 from unittest import TestCase, mock
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.dws import DWSHook, DwsClient
-from tests.providers.huawei.cloud.utils.dws_mock import (mock_dws_hook_default_conn, MOCK_PROJECT_ID,
-                                                         MOCK_REGION, AK, SK)
+from tests.providers.huawei.cloud.utils.hw_mock import (mock_huawei_cloud_default, MOCK_PROJECT_ID,
+                                                        AK, SK)
+
 
 DWS_STRING = "airflow.providers.huawei.cloud.hooks.dws.{}"
 MOCK_DWS_CONN_ID = "mock_dws_conn_default"
@@ -26,21 +45,16 @@ class TestDWSHook(TestCase):
     def setUp(self):
         with mock.patch(
             DWS_STRING.format("DWSHook.__init__"),
-            new=mock_dws_hook_default_conn,
+            new=mock_huawei_cloud_default,
         ):
             self.hook = DWSHook(huaweicloud_conn_id=MOCK_DWS_CONN_ID)
+            self.hook.project_id = MOCK_PROJECT_ID
 
     def test_get_credential(self):
         self.assertTupleEqual((AK, SK), self.hook.get_credential())
 
-    def test_get_default_region(self):
-        self.assertEqual(MOCK_REGION, self.hook.get_default_region())
-
     def test_get_default_project_id(self):
         self.assertEqual(MOCK_PROJECT_ID, self.hook.get_default_project_id())
-
-    def test_get_conn(self):
-        assert self.hook.get_conn() is not None
 
     @mock.patch(DWS_STRING.format("BasicCredentials"))
     @mock.patch(DWS_STRING.format("DwsClient"))

@@ -19,7 +19,7 @@
 Huawei Cloud DWS SQL Operators
 ==============================
 
-Airflow to Data Warehouse Service (DWS) integration provides operator to execute SQL statements.
+Airflow to `Data Warehouse Service (DWS) <https://support.huaweicloud.com/intl/en-us/dws/>`__ integration provides operator to execute SQL statements.
 
 Operators
 ---------

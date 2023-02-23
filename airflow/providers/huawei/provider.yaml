@@ -26,12 +26,21 @@ versions:
 
 dependencies:
   - apache-airflow>=2.5.0
-  - huaweicloudsdkcore>=3.1.19
+  - huaweicloudsdkcore>=3.1.21
+  - esdk-obs-python>=3.22.2
+  - huaweicloudsdkdws>=3.1.21
   - huaweicloudsdksmn>=3.1.19
   - huaweicloudsdkdli>=3.1.19
   - huaweicloudsdkcdm>=3.1.19
 
 operators:
+  - integration-name: Huawei Cloud OBS
+    python-modules:
+      - airflow.providers.huawei.cloud.operators.huawei_obs
+  - integration-name: Huawei Cloud DWS
+    python-modules:
+      - airflow.providers.huawei.cloud.operators.dws
+      - airflow.providers.huawei.cloud.operators.dws_sql
   - integration-name: Huawei Cloud SMN
     python-modules:
       - airflow.providers.huawei.cloud.operators.smn
@@ -43,6 +52,12 @@ operators:
       - airflow.providers.huawei.cloud.operators.cdm
 
 sensors:
+  - integration-name: Huawei Cloud OBS
+    python-modules:
+      - airflow.providers.huawei.cloud.sensors.huawei_obs
+  - integration-name: Huawei Cloud DWS
+    python-modules:
+      - airflow.providers.huawei.cloud.sensors.dws
   - integration-name: Huawei Cloud DLI
     python-modules:
       - airflow.providers.huawei.cloud.sensors.dli
@@ -51,6 +66,13 @@ sensors:
       - airflow.providers.huawei.cloud.sensors.cdm
 
 hooks:
+  - integration-name: Huawei Cloud OBS
+    python-modules:
+      - airflow.providers.huawei.cloud.hooks.huawei_obs
+  - integration-name: Huawei Cloud DWS
+    python-modules:
+      - airflow.providers.huawei.cloud.hooks.dws
+      - airflow.providers.huawei.cloud.hooks.dws_sql
   - integration-name: Huawei Cloud SMN
     python-modules:
       - airflow.providers.huawei.cloud.hooks.smn
@@ -64,3 +86,5 @@ hooks:
 connection-types:
   - hook-class-name: airflow.providers.huawei.cloud.hooks.base_huawei_cloud.HuaweiBaseHook
     connection-type: huaweicloud
+  - hook-class-name: airflow.providers.huawei.cloud.hooks.dws_sql.DWSSqlHook
+    connection-type: dws
