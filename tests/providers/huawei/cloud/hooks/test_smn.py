@@ -22,7 +22,7 @@ from unittest import mock
 
 
 from airflow.providers.huawei.cloud.hooks.smn import SMNHook
-from tests.providers.huawei.cloud.utils.smn_mock import mock_smn_hook_default_project_id
+from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default
 SMN_STRING = "airflow.providers.huawei.cloud.hooks.smn.{}"
 MOCK_SMN_CONN_ID = "mock_smn_default"
 
@@ -31,12 +31,12 @@ class TestSmnHook(unittest.TestCase):
     def setUp(self):
         with mock.patch(
             SMN_STRING.format("SMNHook.__init__"),
-            new=mock_smn_hook_default_project_id,
+            new=mock_huawei_cloud_default,
         ):
             self.hook = SMNHook(huaweicloud_conn_id=MOCK_SMN_CONN_ID)
 
     def test_get_default_region(self):
-        assert self.hook._get_region() == "ap-southeast-3"
+        assert self.hook.get_region() == "ap-southeast-3"
 
     def test_get_smn_client(self):
         client = self.hook._get_smn_client("project_id")
