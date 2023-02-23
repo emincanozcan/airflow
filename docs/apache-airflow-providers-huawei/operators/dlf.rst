@@ -26,7 +26,7 @@ Data Lake Factory (DataArts Factory) is a big data platform designed specificall
 
 DataArts Factory enables a variety of operations such as data management, data integration, script development, job scheduling, and monitoring, facilitating the data analysis and processing procedure.
 
- - :class:`~airflow.providers.huawei.cloud.operators.dlf.DLFStartJobOperator`
+ - :class:`~airflow.providers.huawei.cloud.operators.dataarts.DLFStartJobOperator`
 
 Operators
 ---------
@@ -35,7 +35,7 @@ Start a job
 ===========
 
 To start a job you can use
-:class:`~airflow.providers.huawei.cloud.operators.dlf.DLFStartJobOperator`.
+:class:`~airflow.providers.huawei.cloud.operators.dataarts.DLFStartJobOperator`.
 
 .. exampleinclude:: /../../tests/system/providers/huawei/example_dlf.py
    :dedent: 4

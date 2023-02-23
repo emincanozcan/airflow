@@ -42,9 +42,9 @@ operators:
   - integration-name: Huawei Cloud CDM
     python-modules:
       - airflow.providers.huawei.cloud.operators.cdm
-  - integration-name: Huawei Cloud DLF
+  - integration-name: Huawei Cloud DataArts
     python-modules:
-      - airflow.providers.huawei.cloud.operators.dlf
+      - airflow.providers.huawei.cloud.operators.dataarts
 
 sensors:
   - integration-name: Huawei Cloud DLI
@@ -53,9 +53,9 @@ sensors:
   - integration-name: Huawei Cloud CDM
     python-modules:
       - airflow.providers.huawei.cloud.sensors.cdm
-  - integration-name: Huawei Cloud DLF
+  - integration-name: Huawei Cloud DataArts
     python-modules:
-      - airflow.providers.huawei.cloud.sensors.dlf
+      - airflow.providers.huawei.cloud.sensors.dataarts
 
 hooks:
   - integration-name: Huawei Cloud SMN
@@ -67,9 +67,9 @@ hooks:
   - integration-name: Huawei Cloud CDM
     python-modules:
       - airflow.providers.huawei.cloud.hooks.cdm
-  - integration-name: Huawei Cloud DLF
+  - integration-name: Huawei Cloud DataArts
     python-modules:
-      - airflow.providers.huawei.cloud.hooks.dlf
+      - airflow.providers.huawei.cloud.hooks.dataarts
 
 connection-types:
   - hook-class-name: airflow.providers.huawei.cloud.hooks.base_huawei_cloud.HuaweiBaseHook

@@ -21,27 +21,21 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from airflow.models import BaseOperator
-from airflow.providers.huawei.cloud.hooks.dlf import DLFHook
+from airflow.providers.huawei.cloud.hooks.dataarts import DataArtsHook
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
 
-class DLFStartJobOperator(BaseOperator):
+class DataArtsDLFStartJobOperator(BaseOperator):
     """
-    Start a job in Huawei Cloud DLF.
+    Start a job in Huawei Cloud DataArts DLF.
 
     :param project_id: The ID of the project.
-    :type project_id: str
     :param workspace: The name of the workspace.
-    :type workspace: str
     :param job_name: The name of the job.
-    :type job_name: str
     :param body: The body of the request.
-    :type body: dict
     :param region: The name of the region.
-    :type region: str
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
-    :type huaweicloud_conn_id: str
     """
     def __init__(
         self,
@@ -65,10 +59,10 @@ class DLFStartJobOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dlf_hook = DLFHook(
+        dataarts_hook = DataArtsHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
 
-        dlf_hook.start_job(
+        dataarts_hook.dlf_start_job(
             project_id=self.project_id,
             workspace=self.workspace,
             job_name=self.job_name,

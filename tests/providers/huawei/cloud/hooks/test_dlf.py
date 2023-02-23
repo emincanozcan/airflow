@@ -22,23 +22,23 @@ import unittest
 from unittest import mock
 
 
-from airflow.providers.huawei.cloud.hooks.dlf import DLFHook
+from airflow.providers.huawei.cloud.hooks.dataarts import DataArtsHook
 from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default
 
-DLF_STRING = "airflow.providers.huawei.cloud.hooks.dlf.{}"
+DLF_STRING = "airflow.providers.huawei.cloud.hooks.dataarts.{}"
 MOCK_DLF_CONN_ID = "mock_dlf_default"
 PROJECT_ID = "project-id"
 JOB_NAME = "job-name"
 WORKSPACE = "workspace-id"
 BODY = {"jobParams": [{"name": "param1", "value": "value1"}]}
 
-class TestDlfHook(unittest.TestCase):
+class TestDataArtsHook(unittest.TestCase):
     def setUp(self):
         with mock.patch(
-            DLF_STRING.format("DLFHook.__init__"),
+            DLF_STRING.format("DataArtsHook.__init__"),
             new=mock_huawei_cloud_default,
         ):
-            self.hook = DLFHook(huaweicloud_conn_id=MOCK_DLF_CONN_ID)
+            self.hook = DataArtsHook(huaweicloud_conn_id=MOCK_DLF_CONN_ID)
 
     def test_get_default_region(self):
         assert self.hook.get_region() == "ap-southeast-3"
@@ -51,12 +51,12 @@ class TestDlfHook(unittest.TestCase):
 
     @mock.patch(DLF_STRING.format("DlfSdk.DlfClient.start_job"))
     def test_start_job(self, start_job):
-        self.hook.start_job(PROJECT_ID, WORKSPACE, JOB_NAME, BODY)
-        request = self.hook.start_job_request(WORKSPACE, JOB_NAME, BODY)
+        self.hook.dlf_start_job(PROJECT_ID, WORKSPACE, JOB_NAME, BODY)
+        request = self.hook.dlf_start_job_request(WORKSPACE, JOB_NAME, BODY)
         start_job.assert_called_once_with(request)
         
     @mock.patch(DLF_STRING.format("DlfSdk.DlfClient.show_job_status"))
     def test_show_job_status(self, show_job_status):
-        self.hook.show_job_status(PROJECT_ID, WORKSPACE, JOB_NAME)
-        request = self.hook.show_job_status_request(WORKSPACE, JOB_NAME)
+        self.hook.dlf_show_job_status(PROJECT_ID, WORKSPACE, JOB_NAME)
+        request = self.hook.dlf_show_job_status_request(WORKSPACE, JOB_NAME)
         show_job_status.assert_called_once_with(request)

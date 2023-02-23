@@ -26,17 +26,17 @@ from huaweicloudsdkcore.auth.credentials import BasicCredentials
 import huaweicloudsdkdlf.v1 as DlfSdk
 from huaweicloudsdkdlf.v1.region.dlf_region import DlfRegion
 
-class DLFHook(HuaweiBaseHook):
+class DataArtsHook(HuaweiBaseHook):
     
-    def start_job(self, project_id, workspace, job_name, body):
+    def dlf_start_job(self, project_id, workspace, job_name, body):
         try:
-            return self._get_dlf_client(project_id=project_id).start_job(self.start_job_request(workspace, job_name, body))
+            return self._get_dlf_client(project_id=project_id).start_job(self.dlf_start_job_request(workspace, job_name, body))
         except Exception as e:
             raise AirflowException(f"Errors when starting: {e}")
     
-    def show_job_status(self, project_id, workspace, job_name):
+    def dlf_show_job_status(self, project_id, workspace, job_name):
         try:
-            return self._get_dlf_client(project_id=project_id).show_job_status(self.show_job_status_request(workspace, job_name))
+            return self._get_dlf_client(project_id=project_id).show_job_status(self.dlf_show_job_status_request(workspace, job_name))
         except Exception as e:
             raise AirflowException(f"Errors when showing job status: {e}")
 
@@ -54,10 +54,10 @@ class DLFHook(HuaweiBaseHook):
             .build()
         )
     
-    def start_job_request(self, workspace, job_name, body):
+    def dlf_start_job_request(self, workspace, job_name, body):
         request = DlfSdk.StartJobRequest(workspace=workspace, job_name=job_name, body=body)
         return request  
     
-    def show_job_status_request(self, workspace, job_name):
+    def dlf_show_job_status_request(self, workspace, job_name):
         request = DlfSdk.ShowJobStatusRequest(workspace=workspace, job_name=job_name)
         return request

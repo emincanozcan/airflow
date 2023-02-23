@@ -1,11 +1,11 @@
 from datetime import datetime
 from airflow import DAG
 
-from airflow.providers.huawei.cloud.operators.dlf import (
-    DLFStartJobOperator
+from airflow.providers.huawei.cloud.operators.dataarts import (
+    DataArtsDLFStartJobOperator
 )
 
-from airflow.providers.huawei.cloud.sensors.dlf import DLFShowJobStatusSensor
+from airflow.providers.huawei.cloud.sensors.dataarts import DataArtsDLFShowJobStatusSensor
 
 project_id = "ea31ff23328a4d6bbcca820076f7c606"
 job_name = "job_name"
@@ -18,7 +18,7 @@ with DAG(
 ) as dag:
     
     # [START howto_operator_dlf_start_job]
-    start_job = DLFStartJobOperator(
+    start_job = DataArtsDLFStartJobOperator(
         task_id="dlf_start_job",
         project_id=project_id,
         workspace=workspace,
@@ -28,7 +28,7 @@ with DAG(
     # [END howto_operator_dlf_start_job]
 
     # [START howto_sensor_dlf_show_job_status]
-    job_status_sensor = DLFShowJobStatusSensor(
+    job_status_sensor = DataArtsDLFShowJobStatusSensor(
         task_id="dlf_show_job_status", project_id=project_id, job_name=job_name, workspace=workspace
     )
     # [END howto_sensor_dlf_show_job_status]

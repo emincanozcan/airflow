@@ -24,22 +24,18 @@ if TYPE_CHECKING:
 
 from airflow.compat.functools import cached_property
 from airflow.exceptions import AirflowException
-from airflow.providers.huawei.cloud.hooks.dlf import DLFHook
+from airflow.providers.huawei.cloud.hooks.dataarts import DataArtsHook
 from airflow.sensors.base import BaseSensorOperator
 
 
-class DLFShowJobStatusSensor(BaseSensorOperator):
+class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
     """
     Used to view running status of a real-time job
     
     :param job_name: The name of the job.
-    :type job_name: str
     :param project_id: The ID of the project.
-    :type project_id: str
     :param workspace: The name of the workspace.
-    :type workspace: str
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
-    :type huaweicloud_conn_id: str
     """
     
     #Status of a job, including STARTING, NORMAL, EXCEPTION, STOPPING, STOPPED.
@@ -78,15 +74,15 @@ class DLFShowJobStatusSensor(BaseSensorOperator):
         @returns True if the job status stopped, False otherwise
         """
         
-        state = self.get_hook.show_job_status(job_name=self.job_name, workspace=self.workspace, project_id=self.project_id)
+        state = self.get_hook.dlf_show_job_status(job_name=self.job_name, workspace=self.workspace, project_id=self.project_id)
         if state in self.FAILURE_STATES:
-            raise AirflowException("DLF sensor failed")
+            raise AirflowException("DataArts DLF sensor failed")
 
         if state in self.INTERMEDIATE_STATES:
             return False
         return True
 
     @cached_property
-    def get_hook(self) -> DLFHook:
-        """Create and return a DLFHook"""
-        return DLFHook(huaweicloud_conn_id=self.huaweicloud_conn_id)
+    def get_hook(self) -> DataArtsHook:
+        """Create and return a DataArtsHook"""
+        return DataArtsHook(huaweicloud_conn_id=self.huaweicloud_conn_id)

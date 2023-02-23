@@ -21,8 +21,8 @@ import json
 import unittest
 from unittest import mock
 
-from airflow.providers.huawei.cloud.operators.dlf import (
-    DLFStartJobOperator
+from airflow.providers.huawei.cloud.operators.dataarts import (
+    DataArtsDLFStartJobOperator
 )
 
 MOCK_TASK_ID = "test-dli-operator"
@@ -33,10 +33,10 @@ MOCK_WORKSPACE = "workspace-id"
 MOCK_JOB_NAME = "job-name"
 MOCK_BODY = {"jobParams": [{"name": "param1", "value": "value1"}]}
 
-class TestDLFStartJobOperator(unittest.TestCase):
-    @mock.patch("airflow.providers.huawei.cloud.operators.dlf.DLFHook")
+class TestDataArtsDLFStartJobOperator(unittest.TestCase):
+    @mock.patch("airflow.providers.huawei.cloud.operators.dataarts.DataArtsHook")
     def test_execute(self, mock_hook):
-        operator = DLFStartJobOperator(
+        operator = DataArtsDLFStartJobOperator(
             task_id=MOCK_TASK_ID,
             region=MOCK_REGION,
             huaweicloud_conn_id=MOCK_CDM_CONN_ID,
@@ -48,7 +48,7 @@ class TestDLFStartJobOperator(unittest.TestCase):
         operator.execute(None)
         mock_hook.assert_called_once_with(
             huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION)
-        mock_hook.return_value.start_job.assert_called_once_with(
+        mock_hook.return_value.dlf_start_job.assert_called_once_with(
             project_id=MOCK_PROJECT_ID,
             workspace=MOCK_WORKSPACE,
             job_name=MOCK_JOB_NAME,
