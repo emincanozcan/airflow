@@ -31,7 +31,7 @@ class CDMCreateJobOperator(BaseOperator):
     """
     This operator is used to create a job in a specified cluster.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param cluster_id: Cluster ID.
     :param jobs: Job list.
     :param region: Regions where the API is available.
@@ -40,9 +40,9 @@ class CDMCreateJobOperator(BaseOperator):
     
     def __init__(
         self,
-        project_id: str,
         cluster_id: str,
         jobs: list,
+        project_id: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -59,10 +59,9 @@ class CDMCreateJobOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return cdm_hook.create_job(
-            project_id=self.project_id,
             cluster_id=self.cluster_id,
             jobs=self.jobs
         ).to_json_object()
@@ -72,7 +71,7 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
     """
     This operator is used to create and execute a job in a random cluster.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param clusters: IDs of CDM clusters. The system selects a random cluster in running 
         state from the specified clusters and creates and executes a migration job in the cluster.
     :param x_language: Request language
@@ -83,10 +82,10 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
     
     def __init__(
         self,
-        project_id: str,
         x_language: str,
         clusters: list,
         jobs: list[dict],
+        project_id: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -104,10 +103,9 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return cdm_hook.create_and_execute_job(
-            project_id=self.project_id,
             x_language=self.x_language,
             clusters=self.clusters,
             jobs=self.jobs
@@ -118,7 +116,7 @@ class CDMStartJobOperator(BaseOperator):
     """
     This operator is used to start a job.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param cluster_id: Cluster ID.
     :param job_name: Job name.
     :param region: Regions where the API is available.
@@ -127,9 +125,9 @@ class CDMStartJobOperator(BaseOperator):
     
     def __init__(
         self,
-        project_id: str,
         cluster_id: str,
         job_name: str,
+        project_id: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -146,10 +144,9 @@ class CDMStartJobOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return cdm_hook.start_job(
-            project_id=self.project_id,
             cluster_id=self.cluster_id,
             job_name=self.job_name
         ).to_json_object()
@@ -159,7 +156,7 @@ class CDMDeleteJobOperator(BaseOperator):
     """
     This operator is used to delete a job.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param cluster_id: Cluster ID.
     :param job_name: Job name.
     :param region: Regions where the API is available.
@@ -168,9 +165,9 @@ class CDMDeleteJobOperator(BaseOperator):
     
     def __init__(
         self,
-        project_id: str,
         cluster_id: str,
         job_name: str,
+        project_id: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -187,10 +184,9 @@ class CDMDeleteJobOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return cdm_hook.delete_job(
-            project_id=self.project_id,
             cluster_id=self.cluster_id,
             job_name=self.job_name
         ).to_json_object()
@@ -200,7 +196,7 @@ class CDMStopJobOperator(BaseOperator):
     """
     This operator is used to stop a job.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param cluster_id: Cluster ID.
     :param job_name: Job name.
     :param region: Regions where the API is available.
@@ -209,10 +205,10 @@ class CDMStopJobOperator(BaseOperator):
     
     def __init__(
         self,
-        project_id: str,
         cluster_id: str,
         job_name: str,
         region: str | None = None,
+        project_id: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
@@ -228,10 +224,9 @@ class CDMStopJobOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return cdm_hook.stop_job(
-            project_id=self.project_id,
             cluster_id=self.cluster_id,
             job_name=self.job_name
         ).to_json_object()

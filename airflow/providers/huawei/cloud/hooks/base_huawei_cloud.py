@@ -15,12 +15,25 @@ class HuaweiBaseHook(BaseHook):
     def __init__(self,
                  huaweicloud_conn_id="huaweicloud_default",
                  region=None,
+                 project_id=None,
                  *args,
                  **kwargs) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
         self.preferred_region = region
+        self.preferred_project_id = project_id
         self.conn = self.get_connection(self.huaweicloud_conn_id)
         super().__init__(*args, **kwargs)
+    
+    def get_default_project_id(self) -> str | None:
+        """
+        Gets project_id from the extra_config option in connection.
+        """
+        
+        if hasattr(self, "preferred_project_id") and self.preferred_project_id is not None:
+            return self.preferred_project_id
+        if self.conn.extra_dejson.get('project_id', None) is not None:
+            return self.conn.extra_dejson.get('project_id', None)
+        raise Exception(f"No project_id is specified for connection: {self.huaweicloud_conn_id}")
     
     def get_region(self) -> str:
         """Returns region for the hook."""

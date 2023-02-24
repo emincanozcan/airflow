@@ -52,9 +52,8 @@ class TestCDMCreateJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.create_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             cluster_id=MOCK_CLUSTER_ID,
             jobs=MOCK_JOBS
         )
@@ -73,9 +72,8 @@ class TestCDMCreateAndExecuteJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.create_and_execute_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             jobs=MOCK_JOBS,
             clusters=MOCK_CLUSTERS,
             x_language=MOCK_X_LANGUAGE
@@ -94,9 +92,8 @@ class TestCDMStartJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.start_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             cluster_id=MOCK_CLUSTER_ID,
             job_name=MOCK_JOB_NAME
         )
@@ -114,9 +111,8 @@ class TestCDMStopJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.stop_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             cluster_id=MOCK_CLUSTER_ID,
             job_name=MOCK_JOB_NAME
         )
@@ -134,9 +130,8 @@ class TestCDMDeleteJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.delete_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             cluster_id=MOCK_CLUSTER_ID,
             job_name=MOCK_JOB_NAME
         )

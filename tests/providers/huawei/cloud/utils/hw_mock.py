@@ -24,7 +24,7 @@ from airflow.models import Connection
 AK = "AK"
 SK = "SK"
 
-def mock_huawei_cloud_default(self, huaweicloud_conn_id="mock_default_connection", region="ap-southeast-3"):
+def mock_huawei_cloud_default(self, huaweicloud_conn_id="mock_default_connection", region="ap-southeast-3", project_id="project_id"):
     self.huaweicloud_conn_id = huaweicloud_conn_id
     self.conn = Connection(
         login=AK,
@@ -32,6 +32,7 @@ def mock_huawei_cloud_default(self, huaweicloud_conn_id="mock_default_connection
         extra=json.dumps(
             {
                 "region": region,
+                "project_id": project_id,
             }
         )
     )

@@ -28,19 +28,20 @@ if TYPE_CHECKING:
 
 class DataArtsDLFStartJobOperator(BaseOperator):
     """
-    Start a job in Huawei Cloud DataArts DLF.
+    This operator is used to start a job.
 
     :param project_id: The ID of the project.
-    :param workspace: The name of the workspace.
-    :param job_name: The name of the job.
+    :param workspace: Workspace ID. If this parameter is not set, data in the default workspace is queried by default.
+        To query data in other workspaces, this header must be carried.
+    :param job_name: Job name.
     :param body: The body of the request.
     :param region: The name of the region.
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
     """
     def __init__(
         self,
-        project_id: str,
         job_name: str,
+        project_id: str | None = None,
         workspace: str | None = None,
         body: dict | None = None,
         region: str | None = None,
@@ -60,10 +61,9 @@ class DataArtsDLFStartJobOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         dataarts_hook = DataArtsHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         dataarts_hook.dlf_start_job(
-            project_id=self.project_id,
             workspace=self.workspace,
             job_name=self.job_name,
             body=self.body

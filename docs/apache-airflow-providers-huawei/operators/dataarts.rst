@@ -15,9 +15,9 @@
     specific language governing permissions and limitations
     under the License.
 
-==========================
-Huawei Cloud DLF Operators
-==========================
+===================================
+Huawei Cloud DataArts DLF Operators
+===================================
 
 Overview
 --------
@@ -26,7 +26,7 @@ Data Lake Factory (DataArts Factory) is a big data platform designed specificall
 
 DataArts Factory enables a variety of operations such as data management, data integration, script development, job scheduling, and monitoring, facilitating the data analysis and processing procedure.
 
- - :class:`~airflow.providers.huawei.cloud.operators.dataarts.DLFStartJobOperator`
+ - :class:`~airflow.providers.huawei.cloud.operators.dataarts.DataArtsDLFStartJobOperator`
 
 Operators
 ---------
@@ -35,9 +35,9 @@ Start a job
 ===========
 
 To start a job you can use
-:class:`~airflow.providers.huawei.cloud.operators.dataarts.DLFStartJobOperator`.
+:class:`~airflow.providers.huawei.cloud.operators.dataarts.DataArtsDLFStartJobOperator`.
 
-.. exampleinclude:: /../../tests/system/providers/huawei/example_dlf.py
+.. exampleinclude:: /../../tests/system/providers/huawei/example_dataarts.py
    :dedent: 4
    :language: python
    :start-after: [START howto_operator_dlf_start_job]
@@ -47,12 +47,12 @@ Sensors
 -------
 
 Show job status
-===================
+===============
 
-Use the :class:`~airflow.providers.huawei.cloud.sensors.dlf.DLFShowJobStatusSensor`
+Use the :class:`~airflow.providers.huawei.cloud.sensors.dataarts.DataArtsDLFShowJobStatusSensor`
 Wait to query the status of a job.
 
-.. exampleinclude:: /../../tests/system/providers/huawei/example_dlf.py
+.. exampleinclude:: /../../tests/system/providers/huawei/example_dataarts.py
     :language: python
     :start-after: [START howto_sensor_dlf_show_job_status]
     :dedent: 4

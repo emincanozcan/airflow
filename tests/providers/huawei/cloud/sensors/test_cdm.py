@@ -56,7 +56,7 @@ class TestCDMSensor(unittest.TestCase):
     @mock.patch(CDM_SENSOR_STRING.format("CDMHook"))
     def test_get_hook(self, mock_service):
         self.job_status_sensor.get_hook()
-        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID)
+        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID)
 
     @mock.patch(CDM_SENSOR_STRING.format("CDMShowJobStatusSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_job_status(self, mock_service):
@@ -69,5 +69,5 @@ class TestCDMSensor(unittest.TestCase):
         # Then
         assert res is False
         mock_service.return_value.show_job_status.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID, job_name=MOCK_JOB_NAME, cluster_id=MOCK_CLUSTER_ID
+            job_name=MOCK_JOB_NAME, cluster_id=MOCK_CLUSTER_ID
         )

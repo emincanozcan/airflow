@@ -38,20 +38,20 @@ class TestCdmHook(unittest.TestCase):
             CDM_STRING.format("CDMHook.__init__"),
             new=mock_huawei_cloud_default,
         ):
-            self.hook = CDMHook(huaweicloud_conn_id=MOCK_CDM_CONN_ID)
+            self.hook = CDMHook(huaweicloud_conn_id=MOCK_CDM_CONN_ID, project_id=PROJECT_ID)
 
     def test_get_default_region(self):
         assert self.hook.get_region() == "ap-southeast-3"
 
     def test_get_cdm_client(self):
-        client = self.hook._get_cdm_client(PROJECT_ID)
+        client = self.hook._get_cdm_client()
         assert client.get_credentials().ak == "AK"
         assert client.get_credentials().sk == "SK"
         assert client.get_credentials().project_id == PROJECT_ID
 
     @mock.patch(CDM_STRING.format("CdmSdk.CdmClient.create_job"))
     def test_create_job(self, create_job):
-        self.hook.create_job(PROJECT_ID, CLUSTER_ID, JOBS)
+        self.hook.create_job(CLUSTER_ID, JOBS)
         request = self.hook.create_job_request(CLUSTER_ID, JOBS)
         create_job.assert_called_once_with(request)
 
@@ -60,31 +60,31 @@ class TestCdmHook(unittest.TestCase):
         x_language = "tr_tr"
         clusters = ["cluster-id"]
         self.hook.create_and_execute_job(
-            PROJECT_ID, x_language, clusters, JOBS)
+            x_language, clusters, JOBS)
         request = self.hook.create_and_execute_job_request(
             x_language, clusters, JOBS)
         create_and_start_random_cluster_job.assert_called_once_with(request)
 
     @mock.patch(CDM_STRING.format("CdmSdk.CdmClient.start_job"))
     def test_start_job(self, start_job):
-        self.hook.start_job(PROJECT_ID, CLUSTER_ID, JOB_NAME)
+        self.hook.start_job(CLUSTER_ID, JOB_NAME)
         request = self.hook.start_job_request(CLUSTER_ID, JOB_NAME)
         start_job.assert_called_once_with(request)
     
     @mock.patch(CDM_STRING.format("CdmSdk.CdmClient.delete_job"))
     def test_delete_job(self, delete_job):
-        self.hook.delete_job(PROJECT_ID, CLUSTER_ID, JOB_NAME)
+        self.hook.delete_job(CLUSTER_ID, JOB_NAME)
         request = self.hook.delete_job_request(CLUSTER_ID, JOB_NAME)
         delete_job.assert_called_once_with(request)
     
     @mock.patch(CDM_STRING.format("CdmSdk.CdmClient.stop_job"))
     def test_stop_job(self, stop_job):
-        self.hook.stop_job(PROJECT_ID, CLUSTER_ID, JOB_NAME)
+        self.hook.stop_job(CLUSTER_ID, JOB_NAME)
         request = self.hook.stop_job_request(CLUSTER_ID, JOB_NAME)
         stop_job.assert_called_once_with(request)
     
     @mock.patch(CDM_STRING.format("CdmSdk.CdmClient.show_job_status"))
     def test_show_job_status(self, show_job_status):
-        self.hook.show_job_status(PROJECT_ID, CLUSTER_ID, JOB_NAME)
+        self.hook.show_job_status(CLUSTER_ID, JOB_NAME)
         request = self.hook.show_job_status_request(CLUSTER_ID, JOB_NAME)
         show_job_status.assert_called_once_with(request)

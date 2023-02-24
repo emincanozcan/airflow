@@ -32,8 +32,8 @@ class DLICreateQueueOperator(BaseOperator):
     """
     This operator is used to create a queue. The queue will be bound to specified compute resources.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
-    :param queue_name: Name of a queue to be deleted.
+    :param project_id: Specifies the project ID.
+    :param queue_name: Name of a newly created resource queue.
     :param cu_count: Minimum number of CUs that are bound to a queue. Currently, the value can only be 16, 64, or 256.
     :param platform: CPU architecture of compute resources.
     :param enterprise_project_id: Enterprise project ID. The value 0 indicates the default enterprise project.
@@ -56,9 +56,9 @@ class DLICreateQueueOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         queue_name: str,
         cu_count: int,
+        project_id: str | None = None,
         platform: str | None = None,
         enterprise_project_id: str | None = None,
         feature: str | None = None,  # basic or ai(Only the SQL x86_64 dedicated queue supports this option)
@@ -94,10 +94,9 @@ class DLICreateQueueOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.create_queue(
-            project_id=self.project_id,
             queue_name=self.queue_name,
             cu_count=self.cu_count,
             platform=self.platform,
@@ -119,7 +118,7 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
     If the queue whose CIDR block is to be modified has jobs that are being submitted or running,
     or the queue has been bound to enhanced datasource connections, the CIDR block cannot be modified.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param queue_name: Name of a queue to be deleted.
     :param cidr_in_vpc: VPC CIDR block of the queue.
     :param region: Regions where the API is available.
@@ -128,9 +127,9 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         queue_name: str,
         cidr_in_vpc: str,
+        project_id: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -146,10 +145,9 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        return dli_hook.update_queue_cidr(
-            project_id=self.project_id, queue_name=self.queue_name, cidr_in_vpc=self.cidr_in_vpc
+        return dli_hook.update_queue_cidr( queue_name=self.queue_name, cidr_in_vpc=self.cidr_in_vpc
         ).to_json_object()
 
 
@@ -157,7 +155,7 @@ class DLIDeleteQueueOperator(BaseOperator):
     """
     This operator is used to delete a specified queue.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param queue_name: Name of a queue to be deleted.
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
@@ -165,8 +163,8 @@ class DLIDeleteQueueOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         queue_name: str,
+        project_id: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -181,16 +179,16 @@ class DLIDeleteQueueOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        return dli_hook.delete_queue(project_id=self.project_id, queue_name=self.queue_name).to_json_object()
+        return dli_hook.delete_queue(queue_name=self.queue_name).to_json_object()
 
 
 class DLIListQueuesOperator(BaseOperator):
     """
     This operator is used to list all queues under the project.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param queue_type: Queue type. The options are as follows: sql, general and all. If this parameter is not specified, the default value sql is used.
     :param tags: Specifies the message content.
     :param return_billing_info: Regions where the API is available.
@@ -201,7 +199,7 @@ class DLIListQueuesOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
+        project_id: str | None = None,
         queue_type: str | None = None,
         tags: str | None = None,
         return_billing_info: bool = False,
@@ -223,10 +221,9 @@ class DLIListQueuesOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         list = dli_hook.list_queues(
-            project_id=self.project_id,
             queue_type=self.queue_type,
             tags=self.tags,
             return_billing_info=self.return_billing_info,
@@ -240,7 +237,7 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
     """
     This operator is used to create a batch processing job in a queue.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param file: Name of the package that is of the JAR or pyFile type and has been uploaded to the DLI resource management system.
         You can also specify an OBS path, for example, obs://Bucket name/Package name.
     :param class_name: Java/Spark main class of the batch processing job.
@@ -301,9 +298,9 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         file: str,
         class_name: str,
+        project_id: str | None = None,
         queue_name: str | None = None,
         obs_bucket: str | None = None,
         catalog_name: str | None = None,
@@ -367,10 +364,9 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.create_batch_job(
-            project_id=self.project_id,
             queue_name=self.queue_name,
             file=self.file,
             class_name=self.class_name,
@@ -404,7 +400,7 @@ class DLIUploadFilesOperator(BaseOperator):
     """
     This operator is used to upload a group of File packages to a project.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param group: Name of a package group.
     :param paths: List of OBS object paths. The OBS object path refers to the OBS object URL.
     :param region: Regions where the API is available.
@@ -413,9 +409,9 @@ class DLIUploadFilesOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         group: str,
         paths: list,
+        project_id: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -431,10 +427,9 @@ class DLIUploadFilesOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        return dli_hook.upload_files(
-            project_id=self.project_id, group=self.group, paths=self.paths
+        return dli_hook.upload_files( group=self.group, paths=self.paths
         ).to_json_object()
 
 
@@ -442,7 +437,7 @@ class DLIRunSqlJobOperator(BaseOperator):
     """
     This operator is used to submit jobs to a queue using SQL statements. The job types support DDL, DCL, IMPORT, QUERY, and INSERT.
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param sql_query: SQL statement that you want to execute.
     :param database_name: Database where the SQL statement is executed. This parameter does not need to be configured during database creation.
     :param queue_name: Name of the queue to which a job to be submitted belongs.
@@ -455,8 +450,8 @@ class DLIRunSqlJobOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         sql_query: str,
+        project_id: str | None = None,
         database_name: str | None = None,
         queue_name: str | None = None,
         list_tags_body: list | None = None,
@@ -479,10 +474,9 @@ class DLIRunSqlJobOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.run_job(
-            project_id=self.project_id,
             sql_query=self.sql_query,
             database_name=self.database_name,
             queue_name=self.queue_name,
@@ -498,7 +492,7 @@ class DLIGetSqlJobResultOperator(BaseOperator):
     This API can be used to view only the first 1000 result records and does not support pagination query. 
     To view all query results, you need to export the query results first
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param job_id: Job ID
     :param queue_name: Name of the queue to which a job to be submitted belongs.
         The name can contain only digits, letters, and underscores (_), but cannot contain only digits or start with an underscore (_).
@@ -512,8 +506,8 @@ class DLIGetSqlJobResultOperator(BaseOperator):
     
     def __init__(
         self,
-        project_id: str,
         job_id: str,
+        project_id: str | None = None,
         queue_name: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
@@ -530,10 +524,9 @@ class DLIGetSqlJobResultOperator(BaseOperator):
     def execute(self, context):
 
         # Connection parameter and kwargs parameter from Airflow UI
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.get_job_result(
-            project_id=self.project_id,
             job_id=self.job_id,
             queue_name=self.queue_name
         ).to_json_object()

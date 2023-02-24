@@ -35,7 +35,7 @@ from airflow.providers.huawei.cloud.operators.dli import (
 MOCK_TASK_ID = "test-dli-operator"
 MOCK_REGION = "mock_region"
 MOCK_DLI_CONN_ID = "mock_dli_conn_default"
-MOCK_PROJECT_ID = "mock_project_id"
+MOCK_PROJECT_ID = None
 MOCK_JOB_ID = "mock_job_id"
 MOCK_AUTO_RECOVERY = False
 MOCK_CATALOG_NAME = "catalog_name"
@@ -113,9 +113,8 @@ class TestDLISparkCreateBatchJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.create_batch_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             auto_recovery=MOCK_AUTO_RECOVERY,
             catalog_name=MOCK_CATALOG_NAME,
             class_name=MOCK_CLASS_NAME,
@@ -167,9 +166,8 @@ class TestDLICreateQueueOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.create_queue.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             charging_mode=MOCK_CHARGING_MODE,
             cu_count=MOCK_CU_COUNT,
             description=MOCK_DESCRIPTION,
@@ -196,9 +194,8 @@ class TestDLIDeleteQueueOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.delete_queue.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             queue_name=MOCK_QUEUE_NAME)
 
 class TestDLIGetSqlJobResultOperator(unittest.TestCase):
@@ -214,9 +211,8 @@ class TestDLIGetSqlJobResultOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.get_job_result.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             queue_name=MOCK_QUEUE_NAME,
             job_id=MOCK_JOB_ID)
 
@@ -235,9 +231,8 @@ class TestDLIListQueueOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.list_queues.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             queue_type=MOCK_QUEUE_TYPE,
             return_billing_info=MOCK_BILLING_INFO,
             return_permission_info=MOCK_PERMISSION_INFO,
@@ -259,9 +254,8 @@ class TestDLIRunSqlJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.run_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             database_name=MOCK_DATABASE_NAME,
             list_conf_body=MOCK_LIST_CONF_BODY,
             list_tags_body=MOCK_LIST_TAGS_BODY,
@@ -281,9 +275,8 @@ class TestDLIUpdateQueueCidrOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.update_queue_cidr.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             cidr_in_vpc=MOCK_CIDR_IN_VPC,
             queue_name=MOCK_QUEUE_NAME)
 
@@ -300,8 +293,7 @@ class TestDLIUploadFilesOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.upload_files.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             paths=MOCK_FILE_PATHS,
             group=MOCK_GROUP)

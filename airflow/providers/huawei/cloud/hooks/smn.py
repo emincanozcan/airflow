@@ -32,7 +32,6 @@ class SMNHook(HuaweiBaseHook):
     """Interact with Huawei Cloud SMN, using the huaweicloudsdksmn library."""
 
     def send_message(self,
-                        project_id: str,
                         topic_urn: str,
                         tags: dict | None = None,
                         template_name: str | None = None,
@@ -64,12 +63,12 @@ class SMNHook(HuaweiBaseHook):
         if message:
             kwargs['message'] = message
 
-        self._send_request(project_id, self._make_publish_app_message_request(
+        self._send_request(self._make_publish_app_message_request(
             topic_urn=topic_urn, body=kwargs))
 
-    def _send_request(self, project_id, request: SmnSdk.PublishMessageRequest) -> None:
+    def _send_request(self, request: SmnSdk.PublishMessageRequest) -> None:
         try:
-            self._get_smn_client(project_id).publish_message(request)
+            self._get_smn_client().publish_message(request)
             self.log.info("The message is published successfully")
         except Exception as e:
             self.log.error(e)
@@ -81,12 +80,12 @@ class SMNHook(HuaweiBaseHook):
         request.body = SmnSdk.PublishMessageRequestBody(**body)
         return request
 
-    def _get_smn_client(self, project_id) -> SmnSdk.SmnClient:
+    def _get_smn_client(self) -> SmnSdk.SmnClient:
 
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, project_id)
+        credentials = BasicCredentials(ak, sk, self.get_default_project_id())
 
         return SmnSdk.SmnClient.new_builder() \
             .with_credentials(credentials) \

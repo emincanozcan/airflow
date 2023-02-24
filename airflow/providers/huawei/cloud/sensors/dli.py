@@ -48,7 +48,7 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
         self,
         *,
         job_id: str,
-        project_id: str,
+        project_id: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
     ) -> None:
@@ -58,7 +58,7 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
         self.project_id = project_id
 
     def poke(self, context: Context) -> bool:
-        state = self.get_hook.show_batch_state(job_id=self.job_id, project_id=self.project_id)
+        state = self.get_hook.show_batch_state(job_id=self.job_id)
         if state in self.FAILURE_STATES:
             raise AirflowException("DLI sensor failed")
 
@@ -69,7 +69,7 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DLIHook:
         """Create and return a DLIHook"""
-        return DLIHook(self.huaweicloud_conn_id)
+        return DLIHook(self.huaweicloud_conn_id, project_id=self.project_id)
 
 class DLISqlShowJobStatusSensor(BaseSensorOperator):
     
@@ -94,7 +94,7 @@ class DLISqlShowJobStatusSensor(BaseSensorOperator):
         self,
         *,
         job_id: str,
-        project_id: str,
+        project_id: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
     ) -> None:
@@ -104,7 +104,7 @@ class DLISqlShowJobStatusSensor(BaseSensorOperator):
         self.project_id = project_id
 
     def poke(self, context: Context) -> bool:
-        state = self.get_hook.show_job_status(job_id=self.job_id, project_id=self.project_id)
+        state = self.get_hook.show_job_status(job_id=self.job_id)
         if state in self.FAILURE_STATES:
             raise AirflowException("DLI sensor failed")
 
@@ -115,4 +115,4 @@ class DLISqlShowJobStatusSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DLIHook:
         """Create and return a DLIHook"""
-        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id)
+        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id)

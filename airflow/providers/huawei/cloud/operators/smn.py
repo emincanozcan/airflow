@@ -46,10 +46,10 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     
     def __init__(
         self,
-        project_id: str,
         topic_urn: str,
         tags: dict,
         template_name: str,
+        project_id: str | None = None,
         region: str | None = None,
         subject: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
@@ -69,10 +69,9 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         smn_hook.send_message(topic_urn=self.topic_urn,
-                              project_id=self.project_id,
                               tags=self.tags,
                               template_name=self.template_name)
 
@@ -91,9 +90,9 @@ class SMNPublishTextMessageOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         topic_urn: str,
         message: str,
+        project_id: str | None = None,
         region: str | None = None,
         subject: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
@@ -112,10 +111,9 @@ class SMNPublishTextMessageOperator(BaseOperator):
 
         # Connection parameter and kwargs parameter from Airflow UI
         smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         smn_hook.send_message(topic_urn=self.topic_urn,
-                              project_id=self.project_id,
                               message=self.message)
 
 
@@ -135,9 +133,9 @@ class SMNPublishJsonMessageOperator(BaseOperator):
 
     def __init__(
         self,
-        project_id: str,
         topic_urn: str,
         default: str,
+        project_id: str | None = None,
         sms: str | None = None,
         email: str | None = None,
         http: str | None = None,
@@ -162,8 +160,7 @@ class SMNPublishJsonMessageOperator(BaseOperator):
     def execute(self, context: Context):
         # Connection parameter and kwargs parameter from Airflow UI
         smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         smn_hook.send_message(topic_urn=self.topic_urn,
-                              project_id=self.project_id,
                               message_structure=self.message_structure)

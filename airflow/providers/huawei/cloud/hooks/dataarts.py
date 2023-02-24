@@ -27,25 +27,32 @@ import huaweicloudsdkdlf.v1 as DlfSdk
 from huaweicloudsdkdlf.v1.region.dlf_region import DlfRegion
 
 class DataArtsHook(HuaweiBaseHook):
+    """Interact with Huawei Cloud DataArts DLF, using the huaweicloudsdkdlf library."""
     
-    def dlf_start_job(self, project_id, workspace, job_name, body):
+    def dlf_start_job(self, workspace, job_name, body):
         try:
-            return self._get_dlf_client(project_id=project_id).start_job(self.dlf_start_job_request(workspace, job_name, body))
+            return self._get_dlf_client().start_job(self.dlf_start_job_request(workspace, job_name, body))
         except Exception as e:
             raise AirflowException(f"Errors when starting: {e}")
     
-    def dlf_show_job_status(self, project_id, workspace, job_name):
+    def dlf_show_job_status(self, workspace, job_name):
         try:
-            return self._get_dlf_client(project_id=project_id).show_job_status(self.dlf_show_job_status_request(workspace, job_name))
+            return self._get_dlf_client().show_job_status(self.dlf_show_job_status_request(workspace, job_name)).to_json_object()["status"]
         except Exception as e:
             raise AirflowException(f"Errors when showing job status: {e}")
+    
+    def dlf_list_job_instances(self, workspace):
+        try:
+            return self._get_dlf_client().list_job_instances(self.dlf_list_job_instances_request(workspace)).instances
+        except Exception as e:
+            raise AirflowException(f"Errors when listing job instances: {e}")
 
-    def _get_dlf_client(self, project_id) -> DlfSdk.DlfClient:
+    def _get_dlf_client(self) -> DlfSdk.DlfClient:
 
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, project_id)
+        credentials = BasicCredentials(ak, sk, self.get_default_project_id())
 
         return (
             DlfSdk.DlfClient.new_builder()
@@ -60,4 +67,8 @@ class DataArtsHook(HuaweiBaseHook):
     
     def dlf_show_job_status_request(self, workspace, job_name):
         request = DlfSdk.ShowJobStatusRequest(workspace=workspace, job_name=job_name)
+        return request
+
+    def dlf_list_job_instances_request(self, workspace):
+        request = DlfSdk.ListJobInstancesRequest(workspace=workspace)
         return request

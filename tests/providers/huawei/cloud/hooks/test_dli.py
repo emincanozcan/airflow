@@ -27,7 +27,7 @@ from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default
 
 DLI_STRING = "airflow.providers.huawei.cloud.hooks.dli.{}"
 MOCK_DLI_CONN_ID = "mock_dli_default"
-
+PROJECT_ID = "project-id"
 
 class TestDliHook(unittest.TestCase):
     def setUp(self):
@@ -35,20 +35,19 @@ class TestDliHook(unittest.TestCase):
             DLI_STRING.format("DLIHook.__init__"),
             new=mock_huawei_cloud_default,
         ):
-            self.hook = DLIHook(huaweicloud_conn_id=MOCK_DLI_CONN_ID)
+            self.hook = DLIHook(huaweicloud_conn_id=MOCK_DLI_CONN_ID, project_id=PROJECT_ID)
 
     def test_get_default_region(self):
         assert self.hook.get_region() == "ap-southeast-3"
 
     def test_get_dli_client(self):
-        client = self.hook._get_dli_client("project_id")
+        client = self.hook._get_dli_client()
         assert client.get_credentials().ak == "AK"
         assert client.get_credentials().sk == "SK"
-        assert client.get_credentials().project_id == "project_id"
+        assert client.get_credentials().project_id == PROJECT_ID
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.create_queue"))
     def test_create_queue(self, create_queue):
-        project_id = "example-id"
         queue_name = "test_queue"
         charging_mode = "charging_mode_test"
         cu_count = "test"
@@ -62,7 +61,6 @@ class TestDliHook(unittest.TestCase):
         queue_type = "queue_type_test"
         resource_mode = "resource_mode_test"
         self.hook.create_queue(
-            project_id,
             queue_name,
             platform,
             enterprise_project_id,
@@ -94,30 +92,26 @@ class TestDliHook(unittest.TestCase):
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.update_queue_cidr"))
     def test_update_queue_cidr(self, update_queue_cidr):
-        project_id = "example-id"
         queue_name = "test_queue"
         cidr_in_vpc = "10.0.0.0/8"
-        self.hook.update_queue_cidr(project_id, queue_name, cidr_in_vpc)
+        self.hook.update_queue_cidr(queue_name, cidr_in_vpc)
         request = self.hook.update_queue_cidr_request(queue_name, cidr_in_vpc)
         update_queue_cidr.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.delete_queue"))
     def test_delete_queue(self, delete_queue):
-        project_id = "example-id"
         queue_name = "queue_name"
-        self.hook.delete_queue(project_id=project_id, queue_name=queue_name)
+        self.hook.delete_queue(queue_name=queue_name)
         request = self.hook.delete_queue_request(queue_name)
         delete_queue.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.list_queues"))
     def test_list_queues(self, list_queues):
-        project_id = "example-id"
         queue_type = "queue_type"
         tags = "tags"
         return_billing_info = False
         return_permission_info = False
         self.hook.list_queues(
-            project_id=project_id,
             queue_type=queue_type,
             return_billing_info=return_billing_info,
             tags=tags,
@@ -133,11 +127,9 @@ class TestDliHook(unittest.TestCase):
     
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.show_job_result"))
     def test_get_job_result(self, show_job_result):
-        project_id = "example-id"
         job_id = "job-id"
         queue_name = "queue_name"
         self.hook.get_job_result(
-            project_id=project_id,
             queue_name=queue_name,
             job_id=job_id
         )
@@ -149,30 +141,26 @@ class TestDliHook(unittest.TestCase):
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.show_job_status"))
     def test_show_job_status(self, show_job_status):
-        project_id = "project-id"
         job_id = "job-id"
-        self.hook.show_job_status(project_id=project_id, job_id=job_id)
+        self.hook.show_job_status(job_id=job_id)
         request = self.hook.show_job_status_request(job_id)
         show_job_status.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.show_batch_state"))
     def test_show_batch_state(self, show_batch_state):
-        project_id = "project-id"
         job_id = "job-id"
-        self.hook.show_batch_state(project_id=project_id, job_id=job_id)
+        self.hook.show_batch_state(job_id=job_id)
         request = self.hook.show_batch_state_request(job_id)
         show_batch_state.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.run_job"))
     def test_run_job(self, run_job):
-        project_id = "project-id"
         queue_name = "queue_name"
         currentdb = "current-db"
         sql = "sql-query"
         tags = "tags"
         conf = "list"
         self.hook.run_job(
-            project_id=project_id,
             queue_name=queue_name,
             database_name=currentdb,
             list_conf_body=conf,
@@ -190,16 +178,14 @@ class TestDliHook(unittest.TestCase):
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.upload_files"))
     def test_upload_files(self, upload_files):
-        project_id = "example-id"
         paths = ["obs://bucketname/test"]
         group = "test-group"
-        self.hook.upload_files(project_id=project_id, paths=paths, group=group)
+        self.hook.upload_files(paths=paths, group=group)
         request = self.hook.upload_files_request(paths=paths, group=group)
         upload_files.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.create_batch_job"))
     def test_create_batch_job(self, create_batch_job):
-        project_id = "example-id"
         queue_name = "test_queue"
         file = "obs://bucketname/test"
         class_name = "com.packagename.ClassName"
@@ -239,7 +225,6 @@ class TestDliHook(unittest.TestCase):
         driver_cores = 6
         driver_memory = "2G"
         self.hook.create_batch_job(
-            project_id=project_id,
             queue_name=queue_name,
             file=file,
             class_name=class_name,
@@ -299,7 +284,6 @@ class TestDliHook(unittest.TestCase):
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.call_api"))
     def test_create_queue_calls_api(self, call_api):
-        project_id = "example-id"
         queue_name = "test_queue"
         charging_mode = {"key": "value"}
         cu_count = "test"
@@ -313,7 +297,6 @@ class TestDliHook(unittest.TestCase):
         queue_type = "queue_type_test"
         resource_mode = "resource_mode_test"
         self.hook.create_queue(
-            project_id=project_id,
             charging_mode=charging_mode,
             cu_count=cu_count,
             description=description,

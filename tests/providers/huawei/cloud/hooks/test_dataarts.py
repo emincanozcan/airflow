@@ -38,25 +38,25 @@ class TestDataArtsHook(unittest.TestCase):
             DLF_STRING.format("DataArtsHook.__init__"),
             new=mock_huawei_cloud_default,
         ):
-            self.hook = DataArtsHook(huaweicloud_conn_id=MOCK_DLF_CONN_ID)
+            self.hook = DataArtsHook(huaweicloud_conn_id=MOCK_DLF_CONN_ID, project_id=PROJECT_ID)
 
     def test_get_default_region(self):
         assert self.hook.get_region() == "ap-southeast-3"
 
     def test_get_dlf_client(self):
-        client = self.hook._get_dlf_client(PROJECT_ID)
+        client = self.hook._get_dlf_client()
         assert client.get_credentials().ak == "AK"
         assert client.get_credentials().sk == "SK"
         assert client.get_credentials().project_id == PROJECT_ID
 
     @mock.patch(DLF_STRING.format("DlfSdk.DlfClient.start_job"))
     def test_start_job(self, start_job):
-        self.hook.dlf_start_job(PROJECT_ID, WORKSPACE, JOB_NAME, BODY)
+        self.hook.dlf_start_job(WORKSPACE, JOB_NAME, BODY)
         request = self.hook.dlf_start_job_request(WORKSPACE, JOB_NAME, BODY)
         start_job.assert_called_once_with(request)
         
     @mock.patch(DLF_STRING.format("DlfSdk.DlfClient.show_job_status"))
     def test_show_job_status(self, show_job_status):
-        self.hook.dlf_show_job_status(PROJECT_ID, WORKSPACE, JOB_NAME)
+        self.hook.dlf_show_job_status(WORKSPACE, JOB_NAME)
         request = self.hook.dlf_show_job_status_request(WORKSPACE, JOB_NAME)
         show_job_status.assert_called_once_with(request)

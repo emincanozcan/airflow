@@ -39,23 +39,32 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
     """
     
     #Status of a job, including STARTING, NORMAL, EXCEPTION, STOPPING, STOPPED.
+    #Status of a job instance, including waiting, running, success, fail, running-exception, pause, manual-stop
+    
+    END_STATES = (
+        "STOPPED", 
+        "EXCEPTION"
+    )
+    
+    #CONTINIOUS_STATES = "STARTING"
     
     INTERMEDIATE_STATES = (
-        "STARTING",
-        "NORMAL",
-        "LAUNCHING",
-        "STOPPING"
+        "waiting",
+        "running",
+        "pause",
+        "manual-stop"
     )
     FAILURE_STATES = (
-        "EXCEPTION",
+        "fail",
+        "running-exception"
     )
-    SUCCESS_STATES = ("STOPPED",)
+    SUCCESS_STATES = ("success",)
 
     def __init__(
         self,
         *,
         job_name: str,
-        project_id: str,
+        project_id: str | None = None,
         workspace: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
@@ -74,15 +83,37 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
         @returns True if the job status stopped, False otherwise
         """
         
-        state = self.get_hook.dlf_show_job_status(job_name=self.job_name, workspace=self.workspace, project_id=self.project_id)
-        if state in self.FAILURE_STATES:
+        status = self.get_hook.dlf_show_job_status(job_name=self.job_name, workspace=self.workspace)
+        print(f"job state: {status}")
+        if status not in self.END_STATES:
+            return False
+            
+        """ if state == self.CONTINIOUS_STATES:
+            return False """
+        
+        instances = self.get_hook.dlf_list_job_instances(workspace=self.workspace)
+        print(f"instances count: {instances}")
+        #raise AirflowException(instances)
+        for instance in instances:
+            #print(instance)
+            if instance.job_name == self.job_name:
+                print(f"instance state: {instance.status}")
+                if instance.status in self.FAILURE_STATES:
+                    raise AirflowException("DataArts DLF sensor failed")
+
+                if instance.status in self.INTERMEDIATE_STATES:
+                    return False
+                
+                return True
+        """ if state in self.FAILURE_STATES:
             raise AirflowException("DataArts DLF sensor failed")
 
         if state in self.INTERMEDIATE_STATES:
-            return False
-        return True
-
+            return False """
+        #raise AirflowException("DataArts DLF job not found")
+        return False
+    
     @cached_property
     def get_hook(self) -> DataArtsHook:
         """Create and return a DataArtsHook"""
-        return DataArtsHook(huaweicloud_conn_id=self.huaweicloud_conn_id)
+        return DataArtsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id)

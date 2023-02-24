@@ -32,7 +32,6 @@ class DLIHook(HuaweiBaseHook):
 
     def create_queue(
         self,
-        project_id,
         queue_name,
         platform,
         enterprise_project_id,
@@ -49,7 +48,7 @@ class DLIHook(HuaweiBaseHook):
         if list_tags_body != None and len(list_tags_body) > 10:
             raise AirflowException("You can add up to 10 tags.")
         try:
-            return self._get_dli_client(project_id).create_queue(
+            return self._get_dli_client().create_queue(
                 self.create_queue_request(
                     elastic_resource_pool_name=elastic_resource_pool_name,
                     list_tags_body=list_tags_body,
@@ -69,27 +68,27 @@ class DLIHook(HuaweiBaseHook):
             self.log.error(e)
             raise AirflowException(f"Errors when creating: {e}")
 
-    def update_queue_cidr(self, project_id, queue_name, cidr_in_vpc) -> DliSdk.UpdateQueueCidrResponse:
+    def update_queue_cidr(self, queue_name, cidr_in_vpc) -> DliSdk.UpdateQueueCidrResponse:
         try:
-            return self._get_dli_client(project_id).update_queue_cidr(
+            return self._get_dli_client().update_queue_cidr(
                 self.update_queue_cidr_request(queue_name=queue_name, cidr_in_vpc=cidr_in_vpc)
             )
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when updating: {e}")
 
-    def delete_queue(self, project_id, queue_name) -> DliSdk.DeleteQueueResponse:
+    def delete_queue(self, queue_name) -> DliSdk.DeleteQueueResponse:
         try:
-            return self._get_dli_client(project_id).delete_queue(self.delete_queue_request(queue_name))
+            return self._get_dli_client().delete_queue(self.delete_queue_request(queue_name))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when deleting: {e}")
 
     def list_queues(
-        self, project_id, queue_type, tags, return_billing_info, return_permission_info
+        self, queue_type, tags, return_billing_info, return_permission_info
     ) -> DliSdk.ListQueuesResponse:
         try:
-            return self._get_dli_client(project_id).list_queues(
+            return self._get_dli_client().list_queues(
                 self.list_queues_request(
                     queue_type=queue_type,
                     tags=tags,
@@ -103,7 +102,6 @@ class DLIHook(HuaweiBaseHook):
 
     def create_batch_job(
         self,
-        project_id,
         queue_name,
         file,
         class_name,
@@ -133,7 +131,7 @@ class DLIHook(HuaweiBaseHook):
     ) -> DliSdk.CreateBatchJobResponse:
         try:
 
-            return self._get_dli_client(project_id).create_batch_job(
+            return self._get_dli_client().create_batch_job(
                 self.create_batch_job_request(
                     queue_name=queue_name,
                     file=file,
@@ -167,9 +165,9 @@ class DLIHook(HuaweiBaseHook):
             self.log.error(e)
             raise AirflowException(f"Errors when crating batch job: {e}")
 
-    def upload_files(self, project_id, paths, group) -> DliSdk.UploadFilesResponse:
+    def upload_files(self, paths, group) -> DliSdk.UploadFilesResponse:
         try:
-            return self._get_dli_client(project_id).upload_files(
+            return self._get_dli_client().upload_files(
                 self.upload_files_request(paths=paths, group=group)
             )
         except Exception as e:
@@ -177,10 +175,10 @@ class DLIHook(HuaweiBaseHook):
             raise AirflowException(f"Errors when uploading files: {e}")
 
     def run_job(
-        self, project_id, sql_query, database_name, queue_name, list_conf_body, list_tags_body
+        self, sql_query, database_name, queue_name, list_conf_body, list_tags_body
     ) -> DliSdk.RunJobResponse:
         try:
-            return self._get_dli_client(project_id).run_job(
+            return self._get_dli_client().run_job(
                 self.run_job_request(
                     sql_query=sql_query,
                     database_name=database_name,
@@ -193,9 +191,9 @@ class DLIHook(HuaweiBaseHook):
             self.log.error(e)
             raise AirflowException(f"Errors when running: {e}")
 
-    def show_batch_state(self, project_id, job_id) -> str:
+    def show_batch_state(self, job_id) -> str:
         try:
-            response = self._get_dli_client(project_id).show_batch_state(
+            response = self._get_dli_client().show_batch_state(
                 self.show_batch_state_request(job_id)
             )
             return response.state
@@ -203,20 +201,20 @@ class DLIHook(HuaweiBaseHook):
             self.log.error(e)
             raise AirflowException(f"Errors when get batch state: {e}")
 
-    def show_job_status(self, project_id, job_id) -> str:
+    def show_job_status(self, job_id) -> str:
         try:
-            response = self._get_dli_client(project_id).show_job_status(self.show_job_status_request(job_id))
+            response = self._get_dli_client().show_job_status(self.show_job_status_request(job_id))
             return response.status
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when get job status: {e}")
 
-    def _get_dli_client(self, project_id) -> DliSdk.DliClient:
+    def _get_dli_client(self) -> DliSdk.DliClient:
 
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, project_id)
+        credentials = BasicCredentials(ak, sk, self.get_default_project_id())
 
         return (
             DliSdk.DliClient.new_builder()
@@ -356,9 +354,9 @@ class DLIHook(HuaweiBaseHook):
         )
         return request
     
-    def get_job_result(self, project_id, job_id, queue_name) -> DliSdk.ShowJobResultResponse:
+    def get_job_result(self, job_id, queue_name) -> DliSdk.ShowJobResultResponse:
         try:
-            response = self._get_dli_client(project_id).show_job_result(self.get_job_result_request(job_id, queue_name))
+            response = self._get_dli_client().show_job_result(self.get_job_result_request(job_id, queue_name))
             return response
         except Exception as e:
             self.log.error(e)

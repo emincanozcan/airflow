@@ -48,7 +48,7 @@ class TestDLISensor(unittest.TestCase):
     @mock.patch(DLI_SENSOR_STRING.format("DLIHook"))
     def test_get_hook(self, mock_service):
         self.job_status_sensor.get_hook()
-        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID)
+        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID)
 
     @mock.patch(DLI_SENSOR_STRING.format("DLISqlShowJobStatusSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_job_status(self, mock_service):
@@ -61,7 +61,7 @@ class TestDLISensor(unittest.TestCase):
         # Then
         assert res is True
         mock_service.return_value.show_job_status.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID, job_id=MOCK_JOB_ID
+            job_id=MOCK_JOB_ID
         )
 
     @mock.patch(DLI_SENSOR_STRING.format("DLISparkShowBatchStateSensor.get_hook"), new_callable=PropertyMock)
@@ -75,5 +75,5 @@ class TestDLISensor(unittest.TestCase):
         # Then
         assert res is True
         mock_service.return_value.show_batch_state.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID, job_id=MOCK_JOB_ID
+            job_id=MOCK_JOB_ID
         )

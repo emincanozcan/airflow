@@ -51,7 +51,7 @@ To create a job you can use
 Create and execute job
 ======================
 
-To create a job you can use
+To create and execute a job you can use
 :class:`~airflow.providers.huawei.cloud.operators.cdm.CDMCreateAndExecuteJobOperator`.
 
 .. exampleinclude:: /../../tests/system/providers/huawei/example_cdm.py

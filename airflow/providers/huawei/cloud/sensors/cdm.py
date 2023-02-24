@@ -32,7 +32,7 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
     """
     Waits for the process to complete
 
-    :param project_id: Specifies the project ID.For details about how to obtain the project ID.
+    :param project_id: Specifies the project ID.
     :param cluster_id: Cluster ID.
     :param job_name: Job name.
     :param region: Regions where the API is available.
@@ -60,7 +60,7 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
         *,
         cluster_id: str,
         job_name: str,
-        project_id: str,
+        project_id: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
     ) -> None:
@@ -78,7 +78,7 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
         @returns True if the job status succeeded, False otherwise
         """
         
-        submissions = self.get_hook.show_job_status(project_id=self.project_id, cluster_id=self.cluster_id, job_name=self.job_name)
+        submissions = self.get_hook.show_job_status(cluster_id=self.cluster_id, job_name=self.job_name)
         
         for submission in submissions:
             if submission["status"] in self.FAILURE_STATES:
@@ -91,5 +91,5 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> CDMHook:
         """Create and return a CDMHook"""
-        return CDMHook(huaweicloud_conn_id=self.huaweicloud_conn_id)
+        return CDMHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id)
 

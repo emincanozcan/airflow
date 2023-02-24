@@ -32,25 +32,23 @@ class CDMHook(HuaweiBaseHook):
 
     def create_job(
         self,
-        project_id,
         cluster_id,
         jobs
     ) -> CdmSdk.CreateJobResponse:
         try:
-            return self._get_cdm_client(project_id).create_job(self.create_job_request(cluster_id=cluster_id, jobs=jobs))
+            return self._get_cdm_client().create_job(self.create_job_request(cluster_id=cluster_id, jobs=jobs))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when creating job: {e}")
 
     def create_and_execute_job(
         self,
-        project_id,
         x_language,
         clusters,
         jobs
     ) -> CdmSdk.CreateAndStartRandomClusterJobResponse:
         try:
-            return self._get_cdm_client(project_id).create_and_start_random_cluster_job(
+            return self._get_cdm_client().create_and_start_random_cluster_job(
                 self.create_and_execute_job_request(x_language=x_language,
                     clusters=clusters, jobs=jobs
                 ))
@@ -58,30 +56,30 @@ class CDMHook(HuaweiBaseHook):
             self.log.error(e)
             raise AirflowException(f"Errors when creating job: {e}")
 
-    def start_job(self, project_id, cluster_id, job_name) -> CdmSdk.StartJobResponse:
+    def start_job(self, cluster_id, job_name) -> CdmSdk.StartJobResponse:
         try:
-            return self._get_cdm_client(project_id).start_job(self.start_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self._get_cdm_client().start_job(self.start_job_request(cluster_id=cluster_id, job_name=job_name))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when starting job: {e}")
 
-    def delete_job(self, project_id, cluster_id, job_name) -> CdmSdk.DeleteJobResponse:
+    def delete_job(self, cluster_id, job_name) -> CdmSdk.DeleteJobResponse:
         try:
-            return self._get_cdm_client(project_id).delete_job(self.delete_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self._get_cdm_client().delete_job(self.delete_job_request(cluster_id=cluster_id, job_name=job_name))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when deleting job: {e}")
 
-    def stop_job(self, project_id, cluster_id, job_name) -> CdmSdk.StopJobResponse:
+    def stop_job(self, cluster_id, job_name) -> CdmSdk.StopJobResponse:
         try:
-            return self._get_cdm_client(project_id).stop_job(self.stop_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self._get_cdm_client().stop_job(self.stop_job_request(cluster_id=cluster_id, job_name=job_name))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when stopping job: {e}")
 
-    def show_job_status(self, project_id, cluster_id, job_name) -> CdmSdk.ShowJobStatusResponse:
+    def show_job_status(self, cluster_id, job_name) -> CdmSdk.ShowJobStatusResponse:
         try:
-            response = self._get_cdm_client(project_id).show_job_status(
+            response = self._get_cdm_client().show_job_status(
                 self.show_job_status_request(cluster_id=cluster_id, job_name=job_name)).to_json_object()
             return response["submissions"]
         except Exception as e:
@@ -133,12 +131,12 @@ class CDMHook(HuaweiBaseHook):
         request.job_name = job_name
         return request
 
-    def _get_cdm_client(self, project_id) -> CdmSdk.CdmClient:
+    def _get_cdm_client(self) -> CdmSdk.CdmClient:
 
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, project_id)
+        credentials = BasicCredentials(ak, sk, self.get_default_project_id())
 
         return (
             CdmSdk.CdmClient.new_builder()

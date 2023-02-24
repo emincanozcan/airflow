@@ -47,9 +47,8 @@ class TestDataArtsDLFStartJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION)
+            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
         mock_hook.return_value.dlf_start_job.assert_called_once_with(
-            project_id=MOCK_PROJECT_ID,
             workspace=MOCK_WORKSPACE,
             job_name=MOCK_JOB_NAME,
             body=MOCK_BODY
