@@ -33,15 +33,11 @@ class DWSCreateClusterOperator(BaseOperator):
     The cluster must run in a VPC. Before creating a cluster, you need to create a VPC and obtain the VPC
     and subnet IDs.This API is an asynchronous API. It takes 10 to 15 minutes to create a cluster.
 
-    .. seealso::
-        For more information on how to use this operator, take a look at the guide:
-        :ref:`howto/operator:DWSCreateClusterOperator`
-
     :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and huaweicloud_conn_id is None or
-            empty, then default obs configuration would be used (and must be
-            maintained on each worker node).
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     :param project_id: 	Project ID.
     :param region: The DWS region.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
@@ -57,20 +53,18 @@ class DWSCreateClusterOperator(BaseOperator):
     :param availability_zone: AZ of a cluster For details, see Regions and Endpoints.
     :param user_name: Administrator username for logging in to a GaussDB(DWS) cluster.
         The administrator username must:
+
             - Consist of lowercase letters, digits, or underscores.
             - Start with a lowercase letter or an underscore.
             - Contain 1 to 63 characters.
             - Cannot be a keyword of the GaussDB(DWS) database.
-    :param user_pwd: Administrator password for logging in to a GaussDB(DWS) cluster
+    :param user_pwd: Administrator password for logging in to a GaussDB(DWS) cluster.
+
         - Contains 8 to 32 characters.
-        - Contains at least three types of the following characters: uppercase letters, lowercase letters,
-            digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
+        - Contains at least three types of the following characters: uppercase letters, lowercase letters, digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
         - Cannot be the same as the username or the username written in reverse order.
     :param port: Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-    :param public_bind_type: Binding type of EIP. The value can be one of the following:
-        - auto_assign
-        - not_use
-        - bind_existing
+    :param public_bind_type: Binding type of EIP. The value can be one of the following:, auto_assign, not_use, bind_existing
     :param eip_id: EIP ID
     :param number_of_cn: Number of deployed CNs. The value ranges from 2 to the number of cluster nodes.
         The maximum value is 20 and the default value is 3.
@@ -161,15 +155,11 @@ class DWSCreateClusterSnapshotOperator(BaseOperator):
     """
     Creates a manual snapshot of the specified cluster. The cluster must be in the available state
 
-    .. seealso::
-        For more information on how to use this operator, take a look at the guide:
-        :ref:`howto/operator:DWSCreateClusterSnapshotOperator`
-
     :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and huaweicloud_conn_id is None or
-            empty, then default obs configuration would be used (and must be
-            maintained on each worker node).
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     :param project_id: 	Project ID.
     :param region: The DWS region.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
@@ -223,15 +213,11 @@ class DWSDeleteClusterSnapshotOperator(BaseOperator):
     """
     Deletes the specified manual snapshot
 
-    .. seealso::
-        For more information on how to use this operator, take a look at the guide:
-        :ref:`howto/operator:DWSDeleteClusterSnapshotOperator`
-
     :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and huaweicloud_conn_id is None or
-            empty, then default obs configuration would be used (and must be
-            maintained on each worker node).
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     :param project_id: 	Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
@@ -271,15 +257,11 @@ class DWSRestoreClusterOperator(BaseOperator):
     """
     Restore the cluster using a snapshot
 
-    .. seealso::
-        For more information on how to use this operator, take a look at the guide:
-        :ref:`howto/operator:DWSRestoreClusterOperator`
-
     :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and huaweicloud_conn_id is None or
-            empty, then default obs configuration would be used (and must be
-            maintained on each worker node).
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     :param project_id: 	Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
@@ -297,10 +279,7 @@ class DWSRestoreClusterOperator(BaseOperator):
         The default value is the same as that of the original cluster.
     :param port: Service port of a cluster. The value ranges from 8000 to 30000.
         The default value is 8000.
-    :param public_bind_type: Binding type of EIP. The value can be one of the following:
-        - auto_assign
-        - not_use
-        - bind_existing
+    :param public_bind_type: Binding type of EIP. The value can be one of the following:, auto_assign, not_use, bind_existing
     :param eip_id: EIP ID.
     :param enterprise_project_id: Enterprise project. The default enterprise project ID is 0.
     """
@@ -366,15 +345,11 @@ class DWSDeleteClusterBasedOnSnapshotOperator(BaseOperator):
     """
     Delete clusters based on snapshot.Filter by cluster tags.
 
-    .. seealso::
-        For more information on how to use this operator, take a look at the guide:
-        :ref:`howto/operator:DWSDeleteClusterBasedOnSnapshotOperator`
-
     :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and huaweicloud_conn_id is None or
-            empty, then default obs configuration would be used (and must be
-            maintained on each worker node).
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     :param project_id: 	Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
@@ -414,15 +389,11 @@ class DWSDeleteClusterOperator(BaseOperator):
     """
     Delete a cluster.
 
-    .. seealso::
-        For more information on how to use this operator, take a look at the guide:
-        :ref:`howto/operator:DWSDeleteClusterOperator`
-
     :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and huaweicloud_conn_id is None or
-            empty, then default obs configuration would be used (and must be
-            maintained on each worker node).
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     :param project_id: 	Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.

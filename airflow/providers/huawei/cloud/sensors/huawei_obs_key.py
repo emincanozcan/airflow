@@ -29,13 +29,13 @@ if TYPE_CHECKING:
 
 class OBSObjectKeySensor(BaseSensorOperator):
     """
-    Waits for a object key (a file-like instance on OBS) to be present in an OBS bucket.
+    Waits for an object key (a file-like instance on OBS) to be present in an OBS bucket.
 
     :param huaweicloud_conn_id: The Airflow connection used for OBS credentials.
         If this is None or empty then the default obs behaviour is used. If
-            running Airflow in a distributed manner and huaweicloud_conn_id is None or
-            empty, then default obs configuration would be used (and must be
-            maintained on each worker node).
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     :param region: OBS region you want to create bucket.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
         If region is cn-north-1, you can determine whether objects in a bucket in any region exist.
@@ -77,12 +77,7 @@ class OBSObjectKeySensor(BaseSensorOperator):
         return obs_hook.exist_object(object_key=object_key, bucket_name=bucket_name)
 
     def poke(self, context: Context):
-        """
-        Check if the object exists in the bucket to pull key.
-        :param self: the object itself.
-        :param context: the context of the object.
-        :returns True if the object exists, False otherwise.
-        """
+        """Check if the object exists in the bucket to pull key."""
         return all(self._check_object_key(object_key) for object_key in self.object_key)
 
     def get_hook(self) -> OBSHook:

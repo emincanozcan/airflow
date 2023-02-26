@@ -9,10 +9,6 @@ class DWSSqlOperator(SQLExecuteQueryOperator):
     """
     Executes SQL Statements against a Huawei Cloud DWS cluster
 
-    .. seealso::
-        For more information on how to use this operator, take a look at the guide:
-        :ref:`howto/operator:DWSSqlOperator`
-
     :param sql: the SQL code to be executed as a single string, or
         a list of str (sql statements), or a reference to a template file.
         Template references are recognized by str ending in '.sql'

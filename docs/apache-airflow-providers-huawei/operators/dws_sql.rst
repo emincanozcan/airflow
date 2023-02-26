@@ -24,8 +24,6 @@ Airflow to `Data Warehouse Service (DWS) <https://support.huaweicloud.com/intl/e
 Operators
 ---------
 
-.. _howto/operator: DWSSqlOperator:
-
 Executes SQL statements against a Huawei Cloud DWS cluster
 ==========================================================
 

@@ -16,7 +16,6 @@
 # under the License.
 from __future__ import annotations
 
-import json
 from typing import TYPE_CHECKING, Any, List
 
 from airflow.exceptions import AirflowException
@@ -35,9 +34,6 @@ from huaweicloudsdkdws.v2 import (Restore, RestoreClusterRequest, RestoreCluster
 from huaweicloudsdkdws.v2.dws_client import DwsClient
 from huaweicloudsdkdws.v2.model.public_ip import PublicIp
 from huaweicloudsdkdws.v2.region.dws_region import DwsRegion
-
-if TYPE_CHECKING:
-    from airflow.models.connection import Connection
 
 
 class DWSHook(HuaweiBaseHook):
@@ -179,21 +175,19 @@ class DWSHook(HuaweiBaseHook):
         :param vpc_id: VPC ID, which is used for configuring cluster network.
         :param availability_zone: AZ of a cluster For details, see Regions and Endpoints.
         :param user_name: Administrator username for logging in to a GaussDB(DWS) cluster.
+
             The administrator username must:
                 - Consist of lowercase letters, digits, or underscores.
                 - Start with a lowercase letter or an underscore.
                 - Contain 1 to 63 characters.
                 - Cannot be a keyword of the GaussDB(DWS) database.
-        :param user_pwd: Administrator password for logging in to a GaussDB(DWS) cluster
+        :param user_pwd: Administrator password for logging in to a GaussDB(DWS) cluster.
+
             - Contains 8 to 32 characters.
-            - Contains at least three types of the following characters: uppercase letters, lowercase letters,
-                digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
+            - Contains at least three types of the following characters: uppercase letters, lowercase letters, digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
             - Cannot be the same as the username or the username written in reverse order.
         :param port: Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-        :param public_bind_type: Binding type of EIP. The value can be one of the following:
-            - auto_assign
-            - not_use
-            - bind_existing
+        :param public_bind_type: Binding type of EIP. The value can be one of the following: auto_assign, not_use, bind_existing
         :param eip_id: EIP ID
         :param number_of_cn: Number of deployed CNs. The value ranges from 2 to the number of cluster nodes.
             The maximum value is 20 and the default value is 3.
@@ -242,7 +236,6 @@ class DWSHook(HuaweiBaseHook):
         """
         Creates a manual snapshot of the specified cluster. The cluster must be in the available state.
         When a snapshot is created, the cluster is labeled.
-
 
         :param name: Snapshot name, which must be unique and start with a letter.
             It consists of 4 to 64 characters, which are case-insensitive and contain letters, digits,
@@ -349,10 +342,7 @@ class DWSHook(HuaweiBaseHook):
             The default value is the same as that of the original cluster.
         :param port: Service port of a cluster. The value ranges from 8000 to 30000.
             The default value is 8000.
-        :param public_bind_type: Binding type of EIP. The value can be one of the following:
-            - auto_assign
-            - not_use
-            - bind_existing
+        :param public_bind_type: Binding type of EIP. The value can be one of the following:, auto_assign, not_use, bind_existing
         :param eip_id: EIP ID.
         :param enterprise_project_id: Enterprise project. The default enterprise project ID is 0.
         """
@@ -406,26 +396,3 @@ class DWSHook(HuaweiBaseHook):
         for tag in resp.tags:
             if tag.key == "snapshot_id":
                 return tag.value
-
-
-def get_ui_field_behaviour() -> dict[str, Any]:
-    """Returns custom UI field behaviour for Huawei Cloud Connection."""
-    return {
-        "hidden_fields": ["host", "port", "schema"],
-        "relabeling": {
-            "login": "Huawei Cloud Access Key ID",
-            "password": "Huawei Cloud Secret Access Key",
-        },
-        "placeholders": {
-            "login": "YOURACCESSKEYID",
-            "password": "********",
-            "schema": "obs-bucket-test",
-            "extra": json.dumps(
-                {
-                    "region": "cn-south-1",
-                    "project_id": "YOURPROJECTID"
-                },
-                indent=2,
-            ),
-        },
-    }

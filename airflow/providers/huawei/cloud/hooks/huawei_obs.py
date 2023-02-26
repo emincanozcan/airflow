@@ -410,9 +410,10 @@ class OBSHook(HuaweiBaseHook):
         :param bucket_name: The name of the bucket.
         :param object_key: Object name or the name of the uploaded file.
         :param object_type: The type of the object，default is content.
-            - file
+
+            - file:
                 Full path of the file/folder to be uploaded, for example, /aa/bb.txt, or /aa/.
-            - content
+            - content:
                 Upload text to the specified bucket using a string as the data source of the object,
                 or upload data to the specified bucket as a network stream or file stream using a
                 readable object with a "read" attribute as the data source of the object.
@@ -694,36 +695,3 @@ class OBSHook(HuaweiBaseHook):
             raise Exception(f"No access_key_secret is specified for connection: {self.huaweicloud_conn_id}.")
 
         return access_key_id, access_key_secret
-
-    # def get_default_region(self) -> str | None:
-    #     """
-    #     Gets region from the extra_config option in connection.
-    #     """
-    #     extra_config = self.conn.extra_dejson
-    #     default_region = extra_config.get("region", None)
-    #     if not default_region:
-    #         raise Exception(f"No region is specified for connection: {self.huaweicloud_conn_id}.")
-    #     return default_region
-
-    @staticmethod
-    def get_ui_field_behaviour() -> dict[str, Any]:
-        """Returns custom UI field behaviour for Huawei Cloud Connection."""
-        return {
-            "hidden_fields": ["host", "port"],
-            "relabeling": {
-                "login": "Huawei Cloud Access Key ID",
-                "password": "Huawei Cloud Secret Access Key",
-                "schema": "Bucket Name"
-            },
-            "placeholders": {
-                "login": "YOURACCESSKEYID",
-                "password": "********",
-                "schema": "obs-bucket-test",
-                "extra": json.dumps(
-                    {
-                        "region": "cn-south-1"
-                    },
-                    indent=2,
-                ),
-            },
-        }

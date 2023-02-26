@@ -29,10 +29,6 @@ class DWSClusterSensor(BaseSensorOperator):
     """
     Waits for a DWS cluster to reach a specific status.
 
-    .. seealso::
-        For more information on how to use this sensor, take a look at the guide:
-        :ref:`howto/sensor:DWSClusterSensor`
-
     :param cluster_name: The name for the cluster being pinged.
     :param target_status: The cluster status desired.
     """
@@ -69,10 +65,6 @@ class DWSClusterSensor(BaseSensorOperator):
 class DWSSnapshotSensor(BaseSensorOperator):
     """
     Waits for a DWS snapshot to reach a specific status.
-
-    .. seealso::
-        For more information on how to use this sensor, take a look at the guide:
-        :ref:`howto/sensor:DWSClusterSensor`
 
     :param snapshot_name: The name for the snapshot being pinged.
     :param target_status: The snapshot status desired.

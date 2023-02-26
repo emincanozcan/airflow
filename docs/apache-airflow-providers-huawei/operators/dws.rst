@@ -25,8 +25,6 @@ several operators to manages all the work of setting up, operating, and scaling 
 Operators
 ---------
 
-.. _howto/operator: DWSCreateClusterOperator:
-
 Create a Huawei Cloud DWS cluster
 =================================
 
@@ -38,8 +36,6 @@ To create a Huawei Cloud DWS Cluster with the specified parameters you can use.
     :dedent: 4
     :start-after: [START howto_operator_dws_create_cluster]
     :end-before: [END howto_operator_dws_create_cluster]
-
-.. _howto/operator: DWSCreateClusterSnapshotOperator:
 
 Create a Huawei Cloud DWS cluster snapshot
 ===========================================
@@ -67,8 +63,6 @@ To delete a Huawei Cloud DWS cluster snapshot with the specified parameters you 
     :start-after: [START howto_operator_dws_delete_snapshot]
     :end-before: [END howto_operator_dws_delete_snapshot]
 
-.. _howto/operator: DWSRestoreClusterOperator:
-
 Restore a Huawei Cloud DWS cluster using a snapshot
 ====================================================
 
@@ -81,8 +75,6 @@ To Restore a Huawei Cloud DWS cluster using a snapshot.
     :start-after: [START howto_operator_dws_restore_cluster]
     :end-before: [END howto_operator_dws_restore_cluster]
 
-.. _howto/operator: DWSDeleteClusterBasedOnSnapshotOperator:
-
 Delete Huawei Cloud DWS clusters based on snapshot.Filter by cluster tags
 =========================================================================
 
@@ -94,8 +86,6 @@ To Delete clusters based on snapshot.Filter by cluster tags.
     :dedent: 4
     :start-after: [START howto_operator_dws_delete_cluster_based_on_snapshot]
     :end-before: [END howto_operator_dws_delete_cluster_based_on_snapshot]
-
-.. _howto/operator: DWSDeleteClusterOperator:
 
 Delete a Huawei Cloud DWS cluster
 =================================
@@ -112,8 +102,6 @@ To Delete a Huawei Cloud DWS cluster.
 Sensors
 -------
 
-.. _howto/sensor: DWSClusterSensor:
-
 Waits for a DWS cluster to reach a specific status
 ==================================================
 
@@ -126,10 +114,8 @@ To wait for a DWS cluster to reach a specific status.
     :start-after: [START howto_sensor_dws_wait_cluster_available]
     :end-before: [END howto_sensor_dws_wait_cluster_available]
 
-.. _howto/sensor: DWSSnapshotSensor:
-
 Waits for a DWS snapshot to reach a specific status
-==================================================
+===================================================
 
 To wait for a DWS cluster to reach a specific status.
 :class:`~airflow.providers.huawei.cloud.sensors.dws.DWSSnapshotSensor`.

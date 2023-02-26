@@ -24,8 +24,6 @@ Airflow to `Object Storage Service (OBS) <https://support.huaweicloud.com/intl/e
 Operators
 ---------
 
-.. _howto/operator: OBSCreateBucketOperator:
-
 Create a Huawei Cloud OBS bucket
 ================================
 
@@ -33,12 +31,10 @@ To create a Huawei Cloud OBS bucket you can use
 :class:`~airflow.providers.huawei.cloud.operators.huawei_obs.OBSCreateBucketOperator`.
 
 .. exampleinclude:: /../../tests/system/providers/huawei/example_obs.py
-   :dedent: 4
    :language: python
+   :dedent: 4
    :start-after: [START howto_operator_obs_create_bucket]
    :end-before: [END howto_operator_obs_create_bucket]
-
-.. _howto/operator:OBSListBucketOperator:
 
 List Huawei Cloud OBS bucket
 ============================
@@ -47,12 +43,10 @@ To list Huawei Cloud OBS bucket you can use
 :class:`~airflow.providers.huawei.cloud.operators.huawei_obs.OBSListBucketOperator`.
 
 .. exampleinclude:: /../../tests/system/providers/huawei/example_obs.py
-   :dedent: 4
    :language: python
+   :dedent: 4
    :start-after: [START howto_operator_obs_list_bucket]
    :end-before: [END howto_operator_obs_list_bucket]
-
-.. _howto/operator:OBSDeleteBucketOperator:
 
 Delete a Huawei Cloud OBS bucket
 ================================
@@ -68,8 +62,6 @@ Non-empty buckets cannot be deleted directly.
     :start-after: [START howto_operator_obs_delete_bucket]
     :end-before: [END howto_operator_obs_delete_bucket]
 
-.. _howto/operator:OBSSetBucketTaggingOperator:
-
 Set the tags for a Huawei Cloud OBS bucket
 ==========================================
 
@@ -81,8 +73,6 @@ To set the tags for a Huawei Cloud OBS bucket you can use
     :dedent: 4
     :start-after: [START howto_operator_obs_set_bucket_tagging]
     :end-before: [END howto_operator_obs_set_bucket_tagging]
-
-.. _howto/operator:OBSGetBucketTaggingOperator:
 
 Get the tag of a Huawei Cloud OBS bucket
 ========================================
@@ -96,8 +86,6 @@ To get the tag set associated with a Huawei Cloud OBS bucket you can use
     :start-after: [START howto_operator_obs_get_bucket_tagging]
     :end-before: [END howto_operator_obs_get_bucket_tagging]
 
-.. _howto/operator:OBSDeleteBucketTaggingOperator:
-
 Delete the tags of a Huawei Cloud OBS bucket
 ============================================
 
@@ -109,8 +97,6 @@ To delete the tags of a Huawei Cloud OBS bucket you can use
     :dedent: 4
     :start-after: [START howto_operator_obs_delete_bucket_tagging]
     :end-before: [END howto_operator_obs_delete_bucket_tagging]
-
-.. _howto/operator:OBSCreateObjectOperator:
 
 Create a Huawei Cloud OBS object
 ================================
@@ -124,8 +110,6 @@ To create a new (or replace) Huawei Cloud OBS object you can use
     :start-after: [START howto_operator_obs_create_object]
     :end-before: [END howto_operator_obs_create_object]
 
-.. _howto/operator:OBSGetObjectOperator:
-
 get a Huawei Cloud OBS object
 =============================
 
@@ -137,8 +121,6 @@ To get a Huawei Cloud OBS object you can use
     :dedent: 4
     :start-after: [START howto_operator_obs_get_object]
     :end-before: [END howto_operator_obs_get_object]
-
-.. _howto/operator:OBSCopyObjectOperator:
 
 Copy a Huawei Cloud OBS object
 ==============================
@@ -154,8 +136,6 @@ Inter-region copy is not supported.
     :start-after: [START howto_operator_obs_copy_object]
     :end-before: [END howto_operator_obs_copy_object]
 
-.. _howto/operator:OBSMoveObjectOperator:
-
 To move a Huawei Cloud OBS object from one bucket to another you can use
 :class:`~airflow.providers.huawei.operators.huawei_obs.OBSMoveObjectOperator`.
 The Huawei Cloud OBS connection used here needs to have access to both source and destination bucket/key.
@@ -166,8 +146,6 @@ Inter-region move is not supported.
     :dedent: 4
     :start-after: [START howto_operator_obs_move_object]
     :end-before: [END howto_operator_obs_move_object]
-
-.. _howto/operator:OBSDeleteObjectOperator:
 
 Delete a Huawei Cloud OBS objects
 =================================
@@ -181,8 +159,6 @@ To delete a Huawei Cloud OBS object you can use
     :start-after: [START howto_operator_obs_delete_object]
     :end-before: [END howto_operator_obs_delete_object]
 
-.. _howto/operator:OBSDeleteBatchObjectOperator:
-
 Delete Huawei Cloud OBS objects
 ===============================
 
@@ -194,8 +170,6 @@ To delete one or multiple Huawei Cloud OBS objects you can use
     :dedent: 4
     :start-after: [START howto_operator_obs_delete_batch_object]
     :end-before: [END howto_operator_obs_delete_batch_object]
-
-.. _howto/operator:OBSListObjectsOperator:
 
 List Huawei Cloud OBS objects
 =============================
@@ -211,8 +185,6 @@ To list Huawei Cloud OBS objects within a Huawei Cloud OBS bucket you can use
 
 Sensors
 -------
-
-.. _howto/sensor:OBSObjectKeySensor:
 
 Wait on Huawei Cloud OBS object keys
 ====================================

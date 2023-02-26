@@ -25,7 +25,7 @@ Content
     :maxdepth: 1
     :caption: Guides
 
-    Connection types <connections/huawei>
+    Connection types <connections/index>
     Operators <operators/index>
 
 .. toctree::
