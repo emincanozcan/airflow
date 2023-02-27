@@ -49,8 +49,8 @@ class DWSHook(HuaweiBaseHook):
         *args,
         **kwargs
     ) -> None:
-        self.project_id = self.get_default_project_id() if project_id is None else project_id
         super().__init__(huaweicloud_conn_id, region, *args, **kwargs)
+        self.project_id = self.get_default_project_id() if project_id is None else project_id
 
     def get_credential(self) -> tuple:
         """
