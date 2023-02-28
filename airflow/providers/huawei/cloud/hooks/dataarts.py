@@ -29,35 +29,48 @@ from huaweicloudsdkdlf.v1.region.dlf_region import DlfRegion
 class DataArtsHook(HuaweiBaseHook):
     """Interact with Huawei Cloud DataArts DLF, using the huaweicloudsdkdlf library."""
     
-    def dlf_start_job(self, workspace, job_name, body):
+    def dlf_start_job(self, workspace, job_name, body) -> DlfSdk.StartJobResponse:
+        """
+        Start a job in DataArts DLF
+        
+        :param workspace: The workspace name.
+        :param job_name: The job name.
+        :param body: The request body.    
+        """
         try:
-            return self._get_dlf_client().start_job(self.dlf_start_job_request(workspace, job_name, body))
+            return self.get_dlf_client().start_job(self.dlf_start_job_request(workspace, job_name, body))
         except Exception as e:
             raise AirflowException(f"Errors when starting: {e}")
     
-    def dlf_show_job_status(self, workspace, job_name):
+    def dlf_show_job_status(self, workspace, job_name) -> str:
+        """
+        Show the status of a job in DataArts DLF
+        
+        :param workspace: The workspace name.
+        :param job_name: The job name.
+        """
         try:
-            return self._get_dlf_client().show_job_status(self.dlf_show_job_status_request(workspace, job_name)).to_json_object()["status"]
+            return self.get_dlf_client().show_job_status(self.dlf_show_job_status_request(workspace, job_name)).to_json_object()["status"]
         except Exception as e:
             raise AirflowException(f"Errors when showing job status: {e}")
     
-    def dlf_list_job_instances(self, workspace):
+    def dlf_list_job_instances(self, workspace) -> list:
         try:
-            return self._get_dlf_client().list_job_instances(self.dlf_list_job_instances_request(workspace)).instances
+            return self.get_dlf_client().list_job_instances(self.dlf_list_job_instances_request(workspace)).instances
         except Exception as e:
             raise AirflowException(f"Errors when listing job instances: {e}")
 
-    def _get_dlf_client(self) -> DlfSdk.DlfClient:
+    def get_dlf_client(self) -> DlfSdk.DlfClient:
 
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, self.get_default_project_id())
+        credentials = BasicCredentials(ak, sk, self.project_id)
 
         return (
             DlfSdk.DlfClient.new_builder()
             .with_credentials(credentials)
-            .with_region(DlfRegion.value_of(self.get_region()))
+            .with_region(DlfRegion.value_of(self.region))
             .build()
         )
     

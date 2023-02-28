@@ -26,6 +26,7 @@ from airflow.providers.huawei.cloud.hooks.dataarts import DataArtsHook
 if TYPE_CHECKING:
     from airflow.utils.context import Context
 
+
 class DataArtsDLFStartJobOperator(BaseOperator):
     """
     This operator is used to start a job.
@@ -38,6 +39,7 @@ class DataArtsDLFStartJobOperator(BaseOperator):
     :param region: The name of the region.
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
     """
+
     def __init__(
         self,
         job_name: str,
@@ -59,9 +61,11 @@ class DataArtsDLFStartJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dataarts_hook = DataArtsHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+            huaweicloud_conn_id=self.huaweicloud_conn_id,
+            region=self.region,
+            project_id=self.project_id
+        )
 
         dataarts_hook.dlf_start_job(
             workspace=self.workspace,

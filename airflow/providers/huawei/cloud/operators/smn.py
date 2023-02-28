@@ -67,7 +67,6 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
 
     def execute(self, context: Context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         smn_hook = SMNHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
@@ -108,13 +107,10 @@ class SMNPublishTextMessageOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
+        
+        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        # Connection parameter and kwargs parameter from Airflow UI
-        smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
-
-        smn_hook.send_message(topic_urn=self.topic_urn,
-                              message=self.message)
+        smn_hook.send_message(topic_urn=self.topic_urn,message=self.message)
 
 
 class SMNPublishJsonMessageOperator(BaseOperator):
@@ -128,8 +124,6 @@ class SMNPublishJsonMessageOperator(BaseOperator):
     :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
-
-    # TODO: update message_structure param -> sms, email etc.
 
     def __init__(
         self,
@@ -158,9 +152,7 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
-        # Connection parameter and kwargs parameter from Airflow UI
-        smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+        
+        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        smn_hook.send_message(topic_urn=self.topic_urn,
-                              message_structure=self.message_structure)
+        smn_hook.send_message(topic_urn=self.topic_urn, message_structure=self.message_structure)

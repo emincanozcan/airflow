@@ -57,7 +57,6 @@ class CDMCreateJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
@@ -101,7 +100,6 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
@@ -142,7 +140,6 @@ class CDMStartJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
@@ -182,7 +179,6 @@ class CDMDeleteJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
@@ -222,7 +218,6 @@ class CDMStopJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         cdm_hook = CDMHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 

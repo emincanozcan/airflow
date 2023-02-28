@@ -17,9 +17,7 @@
 # under the License.
 
 from __future__ import annotations
-import json
 
-from typing import Any
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
 
@@ -30,7 +28,7 @@ import huaweicloudsdksmn.v2 as SmnSdk
 
 class SMNHook(HuaweiBaseHook):
     """Interact with Huawei Cloud SMN, using the huaweicloudsdksmn library."""
-
+    
     def send_message(self,
                         topic_urn: str,
                         tags: dict | None = None,
@@ -41,15 +39,14 @@ class SMNHook(HuaweiBaseHook):
         """
         This function is used to publish messages to a topic
 
-        :param project_id: Specifies the project ID.For details about how to obtain the project ID
+        :param project_id: Specifies the project ID.
         :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource identifier.
         :param tags: Specifies the dictionary consisting of variable parameters and values.
-        :param template_name: Specifies the message template name
-        :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
-        :param message_structure: Specifies the message structure, which contains JSON strings
-        :param message: Specifies the message content
+        :param template_name: Specifies the message template name.
+        :param subject: Specifies the message subject, which is used as the email subject when you publish email messages.
+        :param message_structure: Specifies the message structure, which contains JSON strings.
+        :param message: Specifies the message content.
         """
-        
         kwargs = dict()
 
         if message_structure:
@@ -63,31 +60,31 @@ class SMNHook(HuaweiBaseHook):
         if message:
             kwargs['message'] = message
 
-        self._send_request(self._make_publish_app_message_request(
+        self.send_request(self.make_publish_app_message_request(
             topic_urn=topic_urn, body=kwargs))
 
-    def _send_request(self, request: SmnSdk.PublishMessageRequest) -> None:
+    def send_request(self, request: SmnSdk.PublishMessageRequest) -> None:
         try:
-            self._get_smn_client().publish_message(request)
+            self.get_smn_client().publish_message(request)
             self.log.info("The message is published successfully")
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when publishing: {e}")
 
-    def _make_publish_app_message_request(self, topic_urn, body: dict) -> SmnSdk.PublishMessageRequest:
+    def make_publish_app_message_request(self, topic_urn, body: dict) -> SmnSdk.PublishMessageRequest:
         request = SmnSdk.PublishMessageRequest()
         request.topic_urn = topic_urn
         request.body = SmnSdk.PublishMessageRequestBody(**body)
         return request
 
-    def _get_smn_client(self) -> SmnSdk.SmnClient:
+    def get_smn_client(self) -> SmnSdk.SmnClient:
 
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, self.get_default_project_id())
+        credentials = BasicCredentials(ak, sk, self.project_id)
 
         return SmnSdk.SmnClient.new_builder() \
             .with_credentials(credentials) \
-            .with_region(SmnRegion.value_of(self.get_region())) \
+            .with_region(SmnRegion.value_of(self.region)) \
             .build()

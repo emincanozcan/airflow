@@ -38,15 +38,10 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
     """
     
-    #Status of a job, including STARTING, NORMAL, EXCEPTION, STOPPING, STOPPED.
-    #Status of a job instance, including waiting, running, success, fail, running-exception, pause, manual-stop
-    
     END_STATES = (
         "STOPPED", 
         "EXCEPTION"
     )
-    
-    #CONTINIOUS_STATES = "STARTING"
     
     INTERMEDIATE_STATES = (
         "waiting",
@@ -80,24 +75,16 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
         Query the job status.
         @param self - the object itself
         @param context - the context of the object
-        @returns True if the job status stopped, False otherwise
+        @returns True if the job status success, False otherwise
         """
         
         status = self.get_hook.dlf_show_job_status(job_name=self.job_name, workspace=self.workspace)
-        print(f"job state: {status}")
         if status not in self.END_STATES:
             return False
-            
-        """ if state == self.CONTINIOUS_STATES:
-            return False """
         
         instances = self.get_hook.dlf_list_job_instances(workspace=self.workspace)
-        print(f"instances count: {instances}")
-        #raise AirflowException(instances)
         for instance in instances:
-            #print(instance)
             if instance.job_name == self.job_name:
-                print(f"instance state: {instance.status}")
                 if instance.status in self.FAILURE_STATES:
                     raise AirflowException("DataArts DLF sensor failed")
 
@@ -105,12 +92,7 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
                     return False
                 
                 return True
-        """ if state in self.FAILURE_STATES:
-            raise AirflowException("DataArts DLF sensor failed")
-
-        if state in self.INTERMEDIATE_STATES:
-            return False """
-        #raise AirflowException("DataArts DLF job not found")
+    
         return False
     
     @cached_property

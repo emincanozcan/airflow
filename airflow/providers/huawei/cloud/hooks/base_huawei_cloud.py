@@ -13,32 +13,29 @@ class HuaweiBaseHook(BaseHook):
     hook_name = "Huawei Cloud"
     
     def __init__(self,
+                 region,
+                 project_id,
                  huaweicloud_conn_id="huaweicloud_default",
-                 region=None,
-                 project_id=None,
                  *args,
                  **kwargs) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.preferred_region = region
-        self.preferred_project_id = project_id
+        self.region = self.get_default_region() if region is None else region
+        self.project_id = self.get_default_project_id() if project_id is None else project_id
         self.conn = self.get_connection(self.huaweicloud_conn_id)
         super().__init__(*args, **kwargs)
+        
     
     def get_default_project_id(self) -> str | None:
         """
         Gets project_id from the extra_config option in connection.
         """
         
-        if hasattr(self, "preferred_project_id") and self.preferred_project_id is not None:
-            return self.preferred_project_id
         if self.conn.extra_dejson.get('project_id', None) is not None:
             return self.conn.extra_dejson.get('project_id', None)
         raise Exception(f"No project_id is specified for connection: {self.huaweicloud_conn_id}")
     
-    def get_region(self) -> str:
+    def get_default_region(self) -> str:
         """Returns region for the hook."""
-        if hasattr(self, "preferred_region") and self.preferred_region is not None:
-            return self.preferred_region
         if self.conn.extra_dejson.get('region', None) is not None:
             return self.conn.extra_dejson.get('region', None)
         raise Exception(f"No region is specified for connection")
@@ -57,7 +54,8 @@ class HuaweiBaseHook(BaseHook):
                 "password": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
                 "extra": json.dumps(
                     {
-                        "region": "ap-southeast-3"
+                        "region": "ap-southeast-3",
+                        "project_id": "1234567890",
                     },
                     indent=2,
                 ),
@@ -66,6 +64,6 @@ class HuaweiBaseHook(BaseHook):
     
     def test_connection(self):
         try:
-            return True, self.get_region()
+            return True, self.get_default_region()
         except Exception as e:
             return False, str(f"{type(e).__name__!r} error occurred while testing connection: {e}")

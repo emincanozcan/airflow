@@ -35,8 +35,18 @@ class CDMHook(HuaweiBaseHook):
         cluster_id,
         jobs
     ) -> CdmSdk.CreateJobResponse:
+        """
+        Create a job in CDM cluster
+
+        :param cluster_id: The ID of the cluster.   
+        :type cluster_id: str
+        :param jobs: The job information.
+        :type jobs: list
+        :return: The response of the create job request.
+        :rtype: CdmSdk.CreateJobResponse
+        """
         try:
-            return self._get_cdm_client().create_job(self.create_job_request(cluster_id=cluster_id, jobs=jobs))
+            return self.get_cdm_client().create_job(self.create_job_request(cluster_id=cluster_id, jobs=jobs))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when creating job: {e}")
@@ -47,39 +57,94 @@ class CDMHook(HuaweiBaseHook):
         clusters,
         jobs
     ) -> CdmSdk.CreateAndStartRandomClusterJobResponse:
+        """
+        Create and start a job in CDM cluster
+
+        :param x_language: The language of the request.
+        :type x_language: str
+        :param clusters: The cluster information.
+        :type clusters: list
+        :param jobs: The job information.
+        :type jobs: list
+        :return: The response of the create and start job request.
+        :rtype: CdmSdk.CreateAndStartRandomClusterJobResponse
+        """
         try:
-            return self._get_cdm_client().create_and_start_random_cluster_job(
-                self.create_and_execute_job_request(x_language=x_language,
-                    clusters=clusters, jobs=jobs
-                ))
+            return self.get_cdm_client().create_and_start_random_cluster_job(
+                self.create_and_execute_job_request(
+                    x_language=x_language,
+                    clusters=clusters,
+                    jobs=jobs
+                )
+            )
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when creating job: {e}")
 
     def start_job(self, cluster_id, job_name) -> CdmSdk.StartJobResponse:
+        """
+        Start a job in CDM cluster
+        
+        :param cluster_id: The ID of the cluster.
+        :type cluster_id: str
+        :param job_name: The name of the job.
+        :type job_name: str
+        :return: The response of the start job request.
+        :rtype: CdmSdk.StartJobResponse
+        """
         try:
-            return self._get_cdm_client().start_job(self.start_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self.get_cdm_client().start_job(self.start_job_request(cluster_id=cluster_id, job_name=job_name))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when starting job: {e}")
 
     def delete_job(self, cluster_id, job_name) -> CdmSdk.DeleteJobResponse:
+        """
+        Delete a job in CDM cluster
+        
+        :param cluster_id: The ID of the cluster.
+        :type cluster_id: str
+        :param job_name: The name of the job.
+        :type job_name: str
+        :return: The response of the delete job request.
+        :rtype: CdmSdk.DeleteJobResponse
+        """
         try:
-            return self._get_cdm_client().delete_job(self.delete_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self.get_cdm_client().delete_job(self.delete_job_request(cluster_id=cluster_id, job_name=job_name))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when deleting job: {e}")
 
     def stop_job(self, cluster_id, job_name) -> CdmSdk.StopJobResponse:
+        """
+        Stop a job in CDM cluster
+        
+        :param cluster_id: The ID of the cluster.
+        :type cluster_id: str
+        :param job_name: The name of the job.
+        :type job_name: str
+        :return: The response of the stop job request.
+        :rtype: CdmSdk.StopJobResponse
+        """
         try:
-            return self._get_cdm_client().stop_job(self.stop_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self.get_cdm_client().stop_job(self.stop_job_request(cluster_id=cluster_id, job_name=job_name))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when stopping job: {e}")
 
     def show_job_status(self, cluster_id, job_name) -> CdmSdk.ShowJobStatusResponse:
+        """
+        Show the status of a job in CDM cluster
+        
+        :param cluster_id: The ID of the cluster.
+        :type cluster_id: str
+        :param job_name: The name of the job.
+        :type job_name: str
+        :return: The response of the show job status request.
+        :rtype: CdmSdk.ShowJobStatusResponse
+        """
         try:
-            response = self._get_cdm_client().show_job_status(
+            response = self.get_cdm_client().show_job_status(
                 self.show_job_status_request(cluster_id=cluster_id, job_name=job_name)).to_json_object()
             return response["submissions"]
         except Exception as e:
@@ -131,16 +196,16 @@ class CDMHook(HuaweiBaseHook):
         request.job_name = job_name
         return request
 
-    def _get_cdm_client(self) -> CdmSdk.CdmClient:
+    def get_cdm_client(self) -> CdmSdk.CdmClient:
 
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, self.get_default_project_id())
+        credentials = BasicCredentials(ak, sk, self.project_id)
 
         return (
             CdmSdk.CdmClient.new_builder()
             .with_credentials(credentials)
-            .with_region(CdmRegion.value_of(self.get_region()))
+            .with_region(CdmRegion.value_of(self.region))
             .build()
         )

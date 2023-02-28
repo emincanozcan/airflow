@@ -23,11 +23,9 @@ from unittest import mock
 
 
 from airflow.providers.huawei.cloud.hooks.cdm import CDMHook
-from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default
+from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
 
 CDM_STRING = "airflow.providers.huawei.cloud.hooks.cdm.{}"
-MOCK_CDM_CONN_ID = "mock_cdm_default"
-PROJECT_ID = "project-id"
 JOB_NAME = "job-name"
 CLUSTER_ID = "cluster-id"
 JOBS = [] # NOTE: Huawei Cloud doesn't accept empty job list. But, we have mocked the SDK, so there is no problem for tests.
@@ -38,16 +36,13 @@ class TestCdmHook(unittest.TestCase):
             CDM_STRING.format("CDMHook.__init__"),
             new=mock_huawei_cloud_default,
         ):
-            self.hook = CDMHook(huaweicloud_conn_id=MOCK_CDM_CONN_ID, project_id=PROJECT_ID)
-
-    def test_get_default_region(self):
-        assert self.hook.get_region() == "ap-southeast-3"
+            self.hook = CDMHook()
 
     def test_get_cdm_client(self):
-        client = self.hook._get_cdm_client()
-        assert client.get_credentials().ak == "AK"
-        assert client.get_credentials().sk == "SK"
-        assert client.get_credentials().project_id == PROJECT_ID
+        client = self.hook.get_cdm_client()
+        assert client.get_credentials().ak == default_mock_constants["AK"]
+        assert client.get_credentials().sk == default_mock_constants["SK"]
+        assert client.get_credentials().project_id == default_mock_constants["PROJECT_ID"]
 
     @mock.patch(CDM_STRING.format("CdmSdk.CdmClient.create_job"))
     def test_create_job(self, create_job):

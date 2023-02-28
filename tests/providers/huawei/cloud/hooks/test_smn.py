@@ -22,10 +22,8 @@ from unittest import mock
 
 
 from airflow.providers.huawei.cloud.hooks.smn import SMNHook
-from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default
+from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
 SMN_STRING = "airflow.providers.huawei.cloud.hooks.smn.{}"
-MOCK_SMN_CONN_ID = "mock_smn_default"
-PROJECT_ID = "project-id"
 
 class TestSmnHook(unittest.TestCase):
     def setUp(self):
@@ -33,33 +31,33 @@ class TestSmnHook(unittest.TestCase):
             SMN_STRING.format("SMNHook.__init__"),
             new=mock_huawei_cloud_default,
         ):
-            self.hook = SMNHook(huaweicloud_conn_id=MOCK_SMN_CONN_ID, project_id=PROJECT_ID)
+            self.hook = SMNHook()
 
     def test_get_default_region(self):
-        assert self.hook.get_region() == "ap-southeast-3"
+        assert self.hook.region == default_mock_constants["REGION"]
 
     def test_get_smn_client(self):
-        client = self.hook._get_smn_client()
-        assert client.get_credentials().ak == "AK"
-        assert client.get_credentials().sk == "SK"
-        assert client.get_credentials().project_id == PROJECT_ID
+        client = self.hook.get_smn_client()
+        assert client.get_credentials().ak == default_mock_constants["AK"]
+        assert client.get_credentials().sk == default_mock_constants["SK"]
+        assert client.get_credentials().project_id == default_mock_constants["PROJECT_ID"]
 
     def test_get_request_body(self):
-        req = self.hook._make_publish_app_message_request(
+        req = self.hook.make_publish_app_message_request(
             "test_urn", {"subject": "bar"})
         assert req.body.subject == "bar"
 
     @mock.patch(SMN_STRING.format("SmnSdk.smn_client.SmnClient.publish_message"))
     def test_send_request(self, publish_message):
-        var = self.hook._make_publish_app_message_request(
+        var = self.hook.make_publish_app_message_request(
             "test_urn", {"subject": "bar"})
-        self.hook._send_request(var)
+        self.hook.send_request(var)
         publish_message.assert_called_once_with(var)
 
-    @mock.patch(SMN_STRING.format("SMNHook._send_request"))
+    @mock.patch(SMN_STRING.format("SMNHook.send_request"))
     def test_publish_message(self, send_request):
-        payload = {"message_structure": '{"default":"Merhaba", "sms":"Merhaba SMS", "email":"Merhaba EMail"}',
-                   "tags": {"a": "1"},
+        payload = {"message_structure": '{"default":"Hello", "sms":"Hello SMS", "email":"Hello Email"}',
+                   "tags": {"name": "value"},
                    "message": "message"}
         self.hook.send_message(topic_urn="example-urn", **payload)
-        send_request.assert_called_once_with(self.hook._make_publish_app_message_request("example-urn", payload))
+        send_request.assert_called_once_with(self.hook.make_publish_app_message_request("example-urn", payload))

@@ -93,7 +93,6 @@ class DLICreateQueueOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.create_queue(
@@ -144,7 +143,6 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.update_queue_cidr( queue_name=self.queue_name, cidr_in_vpc=self.cidr_in_vpc
@@ -178,7 +176,6 @@ class DLIDeleteQueueOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.delete_queue(queue_name=self.queue_name).to_json_object()
@@ -220,7 +217,6 @@ class DLIListQueuesOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         list = dli_hook.list_queues(
@@ -363,7 +359,6 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.create_batch_job(
@@ -426,11 +421,9 @@ class DLIUploadFilesOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        return dli_hook.upload_files( group=self.group, paths=self.paths
-        ).to_json_object()
+        return dli_hook.upload_files( group=self.group, paths=self.paths).to_json_object()
 
 
 class DLIRunSqlJobOperator(BaseOperator):
@@ -473,7 +466,6 @@ class DLIRunSqlJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.run_job(
@@ -523,7 +515,6 @@ class DLIGetSqlJobResultOperator(BaseOperator):
 
     def execute(self, context):
 
-        # Connection parameter and kwargs parameter from Airflow UI
         dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
         return dli_hook.get_job_result(

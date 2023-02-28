@@ -23,11 +23,9 @@ from unittest import mock
 
 
 from airflow.providers.huawei.cloud.hooks.dataarts import DataArtsHook
-from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default
+from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
 
 DLF_STRING = "airflow.providers.huawei.cloud.hooks.dataarts.{}"
-MOCK_DLF_CONN_ID = "mock_dlf_default"
-PROJECT_ID = "project-id"
 JOB_NAME = "job-name"
 WORKSPACE = "workspace-id"
 BODY = {"jobParams": [{"name": "param1", "value": "value1"}]}
@@ -38,16 +36,13 @@ class TestDataArtsHook(unittest.TestCase):
             DLF_STRING.format("DataArtsHook.__init__"),
             new=mock_huawei_cloud_default,
         ):
-            self.hook = DataArtsHook(huaweicloud_conn_id=MOCK_DLF_CONN_ID, project_id=PROJECT_ID)
-
-    def test_get_default_region(self):
-        assert self.hook.get_region() == "ap-southeast-3"
+            self.hook = DataArtsHook()
 
     def test_get_dlf_client(self):
-        client = self.hook._get_dlf_client()
-        assert client.get_credentials().ak == "AK"
-        assert client.get_credentials().sk == "SK"
-        assert client.get_credentials().project_id == PROJECT_ID
+        client = self.hook.get_dlf_client()
+        assert client.get_credentials().ak == default_mock_constants["AK"]
+        assert client.get_credentials().sk == default_mock_constants["SK"]
+        assert client.get_credentials().project_id == default_mock_constants["PROJECT_ID"]
 
     @mock.patch(DLF_STRING.format("DlfSdk.DlfClient.start_job"))
     def test_start_job(self, start_job):

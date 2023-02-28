@@ -21,14 +21,21 @@ import json
 
 from airflow.models import Connection
 
-AK = "AK"
-SK = "SK"
+default_mock_constants = {
+    "AK": "AK",
+    "SK": "SK",
+    "PROJECT_ID": "project_id",
+    "REGION": "ap-southeast-3",
+    "CONN_ID": "mock_smn_default"
+}
 
-def mock_huawei_cloud_default(self, huaweicloud_conn_id="mock_default_connection", region="ap-southeast-3", project_id="project_id"):
+def mock_huawei_cloud_default(self, huaweicloud_conn_id=default_mock_constants["CONN_ID"], region=default_mock_constants["REGION"], project_id=default_mock_constants["PROJECT_ID"]):
     self.huaweicloud_conn_id = huaweicloud_conn_id
+    self.project_id = project_id
+    self.region = region
     self.conn = Connection(
-        login=AK,
-        password=SK,
+        login=default_mock_constants["AK"],
+        password=default_mock_constants["SK"],
         extra=json.dumps(
             {
                 "region": region,
@@ -36,3 +43,5 @@ def mock_huawei_cloud_default(self, huaweicloud_conn_id="mock_default_connection
             }
         )
     )
+
+
