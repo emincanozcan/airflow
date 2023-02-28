@@ -27,6 +27,7 @@ Data Lake Factory (DataArts Factory) is a big data platform designed specificall
 DataArts Factory enables a variety of operations such as data management, data integration, script development, job scheduling, and monitoring, facilitating the data analysis and processing procedure.
 
  - :class:`~airflow.providers.huawei.cloud.operators.dataarts.DataArtsDLFStartJobOperator`
+ - :class:`~airflow.providers.huawei.cloud.sensors.dataarts.DataArtsDLFShowJobStatusSensor`
 
 Operators
 ---------

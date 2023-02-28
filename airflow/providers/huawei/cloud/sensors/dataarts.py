@@ -59,8 +59,9 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
         self,
         *,
         job_name: str,
-        project_id: str | None = None,
         workspace: str | None = None,
+        project_id: str | None = None,
+        region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
     ) -> None:
@@ -69,6 +70,7 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
         self.job_name = job_name
         self.workspace = workspace
         self.project_id = project_id
+        self.region = region
 
     def poke(self, context: Context) -> bool:
         """
@@ -98,4 +100,4 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DataArtsHook:
         """Create and return a DataArtsHook"""
-        return DataArtsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id)
+        return DataArtsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)

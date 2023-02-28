@@ -19,9 +19,9 @@ class HuaweiBaseHook(BaseHook):
                  *args,
                  **kwargs) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
+        self.conn = self.get_connection(self.huaweicloud_conn_id)
         self.region = self.get_default_region() if region is None else region
         self.project_id = self.get_default_project_id() if project_id is None else project_id
-        self.conn = self.get_connection(self.huaweicloud_conn_id)
         super().__init__(*args, **kwargs)
         
     

@@ -15,7 +15,7 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-"""This module contains Huawei Cloud SMN operators."""
+"""This module contains Huawei Cloud CDM operators."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

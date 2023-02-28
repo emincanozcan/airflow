@@ -61,6 +61,7 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
         cluster_id: str,
         job_name: str,
         project_id: str | None = None,
+        region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
     ) -> None:
@@ -69,6 +70,7 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
         self.cluster_id = cluster_id
         self.job_name = job_name
         self.project_id = project_id
+        self.region = region
 
     def poke(self, context: Context) -> bool:
         """
@@ -91,5 +93,5 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> CDMHook:
         """Create and return a CDMHook"""
-        return CDMHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id)
+        return CDMHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
 

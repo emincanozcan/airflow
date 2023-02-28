@@ -32,6 +32,7 @@ of data source migration and integration and effectively improving the data migr
  - :class:`~airflow.providers.huawei.cloud.operators.cdm.CDMStartJobOperator`
  - :class:`~airflow.providers.huawei.cloud.operators.cdm.CDMDeleteJobOperator`
  - :class:`~airflow.providers.huawei.cloud.operators.cdm.CDMStopJobOperator`
+ - :class:`~airflow.providers.huawei.cloud.sensors.cdm.CDMShowJobStatusSensor`
 
 Operators
 ---------

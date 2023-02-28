@@ -49,6 +49,7 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
         *,
         job_id: str,
         project_id: str | None = None,
+        region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
     ) -> None:
@@ -56,6 +57,7 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
         self.job_id = job_id
         self.project_id = project_id
+        self.region = region
 
     def poke(self, context: Context) -> bool:
         state = self.get_hook.show_batch_state(job_id=self.job_id)
@@ -69,7 +71,7 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DLIHook:
         """Create and return a DLIHook"""
-        return DLIHook(self.huaweicloud_conn_id, project_id=self.project_id)
+        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
 
 class DLISqlShowJobStatusSensor(BaseSensorOperator):
     
@@ -95,6 +97,7 @@ class DLISqlShowJobStatusSensor(BaseSensorOperator):
         *,
         job_id: str,
         project_id: str | None = None,
+        region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs: Any,
     ) -> None:
@@ -102,6 +105,7 @@ class DLISqlShowJobStatusSensor(BaseSensorOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
         self.job_id = job_id
         self.project_id = project_id
+        self.region = region
 
     def poke(self, context: Context) -> bool:
         state = self.get_hook.show_job_status(job_id=self.job_id)
@@ -115,4 +119,4 @@ class DLISqlShowJobStatusSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DLIHook:
         """Create and return a DLIHook"""
-        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id)
+        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)

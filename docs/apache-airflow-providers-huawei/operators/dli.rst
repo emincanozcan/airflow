@@ -33,6 +33,8 @@ Now, working with streaming and batch data and interactive analysis in data lake
  - :class:`~airflow.providers.huawei.cloud.operators.dli.DLIRunSqlJobOperator`
  - :class:`~airflow.providers.huawei.cloud.operators.dli.DLIUpdateQueueCidrOperator`
  - :class:`~airflow.providers.huawei.cloud.operators.dli.DLIGetSqlJobResultOperator`
+ - :class:`~airflow.providers.huawei.cloud.sensors.dli.DLISparkShowBatchStateSensor`
+ - :class:`~airflow.providers.huawei.cloud.sensors.dli.DLISqlShowJobStatusSensor`
 
 Operators
 ---------
