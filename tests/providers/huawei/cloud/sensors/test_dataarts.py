@@ -29,6 +29,7 @@ MOCK_PROJECT_ID = "test-project"
 MOCK_CONN_ID = "huaweicloud_default"
 MOCK_TASK_ID = "test-dlf-operator"
 MOCK_WORKSPACE = "workspace-id"
+MOCK_REGION = "region"
 
 
 class TestDataArtsDLFShowJobStatusSensor(unittest.TestCase):
@@ -39,13 +40,14 @@ class TestDataArtsDLFShowJobStatusSensor(unittest.TestCase):
             project_id=MOCK_PROJECT_ID,
             job_name=MOCK_JOB_NAME,
             huaweicloud_conn_id=MOCK_CONN_ID,
+            region=MOCK_REGION
         )
 
     @mock.patch(DLF_SENSOR_STRING.format("DataArtsHook"))
     def test_get_hook(self, mock_service):
         self.job_status_sensor.get_hook()
         mock_service.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION)
 
     @mock.patch(DLF_SENSOR_STRING.format("DataArtsDLFShowJobStatusSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_job_status_starting(self, mock_service):

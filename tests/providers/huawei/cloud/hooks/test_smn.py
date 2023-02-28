@@ -58,6 +58,7 @@ class TestSmnHook(unittest.TestCase):
     def test_publish_message(self, send_request):
         payload = {"message_structure": '{"default":"Hello", "sms":"Hello SMS", "email":"Hello Email"}',
                    "tags": {"name": "value"},
-                   "message": "message"}
+                   "message": "message",
+                   "subject": "subject"}
         self.hook.send_message(topic_urn="example-urn", **payload)
         send_request.assert_called_once_with(self.hook.make_publish_app_message_request("example-urn", payload))

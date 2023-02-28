@@ -43,7 +43,7 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     template_fields: Sequence[str] = ("tags",)
     template_ext: Sequence[str] = ()
     ui_color = "#66c3ff"
-    
+
     def __init__(
         self,
         topic_urn: str,
@@ -70,9 +70,12 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
         smn_hook = SMNHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        smn_hook.send_message(topic_urn=self.topic_urn,
-                              tags=self.tags,
-                              template_name=self.template_name)
+        smn_hook.send_message(
+            topic_urn=self.topic_urn,
+            tags=self.tags,
+            template_name=self.template_name,
+            subject=self.subject
+        )
 
 
 class SMNPublishTextMessageOperator(BaseOperator):
@@ -107,10 +110,18 @@ class SMNPublishTextMessageOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
-        
-        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        smn_hook.send_message(topic_urn=self.topic_urn,message=self.message)
+        smn_hook = SMNHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id,
+            region=self.region,
+            project_id=self.project_id
+        )
+
+        smn_hook.send_message(
+            topic_urn=self.topic_urn,
+            message=self.message,
+            subject=self.subject
+        )
 
 
 class SMNPublishJsonMessageOperator(BaseOperator):
@@ -141,18 +152,27 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        
 
         self.region = region
         self.project_id = project_id
         self.topic_urn = topic_urn
         self.subject = subject
-        msg = {"default": default, "sms": sms, "email": email, "http": http, "https": https, "functionstage": functionstage}
-        self.message_structure = json.dumps({i:j for i,j in msg.items() if j != None})
+        msg = {"default": default, "sms": sms, "email": email,
+               "http": http, "https": https, "functionstage": functionstage}
+        self.message_structure = json.dumps(
+            {i: j for i, j in msg.items() if j != None})
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
-        
-        smn_hook = SMNHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
 
-        smn_hook.send_message(topic_urn=self.topic_urn, message_structure=self.message_structure)
+        smn_hook = SMNHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id,
+            region=self.region,
+            project_id=self.project_id
+        )
+
+        smn_hook.send_message(
+            topic_urn=self.topic_urn,
+            message_structure=self.message_structure,
+            subject=self.subject
+        )

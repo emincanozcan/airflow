@@ -29,6 +29,7 @@ MOCK_PROJECT_ID = "test-project"
 MOCK_CONN_ID = "huaweicloud_default"
 MOCK_TASK_ID = "test-cdm-operator"
 MOCK_CLUSTER_ID = "cluster-id"
+MOCK_REGION = "region"
 
 MOCK_STATUS_RESPONSE = {
     "submissions": [
@@ -51,12 +52,13 @@ class TestCDMSensor(unittest.TestCase):
             project_id=MOCK_PROJECT_ID,
             job_name=MOCK_JOB_NAME,
             huaweicloud_conn_id=MOCK_CONN_ID,
+            region=MOCK_REGION
         )
 
     @mock.patch(CDM_SENSOR_STRING.format("CDMHook"))
     def test_get_hook(self, mock_service):
         self.job_status_sensor.get_hook()
-        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID)
+        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION)
 
     @mock.patch(CDM_SENSOR_STRING.format("CDMShowJobStatusSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_job_status(self, mock_service):
