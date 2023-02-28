@@ -20,7 +20,6 @@ with DAG(
     # [START howto_operator_dlf_start_job]
     start_job = DataArtsDLFStartJobOperator(
         task_id="dlf_start_job",
-        project_id=project_id,
         workspace=workspace,
         body=body,
         job_name=job_name
@@ -29,7 +28,9 @@ with DAG(
 
     # [START howto_sensor_dlf_show_job_status]
     job_status_sensor = DataArtsDLFShowJobStatusSensor(
-        task_id="dlf_show_job_status", project_id=project_id, job_name=job_name, workspace=workspace
+        task_id="dlf_show_job_status",  
+        job_name=job_name, 
+        workspace=workspace
     )
     # [END howto_sensor_dlf_show_job_status]
     

@@ -25,7 +25,6 @@ with DAG(
     # [START howto_operator_cdm_create_job]
     create_job = CDMCreateJobOperator(
         task_id="cdm_create_job",
-        project_id=project_id,
         cluster_id=cluster_id,
         jobs=jobs
     )
@@ -34,35 +33,31 @@ with DAG(
     # [START howto_operator_cdm_create_and_execute_job]
     create_and_execute_job = CDMCreateAndExecuteJobOperator(
         task_id="cdm_create_and_execute_job",
-        project_id=project_id,
         x_language=x_language,
         clusters=clusters,
         jobs=jobs
     )
     # [END howto_operator_cdm_create_and_execute_job]
-    
+
     # [START howto_operator_cdm_start_job]
     start_job = CDMStartJobOperator(
         task_id="cdm_start_job",
-        project_id=project_id,
         cluster_id=cluster_id,
         job_name=job_name
     )
     # [END howto_operator_cdm_start_job]
-    
+
     # [START howto_operator_cdm_stop_job]
     stop_job = CDMStopJobOperator(
         task_id="cdm_stop_job",
-        project_id=project_id,
         cluster_id=cluster_id,
         job_name=job_name
     )
     # [END howto_operator_cdm_stop_job]
-    
+
     # [START howto_operator_cdm_delete_job]
     delete_job = CDMDeleteJobOperator(
         task_id="cdm_delete_job",
-        project_id=project_id,
         cluster_id=cluster_id,
         job_name=job_name
     )
@@ -70,7 +65,8 @@ with DAG(
 
     # [START howto_sensor_cdm_show_job_status]
     job_status_sensor = CDMShowJobStatusSensor(
-        task_id="cdm_show_job_status", project_id=project_id, cluster_id=cluster_id, job_name=job_name
+        task_id="cdm_show_job_status",
+        cluster_id=cluster_id,
+        job_name=job_name
     )
     # [END howto_sensor_cdm_show_job_status]
-    

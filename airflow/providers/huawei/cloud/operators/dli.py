@@ -65,10 +65,10 @@ class DLICreateQueueOperator(BaseOperator):
         resource_mode: int | None = None,  # 0 Shared or 1 Exclusive
         charging_mode: int | None = None,  # Set only 1
         description: str | None = None,
-        queue_type: str = "general",  # sql or general
+        queue_type: str | None = None,  # sql or general
         list_tags_body: list | None = None,
-        list_labels_body: list | None = None,  # TODO: Ask to HQ for detail
-        elastic_resource_pool_name: str | None = None,  # TODO: Ask to HQ for detail.
+        list_labels_body: list | None = None,
+        elastic_resource_pool_name: str | None = None,
         region: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
@@ -119,7 +119,7 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
     or the queue has been bound to enhanced datasource connections, the CIDR block cannot be modified.
 
     :param project_id: Specifies the project ID.
-    :param queue_name: Name of a queue to be deleted.
+    :param queue_name: Name of the queue to be updated.
     :param cidr_in_vpc: VPC CIDR block of the queue.
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
@@ -156,7 +156,7 @@ class DLIDeleteQueueOperator(BaseOperator):
     This operator is used to delete a specified queue.
 
     :param project_id: Specifies the project ID.
-    :param queue_name: Name of a queue to be deleted.
+    :param queue_name: Name of the queue to be deleted.
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
@@ -228,7 +228,7 @@ class DLIListQueuesOperator(BaseOperator):
             tags=self.tags,
             return_billing_info=self.return_billing_info,
             return_permission_info=self.return_permission_info,
-        )
+        ).to_dict()
 
         return list["queues"]
 
