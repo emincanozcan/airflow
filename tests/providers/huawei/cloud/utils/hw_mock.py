@@ -29,6 +29,13 @@ default_mock_constants = {
     "CONN_ID": "mock_smn_default"
 }
 
+AK = "AK"
+SK = "SK"
+MOCK_REGION = "ap-southeast-3"
+MOCK_BUCKET_NAME = "mock_bucket_name"
+MOCK_PROJECT_ID = "mock_project_id"
+
+
 def mock_huawei_cloud_default(self, huaweicloud_conn_id=default_mock_constants["CONN_ID"], region=default_mock_constants["REGION"], project_id=default_mock_constants["PROJECT_ID"]):
     self.huaweicloud_conn_id = huaweicloud_conn_id
     self.project_id = project_id
@@ -39,7 +46,8 @@ def mock_huawei_cloud_default(self, huaweicloud_conn_id=default_mock_constants["
         extra=json.dumps(
             {
                 "region": region,
-                "project_id": project_id,
+                "obs_bucket": MOCK_BUCKET_NAME,
+                "project_id": MOCK_PROJECT_ID,
             }
         )
     )

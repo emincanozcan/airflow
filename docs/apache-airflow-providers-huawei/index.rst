@@ -25,7 +25,7 @@ Content
     :maxdepth: 1
     :caption: Guides
 
-    Connection types <connections/huawei>
+    Connection types <connections/index>
     Operators <operators/index>
 
 .. toctree::
@@ -91,6 +91,8 @@ PIP package                 Version required
 ``huaweicloudsdkcdm``       ``>=3.1.19``
 ``huaweicloudsdkdlf``       ``>=3.1.19``
 ``huaweicloudsdkcore``      ``>=3.1.19``
+``huaweicloudsdkdws``       ``>=3.1.21``
+``esdk-obs-python``         ``>=3.22.2``
 ======================      ==================
 
 .. include:: ../../airflow/providers/huawei/CHANGELOG.rst
