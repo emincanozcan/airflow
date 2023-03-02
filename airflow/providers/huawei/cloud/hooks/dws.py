@@ -50,7 +50,6 @@ class DWSHook(HuaweiBaseHook):
         **kwargs
     ) -> None:
         super().__init__(huaweicloud_conn_id, region, *args, **kwargs)
-        self.project_id = self.get_default_project_id() if project_id is None else project_id
 
     def get_credential(self) -> tuple:
         """
@@ -66,27 +65,16 @@ class DWSHook(HuaweiBaseHook):
 
         return access_key_id, access_key_secret
 
-    def get_default_project_id(self) -> str | None:
-        """
-        Gets project_id from the extra_config option in connection.
-        """
-        extra_config = self.conn.extra_dejson
-
-        default_project_id = extra_config.get("project_id", None)
-        if not default_project_id:
-            raise Exception(f"No project_id is specified for connection: {self.huaweicloud_conn_id}")
-        return default_project_id
-
     def get_dws_client(self) -> DwsClient:
         ak, sk = self.get_credential()
         credentials = BasicCredentials(
             ak=ak,
             sk=sk,
-            project_id=self.project_id
+            project_id=self.get_default_project_id()
         )
         client = DwsClient.new_builder() \
             .with_credentials(credentials=credentials) \
-            .with_region(region=DwsRegion.value_of(region_id=self.get_region())) \
+            .with_region(region=DwsRegion.value_of(region_id=self.get_default_region())) \
             .build()
         return client
 

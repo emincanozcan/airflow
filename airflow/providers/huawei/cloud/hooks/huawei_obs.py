@@ -148,7 +148,7 @@ class OBSHook(HuaweiBaseHook):
         """
         auth = self.get_credential()
         access_key_id, secret_access_key = auth
-        region = self.get_region()
+        region = self.get_default_region()
         server = f"https://obs.{region}.myhuaweicloud.com"
         return ObsClient(access_key_id=access_key_id, secret_access_key=secret_access_key, server=server)
 
@@ -172,7 +172,7 @@ class OBSHook(HuaweiBaseHook):
         """
 
         try:
-            resp = self.get_bucket_client(bucket_name).createBucket(location=self.get_region())
+            resp = self.get_bucket_client(bucket_name).createBucket(location=self.get_default_region())
             if resp.status < 300:
                 self.log.info(f"Created OBS bucket with name: {bucket_name}.")
             else:

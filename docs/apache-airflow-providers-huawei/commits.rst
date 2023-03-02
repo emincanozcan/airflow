@@ -20,7 +20,7 @@
 Package apache-airflow-providers-huawei
 ------------------------------------------------------
 
-Huawei Cloud integration (including `Huawei Cloud <https://www.huaweicloud.com//>`__).
+Huawei Cloud integration (including `Huawei Cloud <https://www.huaweicloud.com/intl/en-us/>`__).
 
 
 This is detailed commit list of changes for versions provider package: ``Huawei``.
