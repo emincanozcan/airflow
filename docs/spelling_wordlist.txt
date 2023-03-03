@@ -1,3 +1,4 @@
+aa
 abc
 accessor
 accountmaking
@@ -14,6 +15,7 @@ adhoc
 adls
 afterall
 AgentKey
+ai
 aio
 Airbnb
 airbnb
@@ -1268,6 +1270,7 @@ sas
 Sasl
 sasl
 savedModel
+sc
 scala
 scalability
 scalable
@@ -1629,6 +1632,7 @@ wildcarded
 winrm
 workgroup
 workgroups
+workspaces
 wsman
 WTF
 wtf
