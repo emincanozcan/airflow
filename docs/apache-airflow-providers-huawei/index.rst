@@ -44,7 +44,7 @@ Content
     :maxdepth: 1
     :caption: Resources
 
-    Example DAGs <https://github.com/apache/airflow/tree/providers-huawei/2.0.0/tests/system/providers/huawei>
+    Example DAGs <https://github.com/apache/airflow/tree/providers-huawei/1.0.0/tests/system/providers/huawei>
     PyPI Repository <https://pypi.org/project/apache-airflow-providers-huawei/>
     Installing from sources <installing-providers-from-sources>
 
@@ -61,7 +61,7 @@ Content
 Package apache-airflow-providers-huawei
 ------------------------------------------------------
 
-Huawei Cloud integration (including `Huawei Cloud <https://www.huaweicloud.com//>`__).
+Huawei Cloud integration (including `Huawei Cloud <https://www.huaweicloud.com/intl/en-us/>`__).
 
 
 Release: 1.0.0

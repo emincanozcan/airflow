@@ -400,13 +400,18 @@
   "huawei": {
     "deps": [
       "apache-airflow>=2.5.0",
+      "esdk-obs-python>=3.22.2",
       "huaweicloudsdkcdm>=3.1.19",
-      "huaweicloudsdkcore>=3.1.19",
+      "huaweicloudsdkcore>=3.1.21",
       "huaweicloudsdkdlf>=3.1.19",
       "huaweicloudsdkdli>=3.1.19",
-      "huaweicloudsdksmn>=3.1.19"
+      "huaweicloudsdkdws>=3.1.21",
+      "huaweicloudsdksmn>=3.1.19",
+      "psycopg2>=2.9.4"
     ],
-    "cross-providers-deps": []
+    "cross-providers-deps": [
+      "common.sql"
+    ]
   },
   "imap": {
     "deps": [],

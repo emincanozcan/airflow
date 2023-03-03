@@ -19,7 +19,7 @@
 package-name: apache-airflow-providers-huawei
 name: Huawei
 description: |
-    Huawei Cloud integration (including `Huawei Cloud <https://www.huaweicloud.com//>`__).
+    Huawei Cloud integration (including `Huawei Cloud <https://www.huaweicloud.com/intl/en-us/>`__).
 
 versions:
   - 1.0.0

@@ -19,10 +19,12 @@ from __future__ import annotations
 from unittest import TestCase, mock
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.dws import DWSHook, DwsClient
-from tests.providers.huawei.cloud.utils.hw_mock import (mock_huawei_cloud_default, MOCK_PROJECT_ID,
-                                                        AK, SK)
+from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
 
 
+MOCK_PROJECT_ID = default_mock_constants["PROJECT_ID"]
+AK = default_mock_constants["AK"]
+SK = default_mock_constants["SK"]
 DWS_STRING = "airflow.providers.huawei.cloud.hooks.dws.{}"
 MOCK_DWS_CONN_ID = "mock_dws_conn_default"
 MOCK_CLUSTER_NAME = "mock_cluster_name"
@@ -52,9 +54,6 @@ class TestDWSHook(TestCase):
 
     def test_get_credential(self):
         self.assertTupleEqual((AK, SK), self.hook.get_credential())
-
-    def test_get_default_project_id(self):
-        self.assertEqual(MOCK_PROJECT_ID, self.hook.get_default_project_id())
 
     @mock.patch(DWS_STRING.format("BasicCredentials"))
     @mock.patch(DWS_STRING.format("DwsClient"))

@@ -1,3 +1,4 @@
+aa
 abc
 accessor
 accountmaking
@@ -14,6 +15,7 @@ adhoc
 adls
 afterall
 AgentKey
+ai
 aio
 Airbnb
 airbnb
@@ -146,6 +148,7 @@ BaseView
 BaseXCom
 bashrc
 batchGet
+bb
 bc
 bcc
 bdist
@@ -176,6 +179,7 @@ botocore
 BounceX
 Bq
 bq
+BucketClient
 bugfix
 bugfixes
 buildType
@@ -244,6 +248,7 @@ cmd
 cmdlet
 cmdline
 cmds
+cn
 cname
 cncf
 cnf
@@ -332,6 +337,7 @@ DAGs
 Dask
 dask
 dat
+dataarts
 Databricks
 databricks
 datacenter
@@ -432,6 +438,7 @@ displayName
 distcp
 distro
 distros
+dli
 Dlp
 dlp
 DlpJob
@@ -466,6 +473,7 @@ dsn
 dttm
 dtypes
 durations
+dws
 dylib
 Dynamodb
 dynamodb
@@ -644,6 +652,7 @@ Hashable
 Hashicorp
 hashicorp
 hasn
+hbase
 HCatalog
 hcatalog
 hdd
@@ -673,6 +682,7 @@ hostname
 hostnames
 hostPath
 hotfix
+hotspot
 Hou
 howto
 hql
@@ -687,8 +697,14 @@ httplib
 HttpRequest
 https
 httpx
-huawei
 Huawei
+huawei
+huaweicloud
+huaweicloudsdkcdm
+huaweicloudsdkdlf
+huaweicloudsdkdli
+huaweicloudsdkdws
+huaweicloudsdksmn
 hvac
 hyperparameter
 hyperparameters
@@ -1001,6 +1017,7 @@ onkill
 Oozie
 openfaas
 openLooKeng
+opentsdb
 oper
 Opsgenie
 opsgenie
@@ -1073,6 +1090,7 @@ pooler
 Popen
 POSIX
 postfix
+Postgre
 Postgres
 postgres
 Postgresql
@@ -1135,6 +1153,7 @@ Pyarrow
 pyarrow
 pydruid
 pyexasol
+pyFile
 pyhive
 pyhs
 pylint
@@ -1169,6 +1188,7 @@ RBAC
 rbac
 rc
 rdbms
+rds
 readfp
 Readme
 readme
@@ -1250,6 +1270,7 @@ sas
 Sasl
 sasl
 savedModel
+sc
 scala
 scalability
 scalable
@@ -1611,6 +1632,7 @@ wildcarded
 winrm
 workgroup
 workgroups
+workspaces
 wsman
 WTF
 wtf

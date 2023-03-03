@@ -23,9 +23,11 @@ from unittest import mock
 
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
-from tests.providers.huawei.cloud.utils.hw_mock import (mock_huawei_cloud_default, MOCK_BUCKET_NAME,
-                                                        MOCK_REGION)
+from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
 
+
+MOCK_BUCKET_NAME = default_mock_constants["OBS_BUCKET"]
+MOCK_REGION = default_mock_constants["REGION"]
 OBS_STRING = "airflow.providers.huawei.cloud.hooks.huawei_obs.{}"
 MOCK_OBS_CONN_ID = "mock_obs_conn_id"
 MOCK_OBJECT_KEY = "mock_object_key"
