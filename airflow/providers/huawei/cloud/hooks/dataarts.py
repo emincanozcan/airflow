@@ -65,12 +65,12 @@ class DataArtsHook(HuaweiBaseHook):
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, self.project_id)
+        credentials = BasicCredentials(ak, sk, self.get_project_id())
 
         return (
             DlfSdk.DlfClient.new_builder()
             .with_credentials(credentials)
-            .with_region(DlfRegion.value_of(self.region))
+            .with_region(DlfRegion.value_of(self.get_region()))
             .build()
         )
     

@@ -125,7 +125,7 @@ class OBSDeleteBucketOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket(bucket_name=self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
 
 
 class OBSListObjectsOperator(BaseOperator):
@@ -187,7 +187,7 @@ class OBSListObjectsOperator(BaseOperator):
                 is_truncated=self.is_truncated,
             )
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
             return None
 
 
@@ -226,7 +226,7 @@ class OBSGetBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             return obs_hook.get_bucket_tagging(self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
             return None
 
 
@@ -269,7 +269,7 @@ class OBSSetBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.set_bucket_tagging(bucket_name=self.bucket_name, tag_info=self.tag_info)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
 
 
 class OBSDeleteBucketTaggingOperator(BaseOperator):
@@ -306,7 +306,7 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket_tagging(bucket_name=self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
 
 
 class OBSCreateObjectOperator(BaseOperator):
@@ -638,7 +638,7 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
                 quiet=self.quiet,
             )
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
 
 
 class OBSMoveObjectOperator(BaseOperator):
@@ -688,10 +688,10 @@ class OBSMoveObjectOperator(BaseOperator):
     def execute(self, context: Context):
         obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if not obs_hook.exist_bucket(self.dest_bucket_name):
-            self.log.warning(f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
             return
         if not obs_hook.exist_bucket(self.source_bucket_name):
-            self.log.warning(f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.region}.")
+            self.log.warning(f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
             return
 
         obs_hook.move_object(

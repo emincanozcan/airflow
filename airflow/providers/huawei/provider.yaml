@@ -34,6 +34,7 @@ dependencies:
   - huaweicloudsdkdli>=3.1.19
   - huaweicloudsdkcdm>=3.1.19
   - huaweicloudsdkdlf>=3.1.19
+  - huaweicloudsdkiam>=3.1.19
 
 operators:
   - integration-name: Huawei Cloud OBS

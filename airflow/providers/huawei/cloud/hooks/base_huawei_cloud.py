@@ -1,6 +1,10 @@
 from __future__ import annotations
 from typing import Any
 
+from huaweicloudsdkcore.auth.credentials import GlobalCredentials
+from huaweicloudsdkcore.exceptions import exceptions
+from huaweicloudsdkiam.v3 import IamClient, KeystoneListAuthDomainsRequest
+
 import json
 
 from airflow.hooks.base import BaseHook
@@ -13,29 +17,32 @@ class HuaweiBaseHook(BaseHook):
     hook_name = "Huawei Cloud"
     
     def __init__(self,
-                 region,
-                 project_id,
+                 region=None,
+                 project_id=None,
                  huaweicloud_conn_id="huaweicloud_default",
                  *args,
                  **kwargs) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
         self.conn = self.get_connection(self.huaweicloud_conn_id)
-        self.region = self.get_default_region() if region is None else region
-        self.project_id = self.get_default_project_id() if project_id is None else project_id
+        self.override_region = region
+        self.override_project_id = project_id
         super().__init__(*args, **kwargs)
         
     
-    def get_default_project_id(self) -> str | None:
+    def get_project_id(self) -> str | None:
         """
         Gets project_id from the extra_config option in connection.
         """
-        
+        if self.override_project_id is not None:
+            return self.override_project_id
         if self.conn.extra_dejson.get('project_id', None) is not None:
             return self.conn.extra_dejson.get('project_id', None)
         raise Exception(f"No project_id is specified for connection: {self.huaweicloud_conn_id}")
     
-    def get_default_region(self) -> str:
+    def get_region(self) -> str:
         """Returns region for the hook."""
+        if self.override_region is not None:
+            return self.override_region
         if self.conn.extra_dejson.get('region', None) is not None:
             return self.conn.extra_dejson.get('region', None)
         raise Exception(f"No region is specified for connection")
@@ -63,7 +70,19 @@ class HuaweiBaseHook(BaseHook):
         }
     
     def test_connection(self):
+        #return True,    "Connection test succeeded!"
         try:
-            return True, self.get_default_region()
-        except Exception as e:
-            return False, str(f"{type(e).__name__!r} error occurred while testing connection: {e}")
+            ak = self.conn.login
+            sk = self.conn.password
+            credentials = GlobalCredentials(ak, sk) \
+
+            client = IamClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_endpoint(f"https://iam.myhuaweicloud.com") \
+                .build()
+            
+            request = KeystoneListAuthDomainsRequest()
+            client.keystone_list_auth_domains(request)
+            return True, "Connection test succeeded!"
+        except exceptions.ClientRequestException as e:
+            return False, f"{e.error_code} {e.error_msg}"
