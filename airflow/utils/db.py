@@ -230,6 +230,18 @@ def create_default_connections(session: Session = NEW_SESSION):
     )
     merge_conn(
         Connection(
+            conn_id="dws_default",
+            conn_type="dws",
+            host="cluster-host",
+            port=8000,
+            schema="database",
+            login="username",
+            password="password",
+        ),
+        session,
+    )
+    merge_conn(
+        Connection(
             conn_id="elasticsearch_default",
             conn_type="elasticsearch",
             host="localhost",
@@ -345,6 +357,22 @@ def create_default_connections(session: Session = NEW_SESSION):
             conn_id="http_default",
             conn_type="http",
             host="https://www.httpbin.org/",
+        ),
+        session,
+    )
+    merge_conn(
+        Connection(
+            conn_id="huaweicloud_default",
+            conn_type="huaweicloud",
+            login="Huawei Cloud Access Key ID",
+            password="Huawei Cloud Secret Access Key",
+            extra="""
+                {
+                    "region": "ap-southeast-3",
+                    "project_id": "1234567890",
+                    "obs_bucket": "your-obs-bucket-name"
+                }
+            """,
         ),
         session,
     )

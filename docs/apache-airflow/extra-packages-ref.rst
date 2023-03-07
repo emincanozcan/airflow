@@ -180,6 +180,8 @@ These are extras that add dependencies needed for integration with external serv
 +---------------------+-----------------------------------------------------+-----------------------------------------------------+
 | hashicorp           | ``pip install 'apache-airflow[hashicorp]'``         | Hashicorp Services (Vault)                          |
 +---------------------+-----------------------------------------------------+-----------------------------------------------------+
+| huawei              | ``pip install 'apache-airflow[huawei]'``            | Huawei Cloud                                        |
++---------------------+-----------------------------------------------------+-----------------------------------------------------+
 | opsgenie            | ``pip install 'apache-airflow[opsgenie]'``          | OpsGenie hooks and operators                        |
 +---------------------+-----------------------------------------------------+-----------------------------------------------------+
 | pagerduty           | ``pip install 'apache-airflow[pagerduty]'``         | Pagerduty hook                                      |
