@@ -38,7 +38,7 @@ class DWSCreateClusterOperator(BaseOperator):
         running Airflow in a distributed manner and huaweicloud_conn_id is None or
         empty, then default obs configuration would be used (and must be
         maintained on each worker node).
-    :param project_id: 	Project ID.
+    :param project_id: Project ID.
     :param region: The DWS region.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
         Be associated with project_id.
