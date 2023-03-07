@@ -41,16 +41,6 @@ class DWSHook(HuaweiBaseHook):
     Interact with Huawei Cloud DWS, using the huaweicloudsdkdws library
     """
 
-    def __init__(
-        self,
-        huaweicloud_conn_id="huaweicloud_default",
-        region: str | None = None,
-        project_id: str | None = None,
-        *args,
-        **kwargs
-    ) -> None:
-        super().__init__(huaweicloud_conn_id, region, *args, **kwargs)
-
     def get_credential(self) -> tuple:
         """
         Gets user authentication information from connection.

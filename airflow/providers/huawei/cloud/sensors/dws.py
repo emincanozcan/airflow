@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence
 
+from airflow.compat.functools import cached_property
 from airflow.providers.huawei.cloud.hooks.dws import DWSHook
 from airflow.sensors.base import BaseSensorOperator
 
@@ -31,6 +32,13 @@ class DWSClusterSensor(BaseSensorOperator):
 
     :param cluster_name: The name for the cluster being pinged.
     :param target_status: The cluster status desired.
+    :param region: The DWS region.
+    :param project_id: Project ID.
+    :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
+        If this is None or empty then the default obs behaviour is used. If
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     """
 
     template_fields: Sequence[str] = ("cluster_name", "target_status")
@@ -40,26 +48,26 @@ class DWSClusterSensor(BaseSensorOperator):
         *,
         cluster_name: str,
         target_status: str = "AVAILABLE",
+        region: str | None = None,
+        project_id: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.cluster_name = cluster_name
         self.target_status = target_status
+        self.region = region
+        self.project_id = project_id
         self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.hook: DWSHook | None = None
 
     def poke(self, context: Context):
         self.log.info("Poking for status : %s\nfor cluster %s", self.target_status, self.cluster_name)
-        return self.get_hook().get_cluster_status(self.cluster_name) == self.target_status
+        return self.get_hook.get_cluster_status(self.cluster_name) == self.target_status
 
+    @cached_property
     def get_hook(self) -> DWSHook:
         """Create and return a DWSHook"""
-        if self.hook:
-            return self.hook
-
-        self.hook = DWSHook(huaweicloud_conn_id=self.huaweicloud_conn_id)
-        return self.hook
+        return DWSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
 
 
 class DWSSnapshotSensor(BaseSensorOperator):
@@ -68,6 +76,13 @@ class DWSSnapshotSensor(BaseSensorOperator):
 
     :param snapshot_name: The name for the snapshot being pinged.
     :param target_status: The snapshot status desired.
+    :param region: The DWS region.
+    :param project_id: Project ID.
+    :param huaweicloud_conn_id: The Airflow connection used for DWS credentials.
+        If this is None or empty then the default obs behaviour is used. If
+        running Airflow in a distributed manner and huaweicloud_conn_id is None or
+        empty, then default obs configuration would be used (and must be
+        maintained on each worker node).
     """
 
     template_fields: Sequence[str] = ("snapshot_name", "target_status")
@@ -77,23 +92,24 @@ class DWSSnapshotSensor(BaseSensorOperator):
         *,
         snapshot_name: str,
         target_status: str = "AVAILABLE",
+        region: str | None = None,
+        project_id: str | None = None,
         huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.snapshot_name = snapshot_name
         self.target_status = target_status
+        self.region = region
+        self.project_id = project_id
         self.huaweicloud_conn_id = huaweicloud_conn_id
-        self.hook: DWSHook | None = None
 
     def poke(self, context: Context):
         self.log.info("Poking for status : %s\nfor snapshot %s", self.target_status, self.snapshot_name)
-        return self.get_hook().get_snapshot_status(self.snapshot_name) == self.target_status
+        return self.get_hook.get_snapshot_status(self.snapshot_name) == self.target_status
 
+    @cached_property
     def get_hook(self) -> DWSHook:
         """Create and return a DWSHook"""
-        if self.hook:
-            return self.hook
 
-        self.hook = DWSHook(huaweicloud_conn_id=self.huaweicloud_conn_id)
-        return self.hook
+        return DWSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)

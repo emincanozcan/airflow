@@ -10,12 +10,12 @@ import json
 from airflow.hooks.base import BaseHook
 
 class HuaweiBaseHook(BaseHook):
-    
+
     conn_name_attr = "huaweicloud_conn_id"
     default_conn_name = "huaweicloud_default"
     conn_type = "huaweicloud"
     hook_name = "Huawei Cloud"
-    
+
     def __init__(self,
                  region=None,
                  project_id=None,
@@ -27,8 +27,8 @@ class HuaweiBaseHook(BaseHook):
         self.override_region = region
         self.override_project_id = project_id
         super().__init__(*args, **kwargs)
-        
-    
+
+
     def get_project_id(self) -> str | None:
         """
         Gets project_id from the extra_config option in connection.
@@ -38,7 +38,7 @@ class HuaweiBaseHook(BaseHook):
         if self.conn.extra_dejson.get('project_id', None) is not None:
             return self.conn.extra_dejson.get('project_id', None)
         raise Exception(f"No project_id is specified for connection: {self.huaweicloud_conn_id}")
-    
+
     def get_region(self) -> str:
         """Returns region for the hook."""
         if self.override_region is not None:
@@ -46,7 +46,7 @@ class HuaweiBaseHook(BaseHook):
         if self.conn.extra_dejson.get('region', None) is not None:
             return self.conn.extra_dejson.get('region', None)
         raise Exception(f"No region is specified for connection")
-    
+
     @staticmethod
     def get_ui_field_behaviour() -> dict[str, Any]:
         """Returns custom UI field behaviour for Huawei Cloud Connection."""
@@ -63,24 +63,24 @@ class HuaweiBaseHook(BaseHook):
                     {
                         "region": "ap-southeast-3",
                         "project_id": "1234567890",
+                        "obs_bucket": "your-obs-bucket-name"
                     },
                     indent=2,
                 ),
             },
         }
-    
+
     def test_connection(self):
-        #return True,    "Connection test succeeded!"
         try:
             ak = self.conn.login
             sk = self.conn.password
-            credentials = GlobalCredentials(ak, sk) \
+            credentials = GlobalCredentials(ak, sk)
 
             client = IamClient.new_builder() \
                 .with_credentials(credentials) \
                 .with_endpoint(f"https://iam.myhuaweicloud.com") \
                 .build()
-            
+
             request = KeystoneListAuthDomainsRequest()
             client.keystone_list_auth_domains(request)
             return True, "Connection test succeeded!"
