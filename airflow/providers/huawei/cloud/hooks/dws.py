@@ -70,11 +70,11 @@ class DWSHook(HuaweiBaseHook):
         credentials = BasicCredentials(
             ak=ak,
             sk=sk,
-            project_id=self.get_default_project_id()
+            project_id=self.get_project_id()
         )
         client = DwsClient.new_builder() \
             .with_credentials(credentials=credentials) \
-            .with_region(region=DwsRegion.value_of(region_id=self.get_default_region())) \
+            .with_region(region=DwsRegion.value_of(region_id=self.get_region())) \
             .build()
         return client
 

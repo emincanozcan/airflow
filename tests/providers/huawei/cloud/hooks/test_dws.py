@@ -50,7 +50,6 @@ class TestDWSHook(TestCase):
             new=mock_huawei_cloud_default,
         ):
             self.hook = DWSHook(huaweicloud_conn_id=MOCK_DWS_CONN_ID)
-            self.hook.project_id = MOCK_PROJECT_ID
 
     def test_get_credential(self):
         self.assertTupleEqual((AK, SK), self.hook.get_credential())

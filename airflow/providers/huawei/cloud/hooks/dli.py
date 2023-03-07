@@ -376,12 +376,12 @@ class DLIHook(HuaweiBaseHook):
         ak = self.conn.login
         sk = self.conn.password
 
-        credentials = BasicCredentials(ak, sk, self.project_id)
+        credentials = BasicCredentials(ak, sk, self.get_project_id())
 
         return (
             DliSdk.DliClient.new_builder()
             .with_credentials(credentials)
-            .with_region(DliRegion.value_of(self.region))
+            .with_region(DliRegion.value_of(self.get_region()))
             .build()
         )
 

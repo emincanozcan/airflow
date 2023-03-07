@@ -33,8 +33,8 @@ default_mock_constants = {
 
 def mock_huawei_cloud_default(self, huaweicloud_conn_id=default_mock_constants["CONN_ID"], region=default_mock_constants["REGION"], project_id=default_mock_constants["PROJECT_ID"]):
     self.huaweicloud_conn_id = huaweicloud_conn_id
-    self.project_id = project_id
-    self.region = region
+    self.override_project_id = project_id
+    self.override_region = region
     self.conn = Connection(
         login=default_mock_constants["AK"],
         password=default_mock_constants["SK"],

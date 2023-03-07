@@ -72,7 +72,7 @@ class OBSObjectKeySensor(BaseSensorOperator):
 
         if not obs_hook.exist_bucket(bucket_name):
             raise AirflowException(
-                f"OBS Bucket with name: {bucket_name} doesn't exist on region: {obs_hook.region}.")
+                f"OBS Bucket with name: {bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
 
         return obs_hook.exist_object(object_key=object_key, bucket_name=bucket_name)
 

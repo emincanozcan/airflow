@@ -34,7 +34,7 @@ class TestSmnHook(unittest.TestCase):
             self.hook = SMNHook()
 
     def test_get_default_region(self):
-        assert self.hook.region == default_mock_constants["REGION"]
+        assert self.hook.get_region() == default_mock_constants["REGION"]
 
     def test_get_smn_client(self):
         client = self.hook.get_smn_client()
