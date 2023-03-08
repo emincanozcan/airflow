@@ -62,13 +62,10 @@ class DLICreateQueueOperator(BaseOperator):
         "feature",
         "description",
         "queue_type",
-        "list_tags_body",
-        "list_labels_body",
         "elastic_resource_pool_name",
         "project_id",
     )
     
-    template_fields_renderers = {"list_tags_body": "json", "list_labels_body": "json"}
     ui_color = "#44b5e2"    
     
     def __init__(
@@ -320,21 +317,8 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
 
     template_fields: Sequence[str] = (
         "file", "class_name", "project_id", "queue_name", "obs_bucket", "catalog_name", "image",
-        "spark_version", "feature", "executor_memory", "driver_memory", "name", 
-        "list_conf_body", "list_groups_body", "list_resources_body", "list_modules_body", "list_files_body", 
-        "list_python_files_body", "list_jars_body", "sc_type", "list_args_body", "cluster_name"
+        "spark_version", "feature", "executor_memory", "driver_memory", "name", "sc_type", "cluster_name"
     )
-    
-    template_fields_renderers = {
-        "list_conf_body": "json",
-        "list_groups_body": "json",
-        "list_resources_body": "json",
-        "list_modules_body": "json",
-        "list_files_body": "json",
-        "list_python_files_body": "json",
-        "list_jars_body": "json",
-        "list_args_body": "json"
-    }
     
     ui_color = "#f0eee4"
     
@@ -449,8 +433,7 @@ class DLIUploadFilesOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
-    template_fields = ("group", "paths","project_id")
-    template_fields_renderers = {"paths": "json"}
+    template_fields = ("group","project_id")
     ui_color = "#f0eee4"
     
     def __init__(
@@ -496,12 +479,9 @@ class DLIRunSqlJobOperator(BaseOperator):
         "project_id",
         "sql_query",
         "database_name",
-        "queue_name",
-        "list_tags_body",
-        "list_conf_body",
+        "queue_name"
     )
     
-    template_fields_renderers = {"list_tags_body": "json", "list_conf_body": "json"}
     ui_color = "#f0eee4"
     
     def __init__(

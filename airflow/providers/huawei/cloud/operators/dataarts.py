@@ -40,8 +40,7 @@ class DataArtsDLFStartJobOperator(BaseOperator):
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
     """
 
-    template_fields: Sequence[str] = ("job_name", "body", "project_id","workspace")
-    template_fields_renderers = {"body": "json"}
+    template_fields: Sequence[str] = ("job_name", "project_id","workspace")
     ui_color = "#f0eee4"
     
     def __init__(

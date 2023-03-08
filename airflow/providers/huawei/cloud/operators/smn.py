@@ -40,8 +40,7 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
-    template_fields: Sequence[str] = ("tags","template_name","project_id","topic_urn","subject")
-    template_fields_renderers = {"tags": "json"}
+    template_fields: Sequence[str] = ("template_name","project_id","topic_urn","subject")
     ui_color = "#66c3ff"
 
     def __init__(
