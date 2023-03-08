@@ -18,7 +18,7 @@
 """This module contains Huawei Cloud CDM operators."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
 from airflow.models import BaseOperator
 from airflow.providers.huawei.cloud.hooks.cdm import CDMHook
@@ -37,6 +37,9 @@ class CDMCreateJobOperator(BaseOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
+    
+    template_fields: Sequence[str] = ("cluster_id","project_id")
+    ui_color = "#f0eee4"
     
     def __init__(
         self,
@@ -78,6 +81,9 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
+    
+    template_fields: Sequence[str] = ("x_language","clusters","project_id")
+    ui_color = "#f0eee4"
     
     def __init__(
         self,
@@ -121,6 +127,9 @@ class CDMStartJobOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
     
+    template_fields: Sequence[str] = ("cluster_id", "job_name","project_id")
+    ui_color = "#f0eee4"
+    
     def __init__(
         self,
         cluster_id: str,
@@ -160,6 +169,9 @@ class CDMDeleteJobOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
     
+    template_fields: Sequence[str] = ("cluster_id", "job_name","project_id")
+    ui_color = "#f0eee4"
+    
     def __init__(
         self,
         cluster_id: str,
@@ -198,6 +210,9 @@ class CDMStopJobOperator(BaseOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
+    
+    template_fields: Sequence[str] = ("cluster_id", "job_name","project_id")
+    ui_color = "#f0eee4"
     
     def __init__(
         self,

@@ -54,6 +54,23 @@ class DLICreateQueueOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
+    template_fields: Sequence[str] = (
+        "queue_name",
+        "cu_count",
+        "platform",
+        "enterprise_project_id",
+        "feature",
+        "description",
+        "queue_type",
+        "list_tags_body",
+        "list_labels_body",
+        "elastic_resource_pool_name",
+        "project_id",
+    )
+    
+    template_fields_renderers = {"list_tags_body": "json", "list_labels_body": "json"}
+    ui_color = "#44b5e2"    
+    
     def __init__(
         self,
         queue_name: str,
@@ -124,6 +141,9 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
+    template_fields: Sequence[str] = ("queue_name", "cidr_in_vpc", "project_id")
+    ui_color = "#44b5e2"
+    
     def __init__(
         self,
         queue_name: str,
@@ -159,6 +179,9 @@ class DLIDeleteQueueOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
+    template_fields: Sequence[str] = ("queue_name", "project_id")
+    ui_color = "#44b5e2"
+    
     def __init__(
         self,
         queue_name: str,
@@ -194,6 +217,9 @@ class DLIListQueuesOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
+    template_fields: Sequence[str] = ("project_id", "queue_type", "tags")
+    ui_color = "#44b5e2"
+    
     def __init__(
         self,
         project_id: str | None = None,
@@ -292,6 +318,27 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
+    template_fields: Sequence[str] = (
+        "file", "class_name", "project_id", "queue_name", "obs_bucket", "catalog_name", "image",
+        "spark_version", "feature", "executor_memory", "driver_memory", "name", 
+        "list_conf_body", "list_groups_body", "list_resources_body", "list_modules_body", "list_files_body", 
+        "list_python_files_body", "list_jars_body", "sc_type", "list_args_body", "cluster_name"
+    )
+    
+    template_fields_renderers = {
+        "list_conf_body": "json",
+        "list_groups_body": "json",
+        "list_resources_body": "json",
+        "list_modules_body": "json",
+        "list_files_body": "json",
+        "list_python_files_body": "json",
+        "list_jars_body": "json",
+        "list_args_body": "json"
+    }
+    
+    ui_color = "#f0eee4"
+    
+    
     def __init__(
         self,
         file: str,
@@ -402,6 +449,10 @@ class DLIUploadFilesOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
+    template_fields = ("group", "paths","project_id")
+    template_fields_renderers = {"paths": "json"}
+    ui_color = "#f0eee4"
+    
     def __init__(
         self,
         group: str,
@@ -441,6 +492,18 @@ class DLIRunSqlJobOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
+    template_fields: Sequence[str] = (
+        "project_id",
+        "sql_query",
+        "database_name",
+        "queue_name",
+        "list_tags_body",
+        "list_conf_body",
+    )
+    
+    template_fields_renderers = {"list_tags_body": "json", "list_conf_body": "json"}
+    ui_color = "#f0eee4"
+    
     def __init__(
         self,
         sql_query: str,
@@ -492,8 +555,7 @@ class DLIGetSqlJobResultOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
     
-    template_fields: Sequence[str] = ("job_id",)
-    template_ext: Sequence[str] = ()
+    template_fields: Sequence[str] = ("job_id","project_id","queue_name")
     ui_color = "#66c3ff"
     
     def __init__(

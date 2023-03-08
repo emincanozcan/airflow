@@ -167,6 +167,7 @@ class CDMHook(HuaweiBaseHook):
         jobs: list[dict]
     ):
         request_body = {"jobs": jobs, "clusters": clusters}
+        self.log.info(f"Request body: {request_body}")
         request = CdmSdk.CreateAndStartRandomClusterJobRequest(
             x_language=x_language,
             body=request_body)
