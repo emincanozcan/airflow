@@ -21,7 +21,7 @@ class DWSSqlOperator(SQLExecuteQueryOperator):
 
     template_fields: Sequence[str] = (
         "sql",
-        "dws_conn_id",
+        "conn_id",
     )
     template_ext: Sequence[str] = (".sql",)
     template_fields_renderers = {"sql": "postgresql"}
