@@ -27,6 +27,14 @@ class HuaweiBaseHook(BaseHook):
         self.override_region = region
         self.override_project_id = project_id
         super().__init__(*args, **kwargs)
+        
+    def get_enterprise_project_id_from_extra_data(self) -> str:
+        """
+        Gets enterprise_project_id from the extra_config option in connection.
+        """
+        if self.conn.extra_dejson.get('enterprise_project_id', None) is not None:
+            return self.conn.extra_dejson.get('enterprise_project_id', None)
+        return None
 
 
     def get_project_id(self) -> str | None:

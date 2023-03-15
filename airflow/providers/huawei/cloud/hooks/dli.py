@@ -17,6 +17,7 @@
 # under the License.
 
 from __future__ import annotations
+import os.path
 
 from typing import Any
 from airflow.exceptions import AirflowException
@@ -86,7 +87,7 @@ class DLIHook(HuaweiBaseHook):
                     list_labels_body=list_labels_body,
                     resource_mode=resource_mode,
                     platform=platform,
-                    enterprise_project_id=enterprise_project_id,
+                    enterprise_project_id= enterprise_project_id if enterprise_project_id is not None else self.get_enterprise_project_id_from_extra_data(),
                     charging_mode=charging_mode,
                     cu_count=cu_count,
                     description=description,
@@ -324,6 +325,11 @@ class DLIHook(HuaweiBaseHook):
         :rtype: DliSdk.RunJobResponse
         """
         try:
+            if os.path.isfile(sql_query):
+                sql_file = open(sql_query, "r")
+                sql_query = sql_file.read()
+                sql_file.close()
+
             return self.get_dli_client().run_job(
                 self.run_job_request(
                     sql_query=sql_query,
