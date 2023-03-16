@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 
 class DWSCreateClusterOperator(BaseOperator):
-    """
+    r"""
     Creates a new cluster with the specified parameters.
     The cluster must run in a VPC. Before creating a cluster, you need to create a VPC and obtain the VPC
     and subnet IDs.This API is an asynchronous API. It takes 10 to 15 minutes to create a cluster.
@@ -59,10 +59,12 @@ class DWSCreateClusterOperator(BaseOperator):
     :param user_pwd: Administrator password for logging in to a GaussDB(DWS) cluster.
 
         - Contains 8 to 32 characters.
-        - Contains at least three types of the following characters: uppercase letters, lowercase letters, digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
+        - Contains at least three types of the following characters: uppercase letters, lowercase letters,
+            digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
         - Cannot be the same as the username or the username written in reverse order.
     :param port: Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-    :param public_bind_type: Binding type of EIP. The value can be one of the following:, auto_assign, not_use, bind_existing
+    :param public_bind_type: Binding type of EIP. The value can be one of the following:
+        auto_assign, not_use, bind_existing
     :param eip_id: EIP ID
     :param number_of_cn: Number of deployed CNs. The value ranges from 2 to the number of cluster nodes.
         The maximum value is 20 and the default value is 3.
@@ -99,7 +101,7 @@ class DWSCreateClusterOperator(BaseOperator):
         enterprise_project_id: str | None = None,
         region: str | None = None,
         project_id: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -181,7 +183,7 @@ class DWSCreateClusterSnapshotOperator(BaseOperator):
         description: str | None = None,
         region: str | None = None,
         project_id: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -227,7 +229,7 @@ class DWSDeleteClusterSnapshotOperator(BaseOperator):
         snapshot_name: str,
         region: str | None = None,
         project_id: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -258,7 +260,8 @@ class DWSRestoreClusterOperator(BaseOperator):
         Be associated with project_id.
     :param snapshot_name: Snapshot name.
     :param name: Cluster name, which must be unique. The cluster name must contain 4 to 64 characters,
-        which must start with a letter. Only letters, digits, hyphens (-), and underscores (_) are allowed.
+        which must start with a letter. Only letters, digits, hyphens (-), and underscores (_) are
+        allowed.
     :param subnet_id: Subnet ID, which is used for configuring cluster network.
         The default value is the same as that of the original cluster.
     :param security_group_id: Security group ID, which is used for configuring cluster network.
@@ -269,7 +272,8 @@ class DWSRestoreClusterOperator(BaseOperator):
         The default value is the same as that of the original cluster.
     :param port: Service port of a cluster. The value ranges from 8000 to 30000.
         The default value is 8000.
-    :param public_bind_type: Binding type of EIP. The value can be one of the following:, auto_assign, not_use, bind_existing
+    :param public_bind_type: Binding type of EIP. The value can be one of the following:
+        auto_assign, not_use, bind_existing
     :param eip_id: EIP ID.
     :param enterprise_project_id: Enterprise project. The default enterprise project ID is 0.
     """
@@ -293,7 +297,7 @@ class DWSRestoreClusterOperator(BaseOperator):
         enterprise_project_id: str | None = None,
         region: str | None = None,
         project_id: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -355,7 +359,7 @@ class DWSDeleteClusterBasedOnSnapshotOperator(BaseOperator):
         snapshot_name: str,
         region: str | None = None,
         project_id: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -400,7 +404,7 @@ class DWSDeleteClusterOperator(BaseOperator):
         keep_last_manual_snapshot: int,
         region: str | None = None,
         project_id: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)

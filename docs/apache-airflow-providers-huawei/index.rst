@@ -44,7 +44,7 @@ Content
     :maxdepth: 1
     :caption: Resources
 
-    Example DAGs <https://github.com/apache/airflow/tree/providers-huawei/1.0.0/tests/system/providers/huawei>
+    Example DAGs <https://github.com/apache/airflow/tree/providers-huawei/|version|/tests/system/providers/huawei>
     PyPI Repository <https://pypi.org/project/apache-airflow-providers-huawei/>
     Installing from sources <installing-providers-from-sources>
 

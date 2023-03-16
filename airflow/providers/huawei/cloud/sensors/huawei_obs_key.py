@@ -52,7 +52,7 @@ class OBSObjectKeySensor(BaseSensorOperator):
         object_key: str | list[str],
         region: str | None = None,
         bucket_name: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)

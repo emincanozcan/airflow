@@ -29,6 +29,7 @@ from airflow.sensors.base import BaseSensorOperator
 
 
 class DLISparkShowBatchStateSensor(BaseSensorOperator):
+    """Sensor for checking the state of a DLI Spark job."""
 
     INTERMEDIATE_STATES = ("starting", "running", "recovering")
     FAILURE_STATES = ("dead",)
@@ -71,8 +72,7 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
 
 
 class DLISqlShowJobStatusSensor(BaseSensorOperator):
-
-    # Status of a job, including RUNNING, SCALING, LAUNCHING, FINISHED, FAILED, and CANCELLED.
+    """Sensor for checking the state of a DLI SQL job."""
 
     INTERMEDIATE_STATES = ("RUNNING", "SCALING", "LAUNCHING")
     FAILURE_STATES = ("FAILED", "CANCELLED")

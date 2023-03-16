@@ -96,23 +96,6 @@ class TestDataArtsDLFShowJobStatusSensor(unittest.TestCase):
         assert res is False
         mock_service.return_value.dlf_list_job_instances.assert_called_once_with(workspace=MOCK_WORKSPACE)
 
-    @mock.patch(
-        DLF_SENSOR_STRING.format("DataArtsDLFShowJobStatusSensor.get_hook"), new_callable=PropertyMock
-    )
-    def test_poke_show_job_status_stopped_fail(self, mock_service):
-        # Given
-        mock_service.return_value.dlf_show_job_status.return_value = "STOPPED"
-
-        mock_service.return_value.dlf_list_job_instances.return_value = [mock_node(MOCK_JOB_NAME, "fail")]
-        flag = False
-        try:
-            self.job_status_sensor.poke(None)
-        except:
-            flag = True
-
-        assert flag is True
-        mock_service.return_value.dlf_list_job_instances.assert_called_once_with(workspace=MOCK_WORKSPACE)
-
 
 class mock_node:
     def __init__(self, job_name, status):

@@ -34,9 +34,7 @@ class CDMHook(HuaweiBaseHook):
         Create a job in CDM cluster
 
         :param cluster_id: The ID of the cluster.
-        :type cluster_id: str
         :param jobs: The job information.
-        :type jobs: list
         :return: The response of the create job request.
         :rtype: CdmSdk.CreateJobResponse
         """
@@ -53,11 +51,8 @@ class CDMHook(HuaweiBaseHook):
         Create and start a job in CDM cluster
 
         :param x_language: The language of the request.
-        :type x_language: str
         :param clusters: The cluster information.
-        :type clusters: list
         :param jobs: The job information.
-        :type jobs: list
         :return: The response of the create and start job request.
         :rtype: CdmSdk.CreateAndStartRandomClusterJobResponse
         """
@@ -74,9 +69,7 @@ class CDMHook(HuaweiBaseHook):
         Start a job in CDM cluster
 
         :param cluster_id: The ID of the cluster.
-        :type cluster_id: str
         :param job_name: The name of the job.
-        :type job_name: str
         :return: The response of the start job request.
         :rtype: CdmSdk.StartJobResponse
         """
@@ -93,9 +86,7 @@ class CDMHook(HuaweiBaseHook):
         Delete a job in CDM cluster
 
         :param cluster_id: The ID of the cluster.
-        :type cluster_id: str
         :param job_name: The name of the job.
-        :type job_name: str
         :return: The response of the delete job request.
         :rtype: CdmSdk.DeleteJobResponse
         """
@@ -112,9 +103,7 @@ class CDMHook(HuaweiBaseHook):
         Stop a job in CDM cluster
 
         :param cluster_id: The ID of the cluster.
-        :type cluster_id: str
         :param job_name: The name of the job.
-        :type job_name: str
         :return: The response of the stop job request.
         :rtype: CdmSdk.StopJobResponse
         """
@@ -131,9 +120,7 @@ class CDMHook(HuaweiBaseHook):
         Show the status of a job in CDM cluster
 
         :param cluster_id: The ID of the cluster.
-        :type cluster_id: str
         :param job_name: The name of the job.
-        :type job_name: str
         :return: The response of the show job status request.
         :rtype: CdmSdk.ShowJobStatusResponse
         """
@@ -154,7 +141,6 @@ class CDMHook(HuaweiBaseHook):
 
     def create_and_execute_job_request(self, x_language: str, clusters: list, jobs: list[dict]):
         request_body = {"jobs": jobs, "clusters": clusters}
-        self.log.info(f"Request body: {request_body}")
         request = CdmSdk.CreateAndStartRandomClusterJobRequest(x_language=x_language, body=request_body)
         return request
 

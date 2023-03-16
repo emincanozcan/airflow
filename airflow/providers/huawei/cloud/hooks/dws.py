@@ -51,14 +51,10 @@ from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHoo
 
 
 class DWSHook(HuaweiBaseHook):
-    """
-    Interact with Huawei Cloud DWS, using the huaweicloudsdkdws library
-    """
+    """Interact with Huawei Cloud DWS, using the huaweicloudsdkdws library"""
 
     def get_credential(self) -> tuple:
-        """
-        Gets user authentication information from connection.
-        """
+        """Gets user authentication information from connection."""
         access_key_id = self.conn.login
         access_key_secret = self.conn.password
         if not access_key_id:
@@ -150,13 +146,14 @@ class DWSHook(HuaweiBaseHook):
         eip_id: str | None = None,
         public_bind_type: str | None = None,
     ) -> str:
-        """
+        r"""
         Creates a new cluster with the specified parameters.
         The cluster must run in a VPC. Before creating a cluster, you need to create a VPC and obtain the VPC
         and subnet IDs.This API is an asynchronous API. It takes 10 to 15 minutes to create a cluster.
 
         :param name: Cluster name, which must be unique. The cluster name must contain 4 to 64 characters,
-            which must start with a letter. Only letters, digits, hyphens (-), and underscores (_) are allowed.
+            which must start with a letter. Only letters, digits, hyphens (-), and underscores (_) are
+            allowed.
         :param node_type: The node type to be provisioned for the cluster.
         :param number_of_node: Number of cluster nodes. For a cluster, the value ranges from 3 to 256.
             For a hybrid data warehouse (standalone), the value is 1.
@@ -174,10 +171,13 @@ class DWSHook(HuaweiBaseHook):
         :param user_pwd: Administrator password for logging in to a GaussDB(DWS) cluster.
 
             - Contains 8 to 32 characters.
-            - Contains at least three types of the following characters: uppercase letters, lowercase letters, digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
+            - Contains at least three types of the following characters: uppercase letters, lowercase
+              letters, digits, and special characters (~!?, .:;-_(){}[]/<>@# %^&*+|\=).
             - Cannot be the same as the username or the username written in reverse order.
-        :param port: Service port of a cluster. The value ranges from 8000 to 30000. The default value is 8000.
-        :param public_bind_type: Binding type of EIP. The value can be one of the following: auto_assign, not_use, bind_existing
+        :param port: Service port of a cluster. The value ranges from 8000 to 30000.
+            The default value is 8000.
+        :param public_bind_type: Binding type of EIP. The value can be one of the following: auto_assign,
+            not_use, bind_existing
         :param eip_id: EIP ID
         :param number_of_cn: Number of deployed CNs. The value ranges from 2 to the number of cluster nodes.
             The maximum value is 20 and the default value is 3.
@@ -262,7 +262,8 @@ class DWSHook(HuaweiBaseHook):
     def delete_cluster(self, cluster_name: str, keep_last_manual_snapshot: int) -> None:
         """
         Delete a cluster.All resources of the deleted cluster, including customer data, will be released.
-        For data security, create a snapshot for the cluster that you want to delete before deleting the cluster.
+        For data security, create a snapshot for the cluster that you want to delete before deleting
+        the cluster.
 
         :param cluster_name: Cluster name.
         :param keep_last_manual_snapshot: The number of latest manual snapshots that need to be retained
@@ -278,7 +279,7 @@ class DWSHook(HuaweiBaseHook):
 
     def delete_cluster_based_on_snapshot(self, snapshot_name: str) -> None:
         """
-        Delete clusters based on snapshot.Filter by cluster tags.
+        Delete clusters based on snapshot. Filter by cluster tags.
 
         :param snapshot_name: Snapshot name.
         """
@@ -302,13 +303,14 @@ class DWSHook(HuaweiBaseHook):
         public_bind_type: str | None = None,
         eip_id: str | None = None,
         enterprise_project_id: str | None = None,
-    ) -> str:
+    ) -> str | None:
         """
         Restore the cluster using a snapshot
 
         :param snapshot_name: Snapshot name.
         :param name: Cluster name, which must be unique. The cluster name must contain 4 to 64 characters,
-            which must start with a letter. Only letters, digits, hyphens (-), and underscores (_) are allowed.
+            which must start with a letter. Only letters, digits, hyphens (-), and underscores (_) are
+            allowed.
         :param subnet_id: Subnet ID, which is used for configuring cluster network.
             The default value is the same as that of the original cluster.
         :param security_group_id: Security group ID, which is used for configuring cluster network.
@@ -319,7 +321,8 @@ class DWSHook(HuaweiBaseHook):
             The default value is the same as that of the original cluster.
         :param port: Service port of a cluster. The value ranges from 8000 to 30000.
             The default value is 8000.
-        :param public_bind_type: Binding type of EIP. The value can be one of the following:, auto_assign, not_use, bind_existing
+        :param public_bind_type: Binding type of EIP. The value can be one of the following:
+            auto_assign, not_use, bind_existing
         :param eip_id: EIP ID.
         :param enterprise_project_id: Enterprise project. The default enterprise project ID is 0.
         """
@@ -367,3 +370,4 @@ class DWSHook(HuaweiBaseHook):
         for tag in resp.tags:
             if tag.key == "snapshot_id":
                 return tag.value
+        return None

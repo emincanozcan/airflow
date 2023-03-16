@@ -32,8 +32,8 @@ class DataArtsDLFStartJobOperator(BaseOperator):
     This operator is used to start a job.
 
     :param project_id: The ID of the project.
-    :param workspace: Workspace ID. If this parameter is not set, data in the default workspace is queried by default.
-        To query data in other workspaces, this header must be carried.
+    :param workspace: Workspace ID. If this parameter is not set, data in the default workspace is queried
+        by default. To query data in other workspaces, this header must be carried.
     :param job_name: Job name.
     :param body: The body of the request.
     :param region: The name of the region.

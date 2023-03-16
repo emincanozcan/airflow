@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import huaweicloudsdksmn.v2 as SmnSdk
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
@@ -42,14 +44,15 @@ class SMNHook(HuaweiBaseHook):
         This function is used to publish messages to a topic
 
         :param project_id: Specifies the project ID.
-        :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource identifier.
+        :param topic_urn: Specifies the resource identifier of the topic, which is unique.
         :param tags: Specifies the dictionary consisting of variable parameters and values.
         :param template_name: Specifies the message template name.
-        :param subject: Specifies the message subject, which is used as the email subject when you publish email messages.
+        :param subject: Specifies the message subject, which is used as the email subject
+            when you publish email messages.
         :param message_structure: Specifies the message structure, which contains JSON strings.
         :param message: Specifies the message content.
         """
-        kwargs = dict()
+        kwargs: dict[str, Any] = {}
 
         if message_structure:
             kwargs["message_structure"] = message_structure
@@ -67,7 +70,6 @@ class SMNHook(HuaweiBaseHook):
     def send_request(self, request: SmnSdk.PublishMessageRequest) -> None:
         try:
             self.get_smn_client().publish_message(request)
-            self.log.info("The message is published successfully")
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when publishing: {e}")
@@ -79,7 +81,6 @@ class SMNHook(HuaweiBaseHook):
         return request
 
     def get_smn_client(self) -> SmnSdk.SmnClient:
-
         ak = self.conn.login
         sk = self.conn.password
 

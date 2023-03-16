@@ -123,10 +123,11 @@ class OBSHook(HuaweiBaseHook):
     @staticmethod
     def get_obs_bucket_object_key(
         bucket_name: str | None, object_key: str, bucket_param_name: str, object_key_param_name: str
-    ) -> tuple[str, str]:
+    ) -> tuple:
         """
         Get the OBS bucket name and object key from either:
-            - bucket name and object key. Return the info as it is after checking `object_key` is a relative path.
+            - bucket name and object key. Return the info as it is after checking `object_key` is a relative
+              path.
             - object key. Must be a full obs:// url
 
         :param bucket_name: The OBS bucket name.
@@ -181,18 +182,16 @@ class OBSHook(HuaweiBaseHook):
         try:
             resp = self.get_bucket_client(bucket_name).createBucket(location=self.get_region())
             if resp.status < 300:
-                self.log.info(f"Created OBS bucket with name: {bucket_name}.")
+                self.log.info("Created OBS bucket with name: %s.", bucket_name)
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when creating a bucket: {e}.")
+                self.log.error("Error message when creating a bucket: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when create bucket {bucket_name}({e}).")
 
     def list_bucket(self) -> list[dict[str, Any]] | None:
-        """
-        Gets a list of bucket information.
-        """
+        """Gets a list of bucket information."""
         try:
             resp = self.get_obs_client().listBuckets()
             if resp.status < 300:
@@ -209,7 +208,7 @@ class OBSHook(HuaweiBaseHook):
                 return buckets
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when getting a list of bucket information: {e}.")
+                self.log.error("Error message when getting a list of bucket information: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when list bucket({e}).")
@@ -226,9 +225,9 @@ class OBSHook(HuaweiBaseHook):
         if resp.status < 300:
             return True
         elif resp.status == 404:
-            self.log.info(f"Bucket {bucket_name} does not exist.")
+            self.log.info("Bucket %s does not exist.", bucket_name)
         elif resp.status == 403:
-            self.log.error(f"{get_err_info(resp)}")
+            self.log.error(get_err_info(resp))
         return False
 
     @provide_bucket_name
@@ -245,10 +244,10 @@ class OBSHook(HuaweiBaseHook):
         try:
             resp = self.get_bucket_client(bucket_name).deleteBucket()
             if resp.status < 300:
-                self.log.info(f"Deleted OBS bucket: {bucket_name}.")
+                self.log.info("Deleted OBS bucket: %s.", bucket_name)
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when deleting a bucket: {e}.")
+                self.log.error("Error message when deleting a bucket: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting {bucket_name}({e})")
@@ -267,11 +266,11 @@ class OBSHook(HuaweiBaseHook):
             resp = self.get_bucket_client(bucket_name).getBucketTagging()
             if resp.status < 300:
                 tag_info = [{"tag": tag.key, "value": tag.value} for tag in resp.body.tagSet]
-                self.log.info(f"Getting the bucket tagging succeeded. {tag_info}")
+                self.log.info("Getting the bucket tagging succeeded. %s", tag_info)
                 return tag_info
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when obtaining the bucket label: {e}.")
+                self.log.error("Error message when obtaining the bucket label: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when getting the bucket tagging of {bucket_name}({e}).")
@@ -300,7 +299,7 @@ class OBSHook(HuaweiBaseHook):
                 self.log.info("Setting the bucket tagging succeeded.")
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when setting the bucket tagging: {e}.")
+                self.log.error("Error message when setting the bucket tagging: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when setting the bucket tagging of {bucket_name}({e}).")
@@ -321,7 +320,7 @@ class OBSHook(HuaweiBaseHook):
                 self.log.info("Deleting the bucket label succeeded.")
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when Deleting the bucket tagging: {e}.")
+                self.log.error("Error message when Deleting the bucket tagging: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting the bucket tagging of {bucket_name}({e}).")
@@ -345,7 +344,7 @@ class OBSHook(HuaweiBaseHook):
         if resp.status < 300:
             object_list = [content.key for content in resp.body.contents]
         else:
-            self.log.error(f"Error message when checking the object: {get_err_info(resp)}")
+            self.log.error("Error message when checking the object: %s", get_err_info(resp))
         if not object_list:
             return False
         return object_key in object_list
@@ -383,7 +382,7 @@ class OBSHook(HuaweiBaseHook):
             if not is_truncated:
                 return object_list
         else:
-            self.log.error(f"Error message when listing the objects: {get_err_info(resp)}.")
+            self.log.error("Error message when listing the objects: %s.", get_err_info(resp))
             return None
         object_lists = [object_list]
 
@@ -397,7 +396,7 @@ class OBSHook(HuaweiBaseHook):
             if resp.status < 300:
                 object_lists.append([content.key for content in resp.body.contents])
             else:
-                self.log.error(f"Error message when listing the objects: {get_err_info(resp)}.")
+                self.log.error("Error message when listing the objects: %s.", get_err_info(resp))
                 return None
         return object_lists
 
@@ -420,7 +419,7 @@ class OBSHook(HuaweiBaseHook):
 
         :param bucket_name: The name of the bucket.
         :param object_key: Object name or the name of the uploaded file.
-        :param object_type: The type of the object，default is content.
+        :param object_type: The type of the object, default is content.
 
             - file:
                 Full path of the file/folder to be uploaded, for example, /aa/bb.txt, or /aa/.
@@ -452,7 +451,7 @@ class OBSHook(HuaweiBaseHook):
                     metadata=metadata,
                     headers=headers,
                 )
-                if getattr(data, "read", None):
+                if getattr(data, "read", None) and hasattr(data, "close") and callable(data.close):
                     data.close()
             else:
                 resp = self.get_bucket_client(bucket_name).putFile(
@@ -465,7 +464,7 @@ class OBSHook(HuaweiBaseHook):
             if isinstance(resp, list):
                 err_object = [i[0] for i in self.flatten(resp) if i[1]["status"] >= 300]
                 if err_object:
-                    self.log.error(f"List of objects that failed to upload: {err_object}.")
+                    self.log.error("List of objects that failed to upload: %s.", err_object)
                     return err_object
                 return None
 
@@ -474,11 +473,16 @@ class OBSHook(HuaweiBaseHook):
                 return None
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when uploading the object: {e}.")
+                self.log.error("Error message when uploading the object: %s.", e)
                 raise AirflowException(e)
 
         except Exception as e:
-            if object_type == "content" and getattr(data, "read", None):
+            if (
+                object_type == "content"
+                and getattr(data, "read", None)
+                and hasattr(data, "close")
+                and callable(data.close)
+            ):
                 data.close()
             raise AirflowException(f"Errors when create object({e}).")
 
@@ -522,7 +526,7 @@ class OBSHook(HuaweiBaseHook):
                 return download_path
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when getting the object: {e}.")
+                self.log.error("Error message when getting the object: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when get: {object_key}({e})")
@@ -573,7 +577,7 @@ class OBSHook(HuaweiBaseHook):
                 self.log.info("Object replication succeeded")
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when copying object: {e}.")
+                self.log.error("Error message when copying object: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when copying: {source_object_key}({e}).")
@@ -605,7 +609,7 @@ class OBSHook(HuaweiBaseHook):
                 self.log.info("Object deleted successfully")
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when deleting object: {e}.")
+                self.log.error("Error message when deleting object: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting: {object_key}({e})")
@@ -648,7 +652,7 @@ class OBSHook(HuaweiBaseHook):
                 self.log.info("Succeeded in deleting objects in batches.")
             else:
                 e = get_err_info(resp)
-                self.log.error(f"Error message when deleting batch objects: {e}.")
+                self.log.error("Error message when deleting batch objects: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when deleting: {object_list}({e}).")
@@ -669,7 +673,6 @@ class OBSHook(HuaweiBaseHook):
         :param dest_bucket_name: Target bucket name.
         """
         try:
-
             obs_client = self.get_obs_client()
             copy_resp = obs_client.copyObject(
                 sourceObjectKey=source_object_key,
@@ -686,19 +689,17 @@ class OBSHook(HuaweiBaseHook):
                 else:
                     obs_client.deleteObject(objectKey=dest_object_key, bucketName=dest_bucket_name)
                     e = get_err_info(delete_resp)
-                    self.log.error(f"Error message when moving objects: {e}.")
+                    self.log.error("Error message when moving objects: %s.", e)
                     raise AirflowException(e)
             else:
                 e = get_err_info(copy_resp)
-                self.log.error(f"Error message when getting the object: {e}.")
+                self.log.error("Error message when getting the object: %s.", e)
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when Moving: {source_object_key}({e}).")
 
     def get_credential(self) -> tuple:
-        """
-        Gets user authentication information from connection.
-        """
+        """Gets user authentication information from connection."""
         access_key_id = self.conn.login
         access_key_secret = self.conn.password
         if not access_key_id:
