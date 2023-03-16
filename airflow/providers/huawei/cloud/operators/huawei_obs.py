@@ -48,7 +48,7 @@ class OBSCreateBucketOperator(BaseOperator):
         self,
         region: str | None = None,
         bucket_name: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -79,7 +79,7 @@ class OBSListBucketOperator(BaseOperator):
     def __init__(
         self,
         region: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -112,7 +112,7 @@ class OBSDeleteBucketOperator(BaseOperator):
         self,
         region: str | None = None,
         bucket_name: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -169,7 +169,7 @@ class OBSListObjectsOperator(BaseOperator):
         marker: str | None = None,
         max_keys: int | None = None,
         is_truncated: bool | None = False,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -185,7 +185,6 @@ class OBSListObjectsOperator(BaseOperator):
         obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
 
         if obs_hook.exist_bucket(self.bucket_name):
-
             return obs_hook.list_object(
                 bucket_name=self.bucket_name,
                 prefix=self.prefix,
@@ -219,7 +218,7 @@ class OBSGetBucketTaggingOperator(BaseOperator):
 
     def __init__(
         self,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         region: str | None = None,
         bucket_name: str | None = None,
         **kwargs,
@@ -265,7 +264,7 @@ class OBSSetBucketTaggingOperator(BaseOperator):
         self,
         tag_info: dict[str, str] | None = None,
         bucket_name: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         region: str | None = None,
         **kwargs,
     ) -> None:
@@ -304,7 +303,7 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
 
     def __init__(
         self,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         region: str | None = None,
         bucket_name: str | None = None,
         **kwargs,
@@ -360,7 +359,8 @@ class OBSCreateObjectOperator(BaseOperator):
             - PRIVATE: Private read/write.
             - PUBLIC_READ: Public read.
             - PUBLIC_READ_WRITE: Public read/write.
-            - BUCKET_OWNER_FULL_CONTROL: The owner of a bucket or object has the full control permission on the bucket or object.
+            - BUCKET_OWNER_FULL_CONTROL: The owner of a bucket or object has the full control permission on
+                the bucket or object.
     :param storage_class: Storage Classes, which can be specified during the object creation.
         The access policy is as follows:
 
@@ -390,7 +390,7 @@ class OBSCreateObjectOperator(BaseOperator):
         object_type: str | None = "content",
         region: str | None = None,
         bucket_name: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         metadata: dict | None = None,
         md5: str | None = None,
         acl: str | None = None,
@@ -457,7 +457,7 @@ class OBSGetObjectOperator(BaseOperator):
         download_path: str,
         bucket_name: str | None = None,
         region: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -499,14 +499,16 @@ class OBSCopyObjectOperator(BaseOperator):
         Possible values are:
 
             - COPY: Default value; Attributes of the target object are copied from the source object.
-            - REPLACE: Attributes of the target object are replaced with values specified in the request parameter.
+            - REPLACE: Attributes of the target object are replaced with values specified in the request
+                parameter.
     :param acl: Pre-set access policies, which can be specified during object copy.
         The access policy is as follows:
 
             - PRIVATE: Private read/write.
             - PUBLIC_READ: Public read.
             - PUBLIC_READ_WRITE: Public read/write.
-            - BUCKET_OWNER_FULL_CONTROL: The owner of a bucket or object has the full control permission on the bucket or object.
+            - BUCKET_OWNER_FULL_CONTROL: The owner of a bucket or object has the full control permission on
+                the bucket or object.
     """
 
     template_fields: Sequence[str] = (
@@ -527,7 +529,7 @@ class OBSCopyObjectOperator(BaseOperator):
         directive: str | None = None,
         acl: str | None = None,
         region: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -586,7 +588,7 @@ class OBSDeleteObjectOperator(BaseOperator):
         bucket_name: str | None = None,
         version_id: str | None = None,
         region: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -630,7 +632,7 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
         bucket_name: str,
         quiet: bool | None = True,
         region: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -686,7 +688,7 @@ class OBSMoveObjectOperator(BaseOperator):
         dest_bucket_name: str,
         source_bucket_name: str | None = None,
         region: str | None = None,
-        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        huaweicloud_conn_id: str = "huaweicloud_default",
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -702,12 +704,16 @@ class OBSMoveObjectOperator(BaseOperator):
         obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if not obs_hook.exist_bucket(self.dest_bucket_name):
             self.log.warning(
-                f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+                "OBS Bucket with name: %s doesn't exist on region: %s.",
+                self.dest_bucket_name,
+                obs_hook.get_region(),
             )
             return
         if not obs_hook.exist_bucket(self.source_bucket_name):
             self.log.warning(
-                f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+                "OBS Bucket with name: %s doesn't exist on region: %s.",
+                self.source_bucket_name,
+                obs_hook.get_region(),
             )
             return
 

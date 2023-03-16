@@ -60,7 +60,7 @@ operators:
 sensors:
   - integration-name: Huawei Cloud OBS
     python-modules:
-      - airflow.providers.huawei.cloud.sensors.huawei_obs
+      - airflow.providers.huawei.cloud.sensors.huawei_obs_key
   - integration-name: Huawei Cloud DWS
     python-modules:
       - airflow.providers.huawei.cloud.sensors.dws
@@ -75,6 +75,9 @@ sensors:
       - airflow.providers.huawei.cloud.sensors.dataarts
 
 hooks:
+  - integration-name: Huawei Cloud
+    python-modules:
+      - airflow.providers.huawei.cloud.hooks.base_huawei_cloud
   - integration-name: Huawei Cloud OBS
     python-modules:
       - airflow.providers.huawei.cloud.hooks.huawei_obs

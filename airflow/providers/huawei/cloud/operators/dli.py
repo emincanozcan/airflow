@@ -33,9 +33,11 @@ class DLICreateQueueOperator(BaseOperator):
 
     :param project_id: Specifies the project ID.
     :param queue_name: Name of a newly created resource queue.
-    :param cu_count: Minimum number of CUs that are bound to a queue. Currently, the value can only be 16, 64, or 256.
+    :param cu_count: Minimum number of CUs that are bound to a queue.
+        Currently, the value can only be 16, 64, or 256.
     :param platform: CPU architecture of compute resources.
-    :param enterprise_project_id: Enterprise project ID. The value 0 indicates the default enterprise project.
+    :param enterprise_project_id: Enterprise project ID.
+        The value 0 indicates the default enterprise project.
     :param feature: Indicates the queue feature. The options are as follows:
         basic: basic type
         ai: AI-enhanced (Only the SQL x86_64 dedicated queue supports this option.)
@@ -43,12 +45,18 @@ class DLICreateQueueOperator(BaseOperator):
     :param resource_mode: Queue resource mode. The options are as follows:
         0: indicates the shared resource mode.
         1: indicates the exclusive resource mode.
-    :param charging_mode: Billing mode of a queue. This value can only be set to 1, indicating that the billing is based on the CUH used.
+    :param charging_mode: Billing mode of a queue. This value can only be set to 1,
+        indicating that the billing is based on the CUH used.
     :param description: Description of a queue.
-    :param queue_type: Queue type. The options are as follows: sql: Queues used to run SQL jobs. general: Queues used to run Flink and Spark Jar jobs.
+    :param queue_type: Queue type. The options are as follows:
+        sql: Queues used to run SQL jobs. general: Queues used to run Flink and Spark Jar jobs.
     :param list_tags_body: Queue tags for identifying cloud resources. A tag consists of a key and tag value
-    :param list_labels_body: Tag information of the queue to be created. Currently, the tag information includes whether the queue is cross-AZ (JSON character string). The value can only be 2, that is, a dual-AZ queue whose compute resources are distributed in two AZs is created.
-    :param elastic_resource_pool_name: Name of a new elastic resource pool. The name can contain only digits, lowercase letters, and underscores (), but cannot contain only digits or start with an underscore (). Length range: 1 to 128 characters.
+    :param list_labels_body: Tag information of the queue to be created. Currently, the tag information
+        includes whether the queue is cross-AZ (JSON character string). The value can only be 2, that is,
+        a dual-AZ queue whose compute resources are distributed in two AZs is created.
+    :param elastic_resource_pool_name: Name of a new elastic resource pool. The name can contain only
+        digits, lowercase letters, and underscores (), but cannot contain only digits or start with an
+        underscore
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
@@ -108,7 +116,6 @@ class DLICreateQueueOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
@@ -163,7 +170,6 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
@@ -202,7 +208,6 @@ class DLIDeleteQueueOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
@@ -215,10 +220,12 @@ class DLIListQueuesOperator(BaseOperator):
     This operator is used to list all queues under the project.
 
     :param project_id: Specifies the project ID.
-    :param queue_type: Queue type. The options are as follows: sql, general and all. If this parameter is not specified, the default value sql is used.
+    :param queue_type: Queue type. The options are as follows: sql, general and all.
+        If this parameter is not specified, the default value sql is used.
     :param tags: Specifies the message content.
     :param return_billing_info: Regions where the API is available.
-    :param return_permission_info: Specifies the message subject, which is used as the email subject when you publish email messages.
+    :param return_permission_info: Specifies the message subject, which is used as the email subject when
+        you publish email messages.
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
@@ -248,7 +255,6 @@ class DLIListQueuesOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
@@ -268,21 +274,22 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
     This operator is used to create a batch processing job in a queue.
 
     :param project_id: Specifies the project ID.
-    :param file: Name of the package that is of the JAR or pyFile type and has been uploaded to the DLI resource management system.
-        You can also specify an OBS path, for example, obs://Bucket name/Package name.
+    :param file: Name of the package that is of the JAR or pyFile type and has been uploaded to the DLI
+        resource management system. You can also specify an OBS path, for example,
+        obs://Bucket name/Package name.
     :param class_name: Java/Spark main class of the batch processing job.
     :param queue_name: Queue name. Set this parameter to the name of the created DLI queue.
-        The queue must be of the general-purpose type. This parameter is compatible with the cluster_name parameter.
-        That is, if cluster_name is used to specify a queue, the queue is still valid.
+        The queue must be of the general-purpose type. This parameter is compatible with the cluster_name
+        parameter. That is, if cluster_name is used to specify a queue, the queue is still valid.
         You are advised to use the queue parameter. The queue and cluster_name parameters cannot coexist.
     :param obs_bucket: OBS bucket for storing the Spark jobs. Set this parameter when you need to save jobs.
     :param catalog_name: To access metadata, set this parameter to dli.
     :param image: Custom image. The format is Organization name/Image name:Image version.
-        This parameter is valid only when feature is set to custom.
-        You can use this parameter with the feature parameter to specify a user-defined Spark image for job running.
+        This parameter is valid only when feature is set to custom. You can use this
+        parameter with the feature parameter to specify a user-defined Spark image for job running.
     :param max_retry_times: Maximum retry times. The maximum value is 100, and the default value is 20.
-    :param auto_recovery: Whether to enable the retry function.
-        If enabled, Spark jobs will be automatically retried after an exception occurs. The default value is false.
+    :param auto_recovery: Whether to enable the retry function. If enabled, Spark jobs will be
+        automatically retried after an exception occurs. The default value is false.
     :param spark_version: Version of the Spark component
         If the in-use Spark version is 2.3.2, this parameter is not required.
         If the current Spark version is 2.3.3, this parameter is required when feature is basic or ai.
@@ -291,32 +298,37 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
         basic: indicates that the basic Spark image provided by DLI is used.
         custom: indicates that the user-defined Spark image is used.
         ai: indicates that the AI image provided by DLI is used.
-    :param num_executors: Number of Executors in a Spark application. This configuration item replaces the default parameter in sc_type.
+    :param num_executors: Number of Executors in a Spark application. This configuration item replaces
+        the default parameter in sc_type.
     :param executor_cores: Number of CPU cores of each Executor in the Spark application.
         This configuration item replaces the default parameter in sc_type.
     :param executor_memory: Executor memory of the Spark application, for example, 2 GB and 2048 MB.
-        This configuration item replaces the default parameter in sc_type. The unit must be provided. Otherwise, the startup fails.
-    :param driver_cores: Number of CPU cores of the Spark application driver. This configuration item replaces the default parameter in sc_type.
-    :param driver_memory: Driver memory of the Spark application, for example, 2 GB and 2048 MB. This configuration item replaces the default parameter in sc_type. The unit must be provided. Otherwise, the startup fails.
+    :param driver_cores: Number of CPU cores of the Spark application driver. This configuration item
+        replaces the default parameter in sc_type.
+    :param driver_memory: Driver memory of the Spark application, for example, 2 GB and 2048 MB.
     :param name: Batch processing task name. The value contains a maximum of 128 characters.
     :param list_conf_body: Batch configuration item
-    :param list_groups_body: JSON object list, including the package group resource. For details about the format, see the request example.
-        If the type of the name in resources is not verified, the package with the name exists in the group.
-    :param list_resources_body: JSON object list, including the name and type of the JSON package that has been uploaded to the queue.
-    :param list_modules_body: Name of the dependent system resource module. You can view the module name using the API related to Querying Resource Packages in a Group.
-        DLI provides dependencies for executing datasource jobs. The following table lists the dependency modules corresponding to different services.
+    :param list_groups_body: JSON object list, including the package group resource. If the type of the name
+        in resources is not verified, the package with the name exists in the group.
+    :param list_resources_body: JSON object list, including the name and type of the JSON package that
+        has been uploaded to the queue.
+    :param list_modules_body: Name of the dependent system resource module.
+        You can view the module name using the API related to Querying Resource Packages in a Group.
+        DLI provides dependencies for executing datasource jobs. The following table lists the dependency
+        modules corresponding to different services.
         CloudTable/MRS HBase: sys.datasource.hbase
         CloudTable/MRS OpenTSDB: sys.datasource.opentsdb
         RDS MySQL: sys.datasource.rds
         RDS Postgre: preset
         DWS: preset
         CSS: sys.datasource.css
-    :param list_files_body: Name of the package that is of the file type and has been uploaded to the DLI resource management system.
-        You can also specify an OBS path, for example, obs://Bucket name/Package name.
-    :param list_python_files_body: Name of the package that is of the PyFile type and has been uploaded to the DLI resource management system.
-        You can also specify an OBS path, for example, obs://Bucket name/Package name.
-    :param list_jars_body: Name of the package that is of the JAR type and has been uploaded to the DLI resource management system.
-        You can also specify an OBS path, for example, obs://Bucket name/Package name.
+    :param list_files_body: Name of the package that is of the file type and has been uploaded to the DLI
+        resource management system. You can also specify an OBS path, for example, obs://Bucket name/Package.
+    :param list_python_files_body: Name of the package that is of the PyFile type and has been uploaded to
+        the DLI resource management system. You can also specify an OBS path, for example,
+        obs://Bucket name/Package name.
+    :param list_jars_body: Name of the package that is of the JAR type and has been uploaded to the DLI
+        resource management system. You can also specify an OBS path, for example, obs://Bucket name/Package.
     :param sc_type: Compute resource type. Currently, resource types A, B, and C are available.
         If this parameter is not specified, the minimum configuration (type A) is used.
     :param list_args_body: Input parameters of the main class, that is, application parameters.
@@ -428,7 +440,6 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
@@ -496,7 +507,6 @@ class DLIUploadFilesOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
@@ -506,13 +516,16 @@ class DLIUploadFilesOperator(BaseOperator):
 
 class DLIRunSqlJobOperator(BaseOperator):
     """
-    This operator is used to submit jobs to a queue using SQL statements. The job types support DDL, DCL, IMPORT, QUERY, and INSERT.
+    This operator is used to submit jobs to a queue using SQL statements.
+    The job types support DDL, DCL, IMPORT, QUERY, and INSERT.
 
     :param project_id: Specifies the project ID.
     :param sql_query: SQL statement that you want to execute.
-    :param database_name: Database where the SQL statement is executed. This parameter does not need to be configured during database creation.
+    :param database_name: Database where the SQL statement is executed. This parameter does not need to be
+        configured during database creation.
     :param queue_name: Name of the queue to which a job to be submitted belongs.
-        The name can contain only digits, letters, and underscores (_), but cannot contain only digits or start with an underscore (_).
+        The name can contain only digits, letters, and underscores (_), but cannot contain only digits or
+        start with an underscore (_).
     :param list_tags_body: Label of a job.
     :param list_conf_body: You can set the configuration parameters for the SQL job in the form of Key/Value.
     :param region: Regions where the API is available.
@@ -554,7 +567,6 @@ class DLIRunSqlJobOperator(BaseOperator):
         self.list_conf_body = list_conf_body
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
@@ -570,8 +582,8 @@ class DLIRunSqlJobOperator(BaseOperator):
 
 class DLIGetSqlJobResultOperator(BaseOperator):
     """
-    This operator is used to view the job execution result after a job is executed using SQL query statements.
-    Currently, you can only query execution results of jobs of the QUERY type.
+    This operator is used to view the job execution result after a job is executed using SQL query
+    statements. Currently, you can only query execution results of jobs of the QUERY type.
 
     This API can be used to view only the first 1000 result records and does not support pagination query.
     To view all query results, you need to export the query results first
@@ -579,7 +591,8 @@ class DLIGetSqlJobResultOperator(BaseOperator):
     :param project_id: Specifies the project ID.
     :param job_id: Job ID
     :param queue_name: Name of the queue to which a job to be submitted belongs.
-        The name can contain only digits, letters, and underscores (_), but cannot contain only digits or start with an underscore (_).
+        The name can contain only digits, letters, and underscores (_), but cannot contain only digits or
+        start with an underscore (_).
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
@@ -605,7 +618,6 @@ class DLIGetSqlJobResultOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context):
-
         dli_hook = DLIHook(
             huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )

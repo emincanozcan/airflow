@@ -33,11 +33,13 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     This operator is used to publish template messages to a topic
 
     :param project_id: Specifies the project ID.For details about how to obtain the project ID
-    :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource identifier.
+    :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource
+        identifier.
     :param tags: Specifies the dictionary consisting of variable parameters and values.
     :param template_name: Specifies the message template name
     :param region: Regions where the API is available
-    :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
+    :param subject: Specifies the message subject, which is used as the email subject when you publish email
+        messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
@@ -81,10 +83,12 @@ class SMNPublishTextMessageOperator(BaseOperator):
     This operator is used to publish text messages to a topic
 
     :param project_id: Specifies the project ID.For details about how to obtain the project ID
-    :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource identifier.
+    :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource
+        identifier.
     :param message: Specifies the message content
     :param region: Regions where the API is available
-    :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
+    :param subject: Specifies the message subject, which is used as the email subject when you publish email
+        messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
@@ -124,10 +128,11 @@ class SMNPublishJsonMessageOperator(BaseOperator):
     This operator is used to publish json messages to a topic
 
     :param project_id: Specifies the project ID.For details about how to obtain the project ID
-    :param topic_urn: Specifies the resource identifier of the topic, which is unique. To obtain the resource identifier.
+    :param topic_urn: Specifies the resource identifier of the topic, which is unique.
     :param message_structure: Specifies the message structure, which contains JSON strings
     :param region: Regions where the API is available
-    :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
+    :param subject: Specifies the message subject, which is used as the email subject when you publish email
+        messages.
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
