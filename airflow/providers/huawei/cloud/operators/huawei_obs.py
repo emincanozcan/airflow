@@ -45,11 +45,11 @@ class OBSCreateBucketOperator(BaseOperator):
     template_fields: Sequence[str] = ("bucket_name",)
 
     def __init__(
-            self,
-            region: str | None = None,
-            bucket_name: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        region: str | None = None,
+        bucket_name: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -77,10 +77,10 @@ class OBSListBucketOperator(BaseOperator):
     """
 
     def __init__(
-            self,
-            region: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        region: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -109,11 +109,11 @@ class OBSDeleteBucketOperator(BaseOperator):
     template_fields: Sequence[str] = ("bucket_name",)
 
     def __init__(
-            self,
-            region: str | None = None,
-            bucket_name: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        region: str | None = None,
+        bucket_name: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -125,7 +125,9 @@ class OBSDeleteBucketOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket(bucket_name=self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
 
 
 class OBSListObjectsOperator(BaseOperator):
@@ -151,19 +153,24 @@ class OBSListObjectsOperator(BaseOperator):
     :param is_truncated: Whether to enable paging query and list all objects that meet the conditions.
     """
 
-    template_fields: Sequence[str] = ("bucket_name", "prefix", "marker", "max_keys",)
+    template_fields: Sequence[str] = (
+        "bucket_name",
+        "prefix",
+        "marker",
+        "max_keys",
+    )
     ui_color = "#ffd700"
 
     def __init__(
-            self,
-            bucket_name: str | None = None,
-            region: str | None = None,
-            prefix: str | None = None,
-            marker: str | None = None,
-            max_keys: int | None = None,
-            is_truncated: bool | None = False,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        bucket_name: str | None = None,
+        region: str | None = None,
+        prefix: str | None = None,
+        marker: str | None = None,
+        max_keys: int | None = None,
+        is_truncated: bool | None = False,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -187,7 +194,9 @@ class OBSListObjectsOperator(BaseOperator):
                 is_truncated=self.is_truncated,
             )
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
             return None
 
 
@@ -209,11 +218,11 @@ class OBSGetBucketTaggingOperator(BaseOperator):
     template_fields: Sequence[str] = ("bucket_name",)
 
     def __init__(
-            self,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            region: str | None = None,
-            bucket_name: str | None = None,
-            **kwargs,
+        self,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        region: str | None = None,
+        bucket_name: str | None = None,
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -226,7 +235,9 @@ class OBSGetBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             return obs_hook.get_bucket_tagging(self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
             return None
 
 
@@ -251,12 +262,12 @@ class OBSSetBucketTaggingOperator(BaseOperator):
     template_fields_renderers = {"tag_info": "json"}
 
     def __init__(
-            self,
-            tag_info: dict[str, str] | None = None,
-            bucket_name: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            region: str | None = None,
-            **kwargs,
+        self,
+        tag_info: dict[str, str] | None = None,
+        bucket_name: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        region: str | None = None,
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -269,7 +280,9 @@ class OBSSetBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.set_bucket_tagging(bucket_name=self.bucket_name, tag_info=self.tag_info)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
 
 
 class OBSDeleteBucketTaggingOperator(BaseOperator):
@@ -290,11 +303,11 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
     template_fields: Sequence[str] = ("bucket_name",)
 
     def __init__(
-            self,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            region: str | None = None,
-            bucket_name: str | None = None,
-            **kwargs,
+        self,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        region: str | None = None,
+        bucket_name: str | None = None,
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -306,7 +319,9 @@ class OBSDeleteBucketTaggingOperator(BaseOperator):
         if obs_hook.exist_bucket(self.bucket_name):
             obs_hook.delete_bucket_tagging(bucket_name=self.bucket_name)
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
 
 
 class OBSCreateObjectOperator(BaseOperator):
@@ -369,21 +384,21 @@ class OBSCreateObjectOperator(BaseOperator):
     template_fields: Sequence[str] = ("bucket_name", "object_key", "object_type", "data", "metadata")
 
     def __init__(
-            self,
-            object_key: str,
-            data: str | object,
-            object_type: str | None = "content",
-            region: str | None = None,
-            bucket_name: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            metadata: dict | None = None,
-            md5: str | None = None,
-            acl: str | None = None,
-            encryption: str | None = None,
-            key: str | None = None,
-            storage_class: str | None = None,
-            expires: int | None = None,
-            **kwargs,
+        self,
+        object_key: str,
+        data: str | object,
+        object_type: str | None = "content",
+        region: str | None = None,
+        bucket_name: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        metadata: dict | None = None,
+        md5: str | None = None,
+        acl: str | None = None,
+        encryption: str | None = None,
+        key: str | None = None,
+        storage_class: str | None = None,
+        expires: int | None = None,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.region = region
@@ -394,12 +409,12 @@ class OBSCreateObjectOperator(BaseOperator):
         self.huaweicloud_conn_id = huaweicloud_conn_id
         self.metadata = metadata
         self.headers = {
-            'md5': md5,
-            'acl': acl,
-            'encryption': encryption,
-            'key': key,
-            'storageClass': storage_class,
-            'expires': expires,
+            "md5": md5,
+            "acl": acl,
+            "encryption": encryption,
+            "key": key,
+            "storageClass": storage_class,
+            "expires": expires,
         }
 
     def execute(self, context: Context):
@@ -432,17 +447,18 @@ class OBSGetObjectOperator(BaseOperator):
         for example, aa/bb.txt.When selecting the current directory,
         the path format must specify the current directory, for example, ./xxx.
     """
+
     ui_color = "#3298ff"
     template_fields: Sequence[str] = ("bucket_name", "object_key", "download_path")
 
     def __init__(
-            self,
-            object_key: str,
-            download_path: str,
-            bucket_name: str | None = None,
-            region: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        object_key: str,
+        download_path: str,
+        bucket_name: str | None = None,
+        region: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -501,18 +517,18 @@ class OBSCopyObjectOperator(BaseOperator):
     )
 
     def __init__(
-            self,
-            source_object_key: str,
-            dest_object_key: str,
-            source_bucket_name: str | None = None,
-            dest_bucket_name: str | None = None,
-            version_id: str | None = None,
-            metadata: dict | None = None,
-            directive: str | None = None,
-            acl: str | None = None,
-            region: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        source_object_key: str,
+        dest_object_key: str,
+        source_bucket_name: str | None = None,
+        dest_bucket_name: str | None = None,
+        version_id: str | None = None,
+        metadata: dict | None = None,
+        directive: str | None = None,
+        acl: str | None = None,
+        region: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -565,13 +581,13 @@ class OBSDeleteObjectOperator(BaseOperator):
     )
 
     def __init__(
-            self,
-            object_key: str,
-            bucket_name: str | None = None,
-            version_id: str | None = None,
-            region: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        object_key: str,
+        bucket_name: str | None = None,
+        version_id: str | None = None,
+        region: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -609,13 +625,13 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
     """
 
     def __init__(
-            self,
-            object_list: list[str | dict[str, str]],
-            bucket_name: str,
-            quiet: bool | None = True,
-            region: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        object_list: list[str | dict[str, str]],
+        bucket_name: str,
+        quiet: bool | None = True,
+        region: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.huaweicloud_conn_id = huaweicloud_conn_id
@@ -633,7 +649,9 @@ class OBSDeleteBatchObjectOperator(BaseOperator):
                 quiet=self.quiet,
             )
         else:
-            self.log.warning(f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
 
 
 class OBSMoveObjectOperator(BaseOperator):
@@ -662,14 +680,14 @@ class OBSMoveObjectOperator(BaseOperator):
     )
 
     def __init__(
-            self,
-            source_object_key: str,
-            dest_object_key: str,
-            dest_bucket_name: str,
-            source_bucket_name: str | None = None,
-            region: str | None = None,
-            huaweicloud_conn_id: str | None = "huaweicloud_default",
-            **kwargs,
+        self,
+        source_object_key: str,
+        dest_object_key: str,
+        dest_bucket_name: str,
+        source_bucket_name: str | None = None,
+        region: str | None = None,
+        huaweicloud_conn_id: str | None = "huaweicloud_default",
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         source_bucket_name = source_bucket_name if source_bucket_name else dest_bucket_name
@@ -683,15 +701,19 @@ class OBSMoveObjectOperator(BaseOperator):
     def execute(self, context: Context):
         obs_hook = OBSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region)
         if not obs_hook.exist_bucket(self.dest_bucket_name):
-            self.log.warning(f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.dest_bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
             return
         if not obs_hook.exist_bucket(self.source_bucket_name):
-            self.log.warning(f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+            self.log.warning(
+                f"OBS Bucket with name: {self.source_bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
             return
 
         obs_hook.move_object(
             source_bucket_name=self.source_bucket_name,
             dest_bucket_name=self.dest_bucket_name,
             source_object_key=self.source_object_key,
-            dest_object_key=self.dest_object_key
+            dest_object_key=self.dest_object_key,
         )

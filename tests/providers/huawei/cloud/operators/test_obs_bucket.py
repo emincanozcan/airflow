@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import unittest
 from unittest import mock
+
 from airflow.providers.huawei.cloud.operators.huawei_obs import (
     OBSCreateBucketOperator,
     OBSDeleteBucketOperator,
@@ -95,4 +96,3 @@ class TestOBSListBucketOperator(unittest.TestCase):
 
         mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.list_bucket.assert_called_once_with()
-

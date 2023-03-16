@@ -23,16 +23,21 @@ from unittest import mock
 
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
-from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
-
+from tests.providers.huawei.cloud.utils.hw_mock import default_mock_constants, mock_huawei_cloud_default
 
 MOCK_BUCKET_NAME = default_mock_constants["OBS_BUCKET"]
 MOCK_REGION = default_mock_constants["REGION"]
 OBS_STRING = "airflow.providers.huawei.cloud.hooks.huawei_obs.{}"
 MOCK_OBS_CONN_ID = "mock_obs_conn_id"
 MOCK_OBJECT_KEY = "mock_object_key"
-MOCK_OBJECT_KEYS = ["mock1_object_key1", "mock2_object_key2", "mock1_object_key3",
-                    "mock2_object_key4", "mock2_object_key5", "mock1_object_key6"]
+MOCK_OBJECT_KEYS = [
+    "mock1_object_key1",
+    "mock2_object_key2",
+    "mock1_object_key3",
+    "mock2_object_key4",
+    "mock2_object_key5",
+    "mock1_object_key6",
+]
 MOCK_CONTENT = "mock_content"
 MOCK_FILE_PATH = "mock_file_path"
 MOCK_TAG_INFO = {"mock_key1": "mock_value1", "mock_key2": "mock_value2"}
@@ -100,15 +105,13 @@ class TestOBSHook(unittest.TestCase):
     @mock.patch(OBS_STRING.format("OBSHook.get_credential"))
     @mock.patch(OBS_STRING.format("ObsClient"))
     def test_get_obs_client(self, mock_obs_client, mock_get_credential):
-        mock_get_credential.return_value = ('AK', 'SK')
+        mock_get_credential.return_value = ("AK", "SK")
 
         self.hook.get_obs_client()
 
         mock_get_credential.assert_called_once_with()
         mock_obs_client.assert_called_once_with(
-            access_key_id='AK',
-            secret_access_key='SK',
-            server=f'https://obs.{MOCK_REGION}.myhuaweicloud.com'
+            access_key_id="AK", secret_access_key="SK", server=f"https://obs.{MOCK_REGION}.myhuaweicloud.com"
         )
 
     @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
@@ -146,24 +149,28 @@ class TestOBSHook(unittest.TestCase):
         resp_bucket_list = copy.deepcopy(RESP_200)
         mock_list_bucket.return_value = resp_bucket_list
         expect_buckets = [
-            {"name": "mock_bucket1",
-             "region": MOCK_REGION,
-             "create_date": "2023/01/13 10:00:00",
-             "bucket_type": "OBJECT",
-             },
-            {"name": "mock_bucket2",
-             "region": MOCK_REGION,
-             "create_date": "2023/01/14 10:00:00",
-             "bucket_type": "OBJECT",
-             },
+            {
+                "name": "mock_bucket1",
+                "region": MOCK_REGION,
+                "create_date": "2023/01/13 10:00:00",
+                "bucket_type": "OBJECT",
+            },
+            {
+                "name": "mock_bucket2",
+                "region": MOCK_REGION,
+                "create_date": "2023/01/14 10:00:00",
+                "bucket_type": "OBJECT",
+            },
         ]
 
         bucket1 = mock.Mock()
         bucket2 = mock.Mock()
-        bucket1.configure_mock(name="mock_bucket1", location=MOCK_REGION,
-                               create_date="2023/01/13 10:00:00", bucket_type="OBJECT")
-        bucket2.configure_mock(name="mock_bucket2", location=MOCK_REGION,
-                               create_date="2023/01/14 10:00:00", bucket_type="OBJECT")
+        bucket1.configure_mock(
+            name="mock_bucket1", location=MOCK_REGION, create_date="2023/01/13 10:00:00", bucket_type="OBJECT"
+        )
+        bucket2.configure_mock(
+            name="mock_bucket2", location=MOCK_REGION, create_date="2023/01/14 10:00:00", bucket_type="OBJECT"
+        )
         resp_bucket_list.body = mock.Mock(buckets=[bucket1, bucket2])
 
         res = self.hook.list_bucket()
@@ -245,10 +252,10 @@ class TestOBSHook(unittest.TestCase):
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_get_bucket_tagging_if_status_lt_300(self, mock_bucket_client):
         mock_get_bucket_tagging = mock_bucket_client.return_value.getBucketTagging
-        tag1 = {'key': 'version', 'value': 'v2.0'}
-        tag2 = {'key': 'name', 'value': 'airflow'}
-        expect_tag_set = [{'tag': 'version', 'value': 'v2.0'}, {'tag': 'name', 'value': 'airflow'}]
-        body = {'tagSet': [mock.Mock(**tag1), mock.Mock(**tag2)]}
+        tag1 = {"key": "version", "value": "v2.0"}
+        tag2 = {"key": "name", "value": "airflow"}
+        expect_tag_set = [{"tag": "version", "value": "v2.0"}, {"tag": "name", "value": "airflow"}]
+        body = {"tagSet": [mock.Mock(**tag1), mock.Mock(**tag2)]}
         resp_tagging = copy.deepcopy(RESP_200)
         resp_tagging.body = mock.Mock(**body)
         mock_get_bucket_tagging.return_value = resp_tagging
@@ -327,15 +334,16 @@ class TestOBSHook(unittest.TestCase):
         mock_get_obs_bucket_object_key.return_value = (MOCK_BUCKET_NAME, MOCK_OBJECT_KEY)
         mock_list_object = mock_bucket_client.return_value.listObjects
 
-        body = {'contents': [mock.Mock(key=MOCK_OBJECT_KEY)]}
+        body = {"contents": [mock.Mock(key=MOCK_OBJECT_KEY)]}
         resp_object_list = copy.deepcopy(RESP_200)
         resp_object_list.body = mock.Mock(**body)
         mock_list_object.return_value = resp_object_list
 
         exist = self.hook.exist_object(MOCK_OBJECT_KEY, MOCK_BUCKET_NAME)
 
-        mock_get_obs_bucket_object_key.assert_called_once_with(MOCK_BUCKET_NAME, MOCK_OBJECT_KEY,
-                                                               "bucket_name", "object_key")
+        mock_get_obs_bucket_object_key.assert_called_once_with(
+            MOCK_BUCKET_NAME, MOCK_OBJECT_KEY, "bucket_name", "object_key"
+        )
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_list_object.assert_called_once_with(prefix=MOCK_OBJECT_KEY, max_keys=1)
         self.assertEqual(True, exist)
@@ -347,15 +355,14 @@ class TestOBSHook(unittest.TestCase):
         mock_get_obs_bucket_object_key.return_value = (MOCK_BUCKET_NAME, MOCK_OBJECT_KEY)
         mock_list_object = mock_bucket_client.return_value.listObjects
 
-        body = {'contents': [mock.Mock(key=MOCK_OBJECT_KEY)]}
+        body = {"contents": [mock.Mock(key=MOCK_OBJECT_KEY)]}
         resp_object_list = copy.deepcopy(RESP_200)
         resp_object_list.body = mock.Mock(**body)
         mock_list_object.return_value = resp_object_list
 
         exist = self.hook.exist_object(bucket_name=None, object_key=object_key)
 
-        mock_get_obs_bucket_object_key.assert_called_once_with(None, object_key,
-                                                               "bucket_name", "object_key")
+        mock_get_obs_bucket_object_key.assert_called_once_with(None, object_key, "bucket_name", "object_key")
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_list_object.assert_called_once_with(prefix=MOCK_OBJECT_KEY, max_keys=1)
         self.assertEqual(True, exist)
@@ -370,8 +377,7 @@ class TestOBSHook(unittest.TestCase):
 
         exist = self.hook.exist_object(bucket_name=None, object_key=object_key)
 
-        mock_get_obs_bucket_object_key.assert_called_once_with(None, object_key,
-                                                               "bucket_name", "object_key")
+        mock_get_obs_bucket_object_key.assert_called_once_with(None, object_key, "bucket_name", "object_key")
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_list_object.assert_called_once_with(prefix=MOCK_OBJECT_KEY, max_keys=1)
         self.assertEqual(False, exist)
@@ -379,9 +385,7 @@ class TestOBSHook(unittest.TestCase):
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_list_object_if_status_lt_300(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
-        body = {
-            'contents': [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS]
-        }
+        body = {"contents": [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS]}
         resp_object_list = copy.deepcopy(RESP_200)
         resp_object_list.body = mock.Mock(**body)
         mock_list_object.return_value = resp_object_list
@@ -407,19 +411,19 @@ class TestOBSHook(unittest.TestCase):
     def test_list_object_if_is_truncated(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
         body = {
-            'contents': [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS[:4]],
-            'max_keys': 4,
-            'is_truncated': True,
-            'next_marker': 'mock2_object_key5',
+            "contents": [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS[:4]],
+            "max_keys": 4,
+            "is_truncated": True,
+            "next_marker": "mock2_object_key5",
         }
         resp_object_list = copy.deepcopy(RESP_200)
         resp_object_list.body = mock.Mock(**body)
 
         body_is_truncated = {
-            'contents': [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS[4:]],
-            'max_keys': 4,
-            'is_truncated': False,
-            'next_marker': 'None',
+            "contents": [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS[4:]],
+            "max_keys": 4,
+            "is_truncated": False,
+            "next_marker": "None",
         }
         resp_object_list_is_truncated = copy.deepcopy(RESP_200)
         resp_object_list_is_truncated.body = mock.Mock(**body_is_truncated)
@@ -434,9 +438,7 @@ class TestOBSHook(unittest.TestCase):
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_list_object_if_max_keys(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
-        body = {
-            'contents': [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS[:2]]
-        }
+        body = {"contents": [mock.Mock(key=key) for key in MOCK_OBJECT_KEYS[:2]]}
         resp_object_list = copy.deepcopy(RESP_200)
         resp_object_list.body = mock.Mock(**body)
         mock_list_object.return_value = resp_object_list
@@ -471,50 +473,39 @@ class TestOBSHook(unittest.TestCase):
         self.assertListEqual(expect_object_list, object_list)
 
     def test_create_object_if_object_type_fail(self):
-        with self.assertRaises(AirflowException) as e:
+        with self.assertRaises(AirflowException):
             self.hook.create_object(
-                bucket_name=MOCK_BUCKET_NAME,
-                object_key=MOCK_OBJECT_KEY,
-                object_type='test',
-                data='test data'
+                bucket_name=MOCK_BUCKET_NAME, object_key=MOCK_OBJECT_KEY, object_type="test", data="test data"
             )
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_object_if_object_type_content(self, mock_bucket_client):
         mock_create_object = mock_bucket_client.return_value.putContent
         data = mock.Mock()
-        data.read.return_value = b'content data'
+        data.read.return_value = b"content data"
         data.close.return_value = None
         body = {
-            'objectUrl':
-                f'https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com/{MOCK_OBJECT_KEY}'
+            "objectUrl": f"https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com/{MOCK_OBJECT_KEY}"
         }
         resp_object = copy.deepcopy(RESP_200)
         resp_object.body = mock.Mock(**body)
         mock_create_object.return_value = resp_object
 
         self.hook.create_object(
-            bucket_name=MOCK_BUCKET_NAME,
-            object_key=MOCK_OBJECT_KEY,
-            object_type='content',
-            data=data
+            bucket_name=MOCK_BUCKET_NAME, object_key=MOCK_OBJECT_KEY, object_type="content", data=data
         )
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_create_object.assert_called_once_with(
-            objectKey=MOCK_OBJECT_KEY,
-            content=data,
-            metadata=None,
-            headers={}
+            objectKey=MOCK_OBJECT_KEY, content=data, metadata=None, headers={}
         )
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_object_if_object_type_file(self, mock_bucket_client):
         mock_create_object = mock_bucket_client.return_value.putFile
-        data = '/tmp/mock_file'
+        data = "/tmp/mock_file"
         body = {
-            'objectUrl':
-                f'https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com/{MOCK_OBJECT_KEY}'
+            "objectUrl": f"https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com/{MOCK_OBJECT_KEY}"
         }
         resp_object_list = copy.deepcopy(RESP_200)
         resp_object_list.body = mock.Mock(**body)
@@ -523,9 +514,9 @@ class TestOBSHook(unittest.TestCase):
         self.hook.create_object(
             bucket_name=MOCK_BUCKET_NAME,
             object_key=MOCK_OBJECT_KEY,
-            object_type='file',
+            object_type="file",
             data=data,
-            headers={'encryption': 'kms'}
+            headers={"encryption": "kms"},
         )
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
@@ -533,52 +524,79 @@ class TestOBSHook(unittest.TestCase):
             objectKey=MOCK_OBJECT_KEY,
             file_path=data,
             metadata=None,
-            headers={'sseHeader': {'encryption': 'kms', 'key': None}}
+            headers={"sseHeader": {"encryption": "kms", "key": None}},
         )
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_create_object_if_object_type_folder(self, mock_bucket_client):
         mock_create_object = mock_bucket_client.return_value.putFile
-        data = '/tmp/mock_folder/'
-        prefix_object_url = f'https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com'
+        data = "/tmp/mock_folder/"
+        prefix_object_url = f"https://{MOCK_BUCKET_NAME}.obs.{MOCK_REGION}.myhuaweicloud.com"
         resp = [
-            (f'{data}test', [
-                (f'{data}test/a', {'status': 200, 'reason': 'OK',
-                                   'body': {'objectUrl': f'{prefix_object_url}/{data}test/a'}
-                                   }),
-                (f'{data}test/b', {'status': 200, 'reason': 'OK',
-                                   'body': {'objectUrl': f'{prefix_object_url}/{data}test/b'},
-                                   }),
-                (f'{data}test/c', {'status': 200, 'reason': 'OK',
-                                   'body': {
-                                       'objectUrl': f'{prefix_object_url}/{data}test/c'},
-                                   })
-            ]),
-            (f'{data}mock1.py',
-             {'status': 400, 'reason': 'Bad Request', 'errorCode': 'EntityTooLarge',
-              'errorMessage': 'Your proposed upload exceeds the maximum allowed object size.'}),
-            (f'{data}mock2.py',
-             {'status': 200, 'reason': 'OK', 'body': {'objectUrl': f'{prefix_object_url}/{data}mock2.py'},
-              }),
-            (f'{data}mock3.py',
-             {'status': 200, 'reason': 'OK', 'body': {'objectUrl': f'{prefix_object_url}/{data}mock3.py'},
-              })
+            (
+                f"{data}test",
+                [
+                    (
+                        f"{data}test/a",
+                        {
+                            "status": 200,
+                            "reason": "OK",
+                            "body": {"objectUrl": f"{prefix_object_url}/{data}test/a"},
+                        },
+                    ),
+                    (
+                        f"{data}test/b",
+                        {
+                            "status": 200,
+                            "reason": "OK",
+                            "body": {"objectUrl": f"{prefix_object_url}/{data}test/b"},
+                        },
+                    ),
+                    (
+                        f"{data}test/c",
+                        {
+                            "status": 200,
+                            "reason": "OK",
+                            "body": {"objectUrl": f"{prefix_object_url}/{data}test/c"},
+                        },
+                    ),
+                ],
+            ),
+            (
+                f"{data}mock1.py",
+                {
+                    "status": 400,
+                    "reason": "Bad Request",
+                    "errorCode": "EntityTooLarge",
+                    "errorMessage": "Your proposed upload exceeds the maximum allowed object size.",
+                },
+            ),
+            (
+                f"{data}mock2.py",
+                {
+                    "status": 200,
+                    "reason": "OK",
+                    "body": {"objectUrl": f"{prefix_object_url}/{data}mock2.py"},
+                },
+            ),
+            (
+                f"{data}mock3.py",
+                {
+                    "status": 200,
+                    "reason": "OK",
+                    "body": {"objectUrl": f"{prefix_object_url}/{data}mock3.py"},
+                },
+            ),
         ]
         mock_create_object.return_value = resp
 
         expect_err_object = self.hook.create_object(
-            bucket_name=MOCK_BUCKET_NAME,
-            object_key=MOCK_OBJECT_KEY,
-            object_type='file',
-            data=data
+            bucket_name=MOCK_BUCKET_NAME, object_key=MOCK_OBJECT_KEY, object_type="file", data=data
         )
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_create_object.assert_called_once_with(
-            objectKey=MOCK_OBJECT_KEY,
-            file_path=data,
-            metadata=None,
-            headers={}
+            objectKey=MOCK_OBJECT_KEY, file_path=data, metadata=None, headers={}
         )
         self.assertListEqual(["/tmp/mock_folder/mock1.py"], expect_err_object)
 
@@ -586,16 +604,12 @@ class TestOBSHook(unittest.TestCase):
     def test_get_object(self, mock_bucket_client):
         mock_get_object = mock_bucket_client.return_value.getObject
         resp_object = copy.deepcopy(RESP_200)
-        body = {
-            "buffer": b"test get object\nxxx xxxx \nxxx xxxx"
-        }
+        body = {"buffer": b"test get object\nxxx xxxx \nxxx xxxx"}
         resp_object.body = mock.Mock(**body)
         mock_get_object.return_value = resp_object
 
         download_path = self.hook.get_object(
-            object_key=MOCK_OBJECT_KEY,
-            bucket_name=MOCK_BUCKET_NAME,
-            download_path="/mock/download/test"
+            object_key=MOCK_OBJECT_KEY, bucket_name=MOCK_BUCKET_NAME, download_path="/mock/download/test"
         )
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
@@ -609,8 +623,8 @@ class TestOBSHook(unittest.TestCase):
     def test_get_object_if_status_ge_300(self, mock_bucket_client):
         mock_get_object = mock_bucket_client.return_value.getObject
         resp_object = copy.deepcopy(RESP_404)
-        resp_object.errorCode = 'NoSuchKey'
-        resp_object.errorMessage = 'The specified key does not exist.'
+        resp_object.errorCode = "NoSuchKey"
+        resp_object.errorMessage = "The specified key does not exist."
         mock_get_object.return_value = resp_object
 
         with self.assertRaises(AirflowException):
@@ -632,7 +646,7 @@ class TestOBSHook(unittest.TestCase):
 
         self.hook.copy_object(
             source_object_key=MOCK_OBJECT_KEY,
-            dest_object_key='mock_dest_object_key',
+            dest_object_key="mock_dest_object_key",
             source_bucket_name=MOCK_BUCKET_NAME,
             dest_bucket_name=MOCK_BUCKET_NAME,
         )
@@ -640,7 +654,7 @@ class TestOBSHook(unittest.TestCase):
         mock_obs_client.assert_called_once_with()
         mock_copy_object.assert_called_once_with(
             sourceObjectKey=MOCK_OBJECT_KEY,
-            destObjectKey='mock_dest_object_key',
+            destObjectKey="mock_dest_object_key",
             sourceBucketName=MOCK_BUCKET_NAME,
             destBucketName=MOCK_BUCKET_NAME,
             versionId=None,
@@ -656,7 +670,7 @@ class TestOBSHook(unittest.TestCase):
         with self.assertRaises(AirflowException):
             self.hook.copy_object(
                 source_object_key=MOCK_OBJECT_KEY,
-                dest_object_key='mock_dest_object_key',
+                dest_object_key="mock_dest_object_key",
                 source_bucket_name=MOCK_BUCKET_NAME,
                 dest_bucket_name=MOCK_BUCKET_NAME,
             )
@@ -664,7 +678,7 @@ class TestOBSHook(unittest.TestCase):
             mock_obs_client.assert_called_once_with()
             mock_copy_object.assert_called_once_with(
                 sourceObjectKey=MOCK_OBJECT_KEY,
-                destObjectKey='mock_dest_object_key',
+                destObjectKey="mock_dest_object_key",
                 sourceBucketName=MOCK_BUCKET_NAME,
                 destBucketName=MOCK_BUCKET_NAME,
                 versionId=None,
@@ -683,10 +697,7 @@ class TestOBSHook(unittest.TestCase):
         )
 
         mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
-        mock_delete_object.assert_called_once_with(
-            objectKey=MOCK_OBJECT_KEY,
-            versionId=None
-        )
+        mock_delete_object.assert_called_once_with(objectKey=MOCK_OBJECT_KEY, versionId=None)
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_object_if_status_ge_300(self, mock_bucket_client):
@@ -700,10 +711,7 @@ class TestOBSHook(unittest.TestCase):
             )
 
             mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
-            mock_delete_object.assert_called_once_with(
-                objectKey=MOCK_OBJECT_KEY,
-                versionId=None
-            )
+            mock_delete_object.assert_called_once_with(objectKey=MOCK_OBJECT_KEY, versionId=None)
 
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
     def test_delete_objects_if_not_object_list(self, mock_bucket_client):
@@ -723,7 +731,7 @@ class TestOBSHook(unittest.TestCase):
         mock_delete_objects.return_value = RESP_404
 
         self.hook.delete_objects(
-            object_list=['i' for i in range(1001)],
+            object_list=["i" for i in range(1001)],
             bucket_name=MOCK_BUCKET_NAME,
         )
 
@@ -735,13 +743,17 @@ class TestOBSHook(unittest.TestCase):
     def test_delete_objects_if_status_lt_300(self, mock_bucket_client, mock_delete_objects_request):
         mock_delete_objects = mock_bucket_client.return_value.deleteObjects
         mock_delete_objects.return_value = RESP_200
-        mock_delete_objects_request.return_value = {'quiet': True,
-                                                    'objects': [{'key': 'mock1_object_key1'},
-                                                                {'key': 'mock2_object_key2'},
-                                                                {'key': 'mock1_object_key3'},
-                                                                {'key': 'mock2_object_key4'},
-                                                                {'key': 'mock2_object_key5'},
-                                                                {'key': 'mock1_object_key6'}]}
+        mock_delete_objects_request.return_value = {
+            "quiet": True,
+            "objects": [
+                {"key": "mock1_object_key1"},
+                {"key": "mock2_object_key2"},
+                {"key": "mock1_object_key3"},
+                {"key": "mock2_object_key4"},
+                {"key": "mock2_object_key5"},
+                {"key": "mock1_object_key6"},
+            ],
+        }
         self.hook.delete_objects(
             object_list=MOCK_OBJECT_KEYS,
             bucket_name=MOCK_BUCKET_NAME,
@@ -752,19 +764,24 @@ class TestOBSHook(unittest.TestCase):
 
     @mock.patch(OBS_STRING.format("DeleteObjectsRequest"))
     @mock.patch(OBS_STRING.format("OBSHook.get_bucket_client"))
-    def test_delete_objects_if_object_list_contains_dict(self, mock_bucket_client,
-                                                         mock_delete_objects_request):
+    def test_delete_objects_if_object_list_contains_dict(
+        self, mock_bucket_client, mock_delete_objects_request
+    ):
         mock_delete_objects = mock_bucket_client.return_value.deleteObjects
         mock_delete_objects.return_value = RESP_200
-        mock_delete_objects_request.return_value = {'quiet': True,
-                                                    'objects': [{'key': 'mock_key1', 'versionId': 'v1'},
-                                                                {'key': 'mock_key2', 'versionId': 'v2'},
-                                                                {'key': 'mock_key3'}]}
+        mock_delete_objects_request.return_value = {
+            "quiet": True,
+            "objects": [
+                {"key": "mock_key1", "versionId": "v1"},
+                {"key": "mock_key2", "versionId": "v2"},
+                {"key": "mock_key3"},
+            ],
+        }
         self.hook.delete_objects(
             object_list=[
-                {'object_key': 'mock_key1', 'version_id': 'v1'},
-                {'object_key': 'mock_key2', 'version_id': 'v2'},
-                {'object_key': 'mock_key3'},
+                {"object_key": "mock_key1", "version_id": "v1"},
+                {"object_key": "mock_key2", "version_id": "v2"},
+                {"object_key": "mock_key3"},
             ],
             bucket_name=MOCK_BUCKET_NAME,
         )
@@ -781,7 +798,7 @@ class TestOBSHook(unittest.TestCase):
 
         self.hook.move_object(
             source_object_key=MOCK_OBJECT_KEY,
-            dest_object_key='dest_mock_object_key',
+            dest_object_key="dest_mock_object_key",
             source_bucket_name=MOCK_BUCKET_NAME,
             dest_bucket_name=MOCK_BUCKET_NAME,
         )
@@ -789,7 +806,7 @@ class TestOBSHook(unittest.TestCase):
         mock_obs_client.assert_called_once_with()
         mock_copy_object.assert_called_once_with(
             sourceObjectKey=MOCK_OBJECT_KEY,
-            destObjectKey='dest_mock_object_key',
+            destObjectKey="dest_mock_object_key",
             sourceBucketName=MOCK_BUCKET_NAME,
             destBucketName=MOCK_BUCKET_NAME,
         )
@@ -804,7 +821,7 @@ class TestOBSHook(unittest.TestCase):
         with self.assertRaises(AirflowException):
             self.hook.move_object(
                 source_object_key=MOCK_OBJECT_KEY,
-                dest_object_key='dest_mock_object_key',
+                dest_object_key="dest_mock_object_key",
                 source_bucket_name=MOCK_BUCKET_NAME,
                 dest_bucket_name=MOCK_BUCKET_NAME,
             )
@@ -812,9 +829,9 @@ class TestOBSHook(unittest.TestCase):
             mock_obs_client.assert_called_once_with()
             mock_copy_object.assert_called_once_with(
                 sourceObjectKey=MOCK_OBJECT_KEY,
-                destObjectKey='dest_mock_object_key',
+                destObjectKey="dest_mock_object_key",
                 sourceBucketName=MOCK_BUCKET_NAME,
-                destBucketName=MOCK_BUCKET_NAME
+                destBucketName=MOCK_BUCKET_NAME,
             )
             mock_delete_object.not_called()
 
@@ -828,7 +845,7 @@ class TestOBSHook(unittest.TestCase):
         with self.assertRaises(AirflowException):
             self.hook.move_object(
                 source_object_key=MOCK_OBJECT_KEY,
-                dest_object_key='dest_mock_object_key',
+                dest_object_key="dest_mock_object_key",
                 source_bucket_name=MOCK_BUCKET_NAME,
                 dest_bucket_name=MOCK_BUCKET_NAME,
             )
@@ -836,11 +853,11 @@ class TestOBSHook(unittest.TestCase):
             mock_obs_client.assert_called_once_with()
             mock_copy_object.assert_called_once_with(
                 sourceObjectKey=MOCK_OBJECT_KEY,
-                destObjectKey='dest_mock_object_key',
+                destObjectKey="dest_mock_object_key",
                 destBucketName=MOCK_BUCKET_NAME,
                 sourceBucketName=MOCK_BUCKET_NAME,
             )
             mock_delete_object.assert_called()
 
     def test_get_credential(self):
-        self.assertTupleEqual(('AK', 'SK'), self.hook.get_credential())
+        self.assertTupleEqual(("AK", "SK"), self.hook.get_credential())

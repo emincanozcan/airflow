@@ -30,14 +30,8 @@ from airflow.sensors.base import BaseSensorOperator
 
 class DLISparkShowBatchStateSensor(BaseSensorOperator):
 
-    INTERMEDIATE_STATES = (
-        "starting",
-        "running",
-        "recovering"
-    )
-    FAILURE_STATES = (
-        "dead",
-    )
+    INTERMEDIATE_STATES = ("starting", "running", "recovering")
+    FAILURE_STATES = ("dead",)
     SUCCESS_STATES = ("success",)
 
     template_fields: Sequence[str] = ("job_id",)
@@ -71,21 +65,17 @@ class DLISparkShowBatchStateSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DLIHook:
         """Create and return a DLIHook"""
-        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
+        return DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region
+        )
+
 
 class DLISqlShowJobStatusSensor(BaseSensorOperator):
-    
-    #Status of a job, including RUNNING, SCALING, LAUNCHING, FINISHED, FAILED, and CANCELLED.
-    
-    INTERMEDIATE_STATES = (
-        "RUNNING",
-        "SCALING",
-        "LAUNCHING"
-    )
-    FAILURE_STATES = (
-        "FAILED",
-        "CANCELLED"
-    )
+
+    # Status of a job, including RUNNING, SCALING, LAUNCHING, FINISHED, FAILED, and CANCELLED.
+
+    INTERMEDIATE_STATES = ("RUNNING", "SCALING", "LAUNCHING")
+    FAILURE_STATES = ("FAILED", "CANCELLED")
     SUCCESS_STATES = ("FINISHED",)
 
     template_fields: Sequence[str] = ("job_id",)
@@ -119,4 +109,6 @@ class DLISqlShowJobStatusSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DLIHook:
         """Create and return a DLIHook"""
-        return DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
+        return DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region
+        )

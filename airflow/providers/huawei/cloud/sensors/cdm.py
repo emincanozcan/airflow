@@ -38,18 +38,10 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
-    
-    INTERMEDIATE_STATES = (
-        "BOOTING",
-        "RUNNING",
-        "UNKNOWN",
-        "NEVER_EXECUTED"
-    )
-    FAILURE_STATES = (
-        "FAILED",
-        "FAILURE_ON_SUBMIT"
-    )
-    SUCCESS_STATES = ("SUCCEEDED","STOPPED")
+
+    INTERMEDIATE_STATES = ("BOOTING", "RUNNING", "UNKNOWN", "NEVER_EXECUTED")
+    FAILURE_STATES = ("FAILED", "FAILURE_ON_SUBMIT")
+    SUCCESS_STATES = ("SUCCEEDED", "STOPPED")
 
     template_fields: Sequence[str] = ("cluster_id",)
     template_ext: Sequence[str] = ()
@@ -79,9 +71,8 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
         @param context - the context of the object
         @returns True if the job status succeeded, False otherwise
         """
-        
         submissions = self.get_hook.show_job_status(cluster_id=self.cluster_id, job_name=self.job_name)
-        
+
         for submission in submissions:
             if submission["status"] in self.FAILURE_STATES:
                 raise AirflowException("CDM sensor failed")
@@ -93,5 +84,6 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> CDMHook:
         """Create and return a CDMHook"""
-        return CDMHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
-
+        return CDMHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region
+        )

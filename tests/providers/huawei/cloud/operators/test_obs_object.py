@@ -19,12 +19,13 @@ from __future__ import annotations
 
 import unittest
 from unittest import mock
+
 from airflow.providers.huawei.cloud.operators.huawei_obs import (
-    OBSCreateObjectOperator,
-    OBSGetObjectOperator,
-    OBSDeleteObjectOperator,
-    OBSDeleteBatchObjectOperator,
     OBSCopyObjectOperator,
+    OBSCreateObjectOperator,
+    OBSDeleteBatchObjectOperator,
+    OBSDeleteObjectOperator,
+    OBSGetObjectOperator,
     OBSMoveObjectOperator,
 )
 
@@ -43,8 +44,14 @@ MOCK_DOWNLOAD_PATH = "mock_download_path"
 
 class TestOBSOBSCreateObjectOperator(unittest.TestCase):
     def setUp(self):
-        self.headers = {'md5': None, 'acl': None, 'encryption': None, 'key': None, 'storageClass': None,
-                        'expires': None}
+        self.headers = {
+            "md5": None,
+            "acl": None,
+            "encryption": None,
+            "key": None,
+            "storageClass": None,
+            "expires": None,
+        }
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
     def test_execute_if_bucket_provided(self, mock_hook):
@@ -56,7 +63,7 @@ class TestOBSOBSCreateObjectOperator(unittest.TestCase):
             data=MOCK_DATA,
             object_type=MOCK_OBJECT_TYPE,
             object_key=MOCK_OBJECT_KEY,
-            metadata=MOCK_METADATA
+            metadata=MOCK_METADATA,
         )
 
         operator.execute(MOCK_CONTEXT)
@@ -68,7 +75,7 @@ class TestOBSOBSCreateObjectOperator(unittest.TestCase):
             object_type=MOCK_OBJECT_TYPE,
             data=MOCK_DATA,
             metadata=MOCK_METADATA,
-            headers=self.headers
+            headers=self.headers,
         )
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
@@ -80,7 +87,7 @@ class TestOBSOBSCreateObjectOperator(unittest.TestCase):
             data=MOCK_DATA,
             object_type=MOCK_OBJECT_TYPE,
             object_key=f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}",
-            metadata=MOCK_METADATA
+            metadata=MOCK_METADATA,
         )
 
         operator.execute(MOCK_CONTEXT)
@@ -92,7 +99,7 @@ class TestOBSOBSCreateObjectOperator(unittest.TestCase):
             object_type=MOCK_OBJECT_TYPE,
             data=MOCK_DATA,
             metadata=MOCK_METADATA,
-            headers=self.headers
+            headers=self.headers,
         )
 
 
@@ -104,7 +111,7 @@ class TestOBSGetObjectOperator(unittest.TestCase):
             region=MOCK_REGION,
             bucket_name=MOCK_BUCKET_NAME,
             object_key=MOCK_OBJECT_KEY,
-            download_path=MOCK_DOWNLOAD_PATH
+            download_path=MOCK_DOWNLOAD_PATH,
         )
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
@@ -130,15 +137,13 @@ class TestOBSDeleteObjectOperator(unittest.TestCase):
             huaweicloud_conn_id=MOCK_OBS_CONN_ID,
             region=MOCK_REGION,
             bucket_name=MOCK_BUCKET_NAME,
-            object_key=MOCK_OBJECT_KEY
+            object_key=MOCK_OBJECT_KEY,
         )
         operator.execute(MOCK_CONTEXT)
 
         mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.delete_object.assert_called_once_with(
-            bucket_name=MOCK_BUCKET_NAME,
-            object_key=MOCK_OBJECT_KEY,
-            version_id=None
+            bucket_name=MOCK_BUCKET_NAME, object_key=MOCK_OBJECT_KEY, version_id=None
         )
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
@@ -154,9 +159,7 @@ class TestOBSDeleteObjectOperator(unittest.TestCase):
 
         mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.delete_object.assert_called_once_with(
-            bucket_name=None,
-            object_key=f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}",
-            version_id=None
+            bucket_name=None, object_key=f"obs://{MOCK_BUCKET_NAME}/{MOCK_OBJECT_KEY}", version_id=None
         )
 
 
@@ -168,7 +171,7 @@ class TestOBSDeleteBatchObjectOperator(unittest.TestCase):
             huaweicloud_conn_id=MOCK_OBS_CONN_ID,
             region=MOCK_REGION,
             bucket_name=MOCK_BUCKET_NAME,
-            object_list=self.object_list
+            object_list=self.object_list,
         )
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
@@ -180,9 +183,7 @@ class TestOBSDeleteBatchObjectOperator(unittest.TestCase):
         mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.exist_bucket.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_hook.return_value.delete_objects.assert_called_once_with(
-            bucket_name=MOCK_BUCKET_NAME,
-            object_list=self.object_list,
-            quiet=True
+            bucket_name=MOCK_BUCKET_NAME, object_list=self.object_list, quiet=True
         )
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
@@ -227,7 +228,7 @@ class TestOBSCopyObjectOperator(unittest.TestCase):
             dest_bucket_name=self.dest_bucket_name,
             metadata=MOCK_METADATA,
             version_id=None,
-            headers={'directive': None, 'acl': None},
+            headers={"directive": None, "acl": None},
         )
 
 
@@ -269,7 +270,3 @@ class TestOBSMoveObjectOperator(unittest.TestCase):
         mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.exist_bucket.assert_called()
         mock_hook.return_value.move_object.assert_not_called()
-
-
-
-

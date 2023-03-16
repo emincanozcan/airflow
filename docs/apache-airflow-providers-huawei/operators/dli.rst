@@ -22,7 +22,7 @@ Huawei Cloud DLI Operators
 Overview
 --------
 
-Data Lake Insight (DLI) is a serverless data processing and analysis service fully compatible with Spark, Flink, and openLooKeng (Presto-based) ecosystems. 
+Data Lake Insight (DLI) is a serverless data processing and analysis service fully compatible with Spark, Flink, and openLooKeng (Presto-based) ecosystems.
 Now, working with streaming and batch data and interactive analysis in data lakes and warehouses is effortless thanks to BI and AI capabilities.
 
  - :class:`~airflow.providers.huawei.cloud.operators.dli.DLICreateQueueOperator`

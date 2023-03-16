@@ -18,45 +18,53 @@
 
 from __future__ import annotations
 
-from typing import Any
+import huaweicloudsdkdlf.v1 as DlfSdk
+from huaweicloudsdkcore.auth.credentials import BasicCredentials
+from huaweicloudsdkdlf.v1.region.dlf_region import DlfRegion
+
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
 
-from huaweicloudsdkcore.auth.credentials import BasicCredentials
-import huaweicloudsdkdlf.v1 as DlfSdk
-from huaweicloudsdkdlf.v1.region.dlf_region import DlfRegion
 
 class DataArtsHook(HuaweiBaseHook):
     """Interact with Huawei Cloud DataArts DLF, using the huaweicloudsdkdlf library."""
-    
+
     def dlf_start_job(self, workspace, job_name, body) -> DlfSdk.StartJobResponse:
         """
         Start a job in DataArts DLF
-        
+
         :param workspace: The workspace name.
         :param job_name: The job name.
-        :param body: The request body.    
+        :param body: The request body.
         """
         try:
             return self.get_dlf_client().start_job(self.dlf_start_job_request(workspace, job_name, body))
         except Exception as e:
             raise AirflowException(f"Errors when starting: {e}")
-    
+
     def dlf_show_job_status(self, workspace, job_name) -> str:
         """
         Show the status of a job in DataArts DLF
-        
+
         :param workspace: The workspace name.
         :param job_name: The job name.
         """
         try:
-            return self.get_dlf_client().show_job_status(self.dlf_show_job_status_request(workspace, job_name)).to_json_object()["status"]
+            return (
+                self.get_dlf_client()
+                .show_job_status(self.dlf_show_job_status_request(workspace, job_name))
+                .to_json_object()["status"]
+            )
         except Exception as e:
             raise AirflowException(f"Errors when showing job status: {e}")
-    
+
     def dlf_list_job_instances(self, workspace) -> list:
         try:
-            return self.get_dlf_client().list_job_instances(self.dlf_list_job_instances_request(workspace)).instances
+            return (
+                self.get_dlf_client()
+                .list_job_instances(self.dlf_list_job_instances_request(workspace))
+                .instances
+            )
         except Exception as e:
             raise AirflowException(f"Errors when listing job instances: {e}")
 
@@ -73,11 +81,11 @@ class DataArtsHook(HuaweiBaseHook):
             .with_region(DlfRegion.value_of(self.get_region()))
             .build()
         )
-    
+
     def dlf_start_job_request(self, workspace, job_name, body):
         request = DlfSdk.StartJobRequest(workspace=workspace, job_name=job_name, body=body)
-        return request  
-    
+        return request
+
     def dlf_show_job_status_request(self, workspace, job_name):
         request = DlfSdk.ShowJobStatusRequest(workspace=workspace, job_name=job_name)
         return request

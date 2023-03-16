@@ -18,27 +18,22 @@
 
 from __future__ import annotations
 
-from typing import Any
+import huaweicloudsdkcdm.v1 as CdmSdk
+from huaweicloudsdkcdm.v1.region.cdm_region import CdmRegion
+from huaweicloudsdkcore.auth.credentials import BasicCredentials
+
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
-
-from huaweicloudsdkcore.auth.credentials import BasicCredentials
-from huaweicloudsdkcdm.v1.region.cdm_region import CdmRegion
-import huaweicloudsdkcdm.v1 as CdmSdk
 
 
 class CDMHook(HuaweiBaseHook):
     """Interact with Huawei Cloud CDM, using the huaweicloudsdkcdm library."""
 
-    def create_job(
-        self,
-        cluster_id,
-        jobs
-    ) -> CdmSdk.CreateJobResponse:
+    def create_job(self, cluster_id, jobs) -> CdmSdk.CreateJobResponse:
         """
         Create a job in CDM cluster
 
-        :param cluster_id: The ID of the cluster.   
+        :param cluster_id: The ID of the cluster.
         :type cluster_id: str
         :param jobs: The job information.
         :type jobs: list
@@ -52,10 +47,7 @@ class CDMHook(HuaweiBaseHook):
             raise AirflowException(f"Errors when creating job: {e}")
 
     def create_and_execute_job(
-        self,
-        x_language,
-        clusters,
-        jobs
+        self, x_language, clusters, jobs
     ) -> CdmSdk.CreateAndStartRandomClusterJobResponse:
         """
         Create and start a job in CDM cluster
@@ -71,11 +63,7 @@ class CDMHook(HuaweiBaseHook):
         """
         try:
             return self.get_cdm_client().create_and_start_random_cluster_job(
-                self.create_and_execute_job_request(
-                    x_language=x_language,
-                    clusters=clusters,
-                    jobs=jobs
-                )
+                self.create_and_execute_job_request(x_language=x_language, clusters=clusters, jobs=jobs)
             )
         except Exception as e:
             self.log.error(e)
@@ -84,7 +72,7 @@ class CDMHook(HuaweiBaseHook):
     def start_job(self, cluster_id, job_name) -> CdmSdk.StartJobResponse:
         """
         Start a job in CDM cluster
-        
+
         :param cluster_id: The ID of the cluster.
         :type cluster_id: str
         :param job_name: The name of the job.
@@ -93,7 +81,9 @@ class CDMHook(HuaweiBaseHook):
         :rtype: CdmSdk.StartJobResponse
         """
         try:
-            return self.get_cdm_client().start_job(self.start_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self.get_cdm_client().start_job(
+                self.start_job_request(cluster_id=cluster_id, job_name=job_name)
+            )
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when starting job: {e}")
@@ -101,7 +91,7 @@ class CDMHook(HuaweiBaseHook):
     def delete_job(self, cluster_id, job_name) -> CdmSdk.DeleteJobResponse:
         """
         Delete a job in CDM cluster
-        
+
         :param cluster_id: The ID of the cluster.
         :type cluster_id: str
         :param job_name: The name of the job.
@@ -110,7 +100,9 @@ class CDMHook(HuaweiBaseHook):
         :rtype: CdmSdk.DeleteJobResponse
         """
         try:
-            return self.get_cdm_client().delete_job(self.delete_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self.get_cdm_client().delete_job(
+                self.delete_job_request(cluster_id=cluster_id, job_name=job_name)
+            )
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when deleting job: {e}")
@@ -118,7 +110,7 @@ class CDMHook(HuaweiBaseHook):
     def stop_job(self, cluster_id, job_name) -> CdmSdk.StopJobResponse:
         """
         Stop a job in CDM cluster
-        
+
         :param cluster_id: The ID of the cluster.
         :type cluster_id: str
         :param job_name: The name of the job.
@@ -127,7 +119,9 @@ class CDMHook(HuaweiBaseHook):
         :rtype: CdmSdk.StopJobResponse
         """
         try:
-            return self.get_cdm_client().stop_job(self.stop_job_request(cluster_id=cluster_id, job_name=job_name))
+            return self.get_cdm_client().stop_job(
+                self.stop_job_request(cluster_id=cluster_id, job_name=job_name)
+            )
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when stopping job: {e}")
@@ -135,7 +129,7 @@ class CDMHook(HuaweiBaseHook):
     def show_job_status(self, cluster_id, job_name) -> CdmSdk.ShowJobStatusResponse:
         """
         Show the status of a job in CDM cluster
-        
+
         :param cluster_id: The ID of the cluster.
         :type cluster_id: str
         :param job_name: The name of the job.
@@ -144,33 +138,24 @@ class CDMHook(HuaweiBaseHook):
         :rtype: CdmSdk.ShowJobStatusResponse
         """
         try:
-            response = self.get_cdm_client().show_job_status(
-                self.show_job_status_request(cluster_id=cluster_id, job_name=job_name)).to_json_object()
+            response = (
+                self.get_cdm_client()
+                .show_job_status(self.show_job_status_request(cluster_id=cluster_id, job_name=job_name))
+                .to_json_object()
+            )
             return response["submissions"]
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when get job status: {e}")
 
-    def create_job_request(
-        self,
-        cluster_id: str,
-        jobs: list[dict]
-    ):
-        request = CdmSdk.CreateJobRequest(
-            cluster_id=cluster_id, body=CdmSdk.CdmCreateJobJsonReq(jobs))
+    def create_job_request(self, cluster_id: str, jobs: list[dict]):
+        request = CdmSdk.CreateJobRequest(cluster_id=cluster_id, body=CdmSdk.CdmCreateJobJsonReq(jobs))
         return request
 
-    def create_and_execute_job_request(
-        self,
-        x_language: str,
-        clusters: list,
-        jobs: list[dict]
-    ):
+    def create_and_execute_job_request(self, x_language: str, clusters: list, jobs: list[dict]):
         request_body = {"jobs": jobs, "clusters": clusters}
         self.log.info(f"Request body: {request_body}")
-        request = CdmSdk.CreateAndStartRandomClusterJobRequest(
-            x_language=x_language,
-            body=request_body)
+        request = CdmSdk.CreateAndStartRandomClusterJobRequest(x_language=x_language, body=request_body)
         return request
 
     def start_job_request(self, cluster_id, job_name):

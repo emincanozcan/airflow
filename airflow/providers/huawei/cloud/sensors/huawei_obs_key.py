@@ -19,9 +19,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence
 
-from airflow.sensors.base import BaseSensorOperator
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.huawei_obs import OBSHook
+from airflow.sensors.base import BaseSensorOperator
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -72,7 +72,8 @@ class OBSObjectKeySensor(BaseSensorOperator):
 
         if not obs_hook.exist_bucket(bucket_name):
             raise AirflowException(
-                f"OBS Bucket with name: {bucket_name} doesn't exist on region: {obs_hook.get_region()}.")
+                f"OBS Bucket with name: {bucket_name} doesn't exist on region: {obs_hook.get_region()}."
+            )
 
         return obs_hook.exist_object(object_key=object_key, bucket_name=bucket_name)
 

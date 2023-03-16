@@ -16,24 +16,38 @@
 # under the License.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List
-
-from airflow.exceptions import AirflowException
-from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
-
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdkcore.exceptions.exceptions import ClientRequestException
-from huaweicloudsdkdws.v2 import (Restore, RestoreClusterRequest, RestoreClusterRequestBody,
-                                  CreateClusterInfo, CreateClusterRequest, CreateClusterRequestBody,
-                                  DeleteClusterRequest, DeleteClusterRequestBody, Snapshot,
-                                  CreateSnapshotRequest, CreateSnapshotRequestBody, DeleteSnapshotRequest,
-                                  ListClustersRequest, ListClusterDetailsRequest, ListSnapshotDetailsRequest,
-                                  BatchCreateResourceTag, BatchCreateResourceTags,
-                                  BatchCreateResourceTagRequest, ListClusterTagsRequest, ListSnapshotsRequest,
-                                  ClusterInfo, Snapshots)
+from huaweicloudsdkdws.v2 import (
+    BatchCreateResourceTag,
+    BatchCreateResourceTagRequest,
+    BatchCreateResourceTags,
+    ClusterInfo,
+    CreateClusterInfo,
+    CreateClusterRequest,
+    CreateClusterRequestBody,
+    CreateSnapshotRequest,
+    CreateSnapshotRequestBody,
+    DeleteClusterRequest,
+    DeleteClusterRequestBody,
+    DeleteSnapshotRequest,
+    ListClusterDetailsRequest,
+    ListClustersRequest,
+    ListClusterTagsRequest,
+    ListSnapshotDetailsRequest,
+    ListSnapshotsRequest,
+    Restore,
+    RestoreClusterRequest,
+    RestoreClusterRequestBody,
+    Snapshot,
+    Snapshots,
+)
 from huaweicloudsdkdws.v2.dws_client import DwsClient
 from huaweicloudsdkdws.v2.model.public_ip import PublicIp
 from huaweicloudsdkdws.v2.region.dws_region import DwsRegion
+
+from airflow.exceptions import AirflowException
+from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
 
 
 class DWSHook(HuaweiBaseHook):
@@ -57,18 +71,16 @@ class DWSHook(HuaweiBaseHook):
 
     def get_dws_client(self) -> DwsClient:
         ak, sk = self.get_credential()
-        credentials = BasicCredentials(
-            ak=ak,
-            sk=sk,
-            project_id=self.get_project_id()
-        )
-        client = DwsClient.new_builder() \
-            .with_credentials(credentials=credentials) \
-            .with_region(region=DwsRegion.value_of(region_id=self.get_region())) \
+        credentials = BasicCredentials(ak=ak, sk=sk, project_id=self.get_project_id())
+        client = (
+            DwsClient.new_builder()
+            .with_credentials(credentials=credentials)
+            .with_region(region=DwsRegion.value_of(region_id=self.get_region()))
             .build()
+        )
         return client
 
-    def _list_clusters(self) -> List[ClusterInfo]:
+    def _list_clusters(self) -> list[ClusterInfo]:
         request = ListClustersRequest()
         return self.get_dws_client().list_clusters(request).clusters
 
@@ -76,7 +88,7 @@ class DWSHook(HuaweiBaseHook):
         request = ListSnapshotsRequest()
         return self.get_dws_client().list_snapshots(request).snapshots
 
-    def get_snapshot_tag_clusters(self, snapshot_id: str) -> List[str]:
+    def get_snapshot_tag_clusters(self, snapshot_id: str) -> list[str]:
         clusters = self._list_clusters()
         if not clusters:
             return []
@@ -170,12 +182,9 @@ class DWSHook(HuaweiBaseHook):
         :param number_of_cn: Number of deployed CNs. The value ranges from 2 to the number of cluster nodes.
             The maximum value is 20 and the default value is 3.
         :param enterprise_project_id: Enterprise project. The default enterprise project ID is 0.
-        :param project_id: 	Project ID
+        :param project_id:     Project ID
         """
-        public_ip = PublicIp(
-            public_bind_type=public_bind_type,
-            eip_id=eip_id
-        ) if public_bind_type else None
+        public_ip = PublicIp(public_bind_type=public_bind_type, eip_id=eip_id) if public_bind_type else None
         cluster_info = CreateClusterInfo(
             name=name,
             node_type=node_type,
@@ -189,12 +198,10 @@ class DWSHook(HuaweiBaseHook):
             user_name=user_name,
             user_pwd=user_pwd,
             public_ip=public_ip,
-            enterprise_project_id=enterprise_project_id
+            enterprise_project_id=enterprise_project_id,
         )
 
-        request = CreateClusterRequest(
-            body=CreateClusterRequestBody(cluster=cluster_info)
-        )
+        request = CreateClusterRequest(body=CreateClusterRequestBody(cluster=cluster_info))
 
         try:
             resp = self.get_dws_client().create_cluster(request)
@@ -225,16 +232,11 @@ class DWSHook(HuaweiBaseHook):
         cluster_state = self.get_cluster_status(cluster_name)
         if cluster_state != "AVAILABLE":
             raise AirflowException(
-                "DWS cluster must be in AVAILABLE state. "
-                f"DWS cluster current state is {cluster_state}"
+                "DWS cluster must be in AVAILABLE state. " f"DWS cluster current state is {cluster_state}"
             )
 
         cluster_id = self._get_cluster_id(cluster_name)
-        snapshot_info = Snapshot(
-            name=name,
-            cluster_id=cluster_id,
-            description=description
-        )
+        snapshot_info = Snapshot(name=name, cluster_id=cluster_id, description=description)
         request = CreateSnapshotRequest(body=CreateSnapshotRequestBody(snapshot=snapshot_info))
         try:
             resp = self.get_dws_client().create_snapshot(request)
@@ -269,7 +271,7 @@ class DWSHook(HuaweiBaseHook):
         cluster_id = self._get_cluster_id(cluster_name)
         request = DeleteClusterRequest(
             cluster_id=cluster_id,
-            body=DeleteClusterRequestBody(keep_last_manual_snapshot=keep_last_manual_snapshot)
+            body=DeleteClusterRequestBody(keep_last_manual_snapshot=keep_last_manual_snapshot),
         )
         resp = self.get_dws_client().delete_cluster(request)
         self.log.info(resp)
@@ -284,10 +286,7 @@ class DWSHook(HuaweiBaseHook):
         cluster_ids = self.get_snapshot_tag_clusters(snapshot_id)
         dws_client = self.get_dws_client()
         for cluster_id in cluster_ids:
-            request = DeleteClusterRequest(
-                cluster_id=cluster_id,
-                body=DeleteClusterRequestBody(0)
-            )
+            request = DeleteClusterRequest(cluster_id=cluster_id, body=DeleteClusterRequestBody(0))
             resp = dws_client.delete_cluster(request)
             self.log.info(resp)
 
@@ -336,16 +335,10 @@ class DWSHook(HuaweiBaseHook):
             vpc_id=vpc_id,
             availability_zone=availability_zone,
             port=port,
-            public_ip=PublicIp(
-                public_bind_type=public_bind_type,
-                eip_id=eip_id
-            ),
+            public_ip=PublicIp(public_bind_type=public_bind_type, eip_id=eip_id),
             enterprise_project_id=enterprise_project_id,
         )
-        request = RestoreClusterRequest(
-            snapshot_id=snapshot_id,
-            body=RestoreClusterRequestBody(restore)
-        )
+        request = RestoreClusterRequest(snapshot_id=snapshot_id, body=RestoreClusterRequestBody(restore))
         try:
             resp = self.get_dws_client().restore_cluster(request)
             self.log.info(resp)

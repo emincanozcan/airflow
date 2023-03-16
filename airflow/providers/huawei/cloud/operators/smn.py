@@ -18,8 +18,8 @@
 """This module contains Huawei Cloud SMN operators."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence
 import json
+from typing import TYPE_CHECKING, Sequence
 
 from airflow.models import BaseOperator
 from airflow.providers.huawei.cloud.hooks.smn import SMNHook
@@ -40,7 +40,8 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     :param subject: Specifies the message subject, which is used as the email subject when you publish email messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
-    template_fields: Sequence[str] = ("template_name","project_id","topic_urn","subject")
+
+    template_fields: Sequence[str] = ("template_name", "project_id", "topic_urn", "subject")
     ui_color = "#66c3ff"
 
     def __init__(
@@ -67,13 +68,11 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     def execute(self, context: Context):
 
         smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         smn_hook.send_message(
-            topic_urn=self.topic_urn,
-            tags=self.tags,
-            template_name=self.template_name,
-            subject=self.subject
+            topic_urn=self.topic_urn, tags=self.tags, template_name=self.template_name, subject=self.subject
         )
 
 
@@ -89,9 +88,9 @@ class SMNPublishTextMessageOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
-    template_fields: Sequence[str] = ("message","project_id","topic_urn","subject")
+    template_fields: Sequence[str] = ("message", "project_id", "topic_urn", "subject")
     ui_color = "#66c3ff"
-    
+
     def __init__(
         self,
         topic_urn: str,
@@ -114,16 +113,10 @@ class SMNPublishTextMessageOperator(BaseOperator):
     def execute(self, context: Context):
 
         smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
 
-        smn_hook.send_message(
-            topic_urn=self.topic_urn,
-            message=self.message,
-            subject=self.subject
-        )
+        smn_hook.send_message(topic_urn=self.topic_urn, message=self.message, subject=self.subject)
 
 
 class SMNPublishJsonMessageOperator(BaseOperator):
@@ -138,10 +131,20 @@ class SMNPublishJsonMessageOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
-    template_fields: Sequence[str] = ("project_id","topic_urn","subject","default","sms","email","http","https","functionstage")
+    template_fields: Sequence[str] = (
+        "project_id",
+        "topic_urn",
+        "subject",
+        "default",
+        "sms",
+        "email",
+        "http",
+        "https",
+        "functionstage",
+    )
 
     ui_color = "#66c3ff"
-    
+
     def __init__(
         self,
         topic_urn: str,
@@ -169,22 +172,23 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         self.http = http
         self.https = https
         self.functionstage = functionstage
-        msg = {"default": default, "sms": sms, "email": email,
-               "http": http, "https": https, "functionstage": functionstage}
-        self.message_structure = json.dumps(
-            {i: j for i, j in msg.items() if j != None})
+        msg = {
+            "default": default,
+            "sms": sms,
+            "email": email,
+            "http": http,
+            "https": https,
+            "functionstage": functionstage,
+        }
+        self.message_structure = json.dumps({i: j for i, j in msg.items() if j is not None})
         self.huaweicloud_conn_id = huaweicloud_conn_id
 
     def execute(self, context: Context):
 
         smn_hook = SMNHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
 
         smn_hook.send_message(
-            topic_urn=self.topic_urn,
-            message_structure=self.message_structure,
-            subject=self.subject
+            topic_urn=self.topic_urn, message_structure=self.message_structure, subject=self.subject
         )

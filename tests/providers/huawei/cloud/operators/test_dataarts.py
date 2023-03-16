@@ -16,14 +16,11 @@
 # specific language governing permissions and limitations
 # under the License.
 from __future__ import annotations
-import json
 
 import unittest
 from unittest import mock
 
-from airflow.providers.huawei.cloud.operators.dataarts import (
-    DataArtsDLFStartJobOperator
-)
+from airflow.providers.huawei.cloud.operators.dataarts import DataArtsDLFStartJobOperator
 
 MOCK_TASK_ID = "test-dli-operator"
 MOCK_REGION = "mock_region"
@@ -32,6 +29,7 @@ MOCK_PROJECT_ID = "mock_project_id"
 MOCK_WORKSPACE = "workspace-id"
 MOCK_JOB_NAME = "job-name"
 MOCK_BODY = {"jobParams": [{"name": "param1", "value": "value1"}]}
+
 
 class TestDataArtsDLFStartJobOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dataarts.DataArtsHook")
@@ -43,13 +41,12 @@ class TestDataArtsDLFStartJobOperator(unittest.TestCase):
             project_id=MOCK_PROJECT_ID,
             workspace=MOCK_WORKSPACE,
             job_name=MOCK_JOB_NAME,
-            body=MOCK_BODY
+            body=MOCK_BODY,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_CDM_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
         mock_hook.return_value.dlf_start_job.assert_called_once_with(
-            workspace=MOCK_WORKSPACE,
-            job_name=MOCK_JOB_NAME,
-            body=MOCK_BODY
+            workspace=MOCK_WORKSPACE, job_name=MOCK_JOB_NAME, body=MOCK_BODY
         )

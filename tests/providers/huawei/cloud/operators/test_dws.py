@@ -1,11 +1,30 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+from __future__ import annotations
+
 from unittest import TestCase, mock
+
 from airflow.providers.huawei.cloud.operators.dws import (
     DWSCreateClusterOperator,
-    DWSDeleteClusterOperator,
     DWSCreateClusterSnapshotOperator,
+    DWSDeleteClusterBasedOnSnapshotOperator,
+    DWSDeleteClusterOperator,
     DWSDeleteClusterSnapshotOperator,
     DWSRestoreClusterOperator,
-    DWSDeleteClusterBasedOnSnapshotOperator
 )
 
 MOCK_TASK_ID = "test-dws-operator"
@@ -27,7 +46,6 @@ MOCK_CONTEXT = mock.Mock()
 
 
 class TestDWSCreateClusterOperator(TestCase):
-
     @mock.patch("airflow.providers.huawei.cloud.operators.dws.DWSHook")
     def test_execute(self, mock_hook):
         operator = DWSCreateClusterOperator(
@@ -48,9 +66,7 @@ class TestDWSCreateClusterOperator(TestCase):
         operator.execute(MOCK_CONTEXT)
 
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DWS_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_DWS_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.create_cluster.assert_called_once_with(
             name=MOCK_CLUSTER_NAME,
@@ -66,12 +82,11 @@ class TestDWSCreateClusterOperator(TestCase):
             eip_id=None,
             number_of_cn=None,
             enterprise_project_id=None,
-            availability_zone=None
+            availability_zone=None,
         )
 
 
 class TestDWSCreateClusterSnapshotOperator(TestCase):
-
     @mock.patch("airflow.providers.huawei.cloud.operators.dws.DWSHook")
     def test_execute(self, mock_hook):
         operator = DWSCreateClusterSnapshotOperator(
@@ -81,25 +96,20 @@ class TestDWSCreateClusterSnapshotOperator(TestCase):
             region=MOCK_REGION,
             name=MOCK_SNAPSHOT_NAME,
             cluster_name=MOCK_CLUSTER_NAME,
-            description="test"
+            description="test",
         )
 
         operator.execute(MOCK_CONTEXT)
 
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DWS_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_DWS_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.create_snapshot.assert_called_once_with(
-            name=MOCK_SNAPSHOT_NAME,
-            cluster_name=MOCK_CLUSTER_NAME,
-            description="test"
+            name=MOCK_SNAPSHOT_NAME, cluster_name=MOCK_CLUSTER_NAME, description="test"
         )
 
 
 class TestDWSDeleteClusterSnapshotOperator(TestCase):
-
     @mock.patch("airflow.providers.huawei.cloud.operators.dws.DWSHook")
     def test_execute(self, mock_hook):
         operator = DWSDeleteClusterSnapshotOperator(
@@ -107,23 +117,18 @@ class TestDWSDeleteClusterSnapshotOperator(TestCase):
             huaweicloud_conn_id=MOCK_DWS_CONN_ID,
             project_id=MOCK_PROJECT_ID,
             region=MOCK_REGION,
-            snapshot_name=MOCK_SNAPSHOT_NAME
+            snapshot_name=MOCK_SNAPSHOT_NAME,
         )
 
         operator.execute(MOCK_CONTEXT)
 
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DWS_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_DWS_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
-        mock_hook.return_value.delete_snapshot.assert_called_once_with(
-            snapshot_name=MOCK_SNAPSHOT_NAME
-        )
+        mock_hook.return_value.delete_snapshot.assert_called_once_with(snapshot_name=MOCK_SNAPSHOT_NAME)
 
 
 class TestDWSRestoreClusterOperator(TestCase):
-
     @mock.patch("airflow.providers.huawei.cloud.operators.dws.DWSHook")
     def test_execute(self, mock_hook):
         operator = DWSRestoreClusterOperator(
@@ -141,9 +146,7 @@ class TestDWSRestoreClusterOperator(TestCase):
         operator.execute(MOCK_CONTEXT)
 
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DWS_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_DWS_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.restore_cluster.assert_called_once_with(
             snapshot_name=MOCK_SNAPSHOT_NAME,
@@ -160,7 +163,6 @@ class TestDWSRestoreClusterOperator(TestCase):
 
 
 class TestDWSDeleteClusterBasedOnSnapshotOperator(TestCase):
-
     @mock.patch("airflow.providers.huawei.cloud.operators.dws.DWSHook")
     def test_execute(self, mock_hook):
         operator = DWSDeleteClusterBasedOnSnapshotOperator(
@@ -168,15 +170,13 @@ class TestDWSDeleteClusterBasedOnSnapshotOperator(TestCase):
             huaweicloud_conn_id=MOCK_DWS_CONN_ID,
             project_id=MOCK_PROJECT_ID,
             region=MOCK_REGION,
-            snapshot_name=MOCK_SNAPSHOT_NAME
+            snapshot_name=MOCK_SNAPSHOT_NAME,
         )
 
         operator.execute(MOCK_CONTEXT)
 
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DWS_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_DWS_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.delete_cluster_based_on_snapshot.assert_called_once_with(
             snapshot_name=MOCK_SNAPSHOT_NAME
@@ -184,7 +184,6 @@ class TestDWSDeleteClusterBasedOnSnapshotOperator(TestCase):
 
 
 class TestDWSDeleteClusterOperator(TestCase):
-
     @mock.patch("airflow.providers.huawei.cloud.operators.dws.DWSHook")
     def test_execute(self, mock_hook):
         operator = DWSDeleteClusterOperator(
@@ -193,15 +192,13 @@ class TestDWSDeleteClusterOperator(TestCase):
             project_id=MOCK_PROJECT_ID,
             region=MOCK_REGION,
             cluster_name=MOCK_CLUSTER_NAME,
-            keep_last_manual_snapshot=3
+            keep_last_manual_snapshot=3,
         )
 
         operator.execute(MOCK_CONTEXT)
 
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DWS_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_DWS_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.delete_cluster.assert_called_once_with(
             cluster_name=MOCK_CLUSTER_NAME,

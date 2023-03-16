@@ -16,19 +16,18 @@
 # specific language governing permissions and limitations
 # under the License.
 from __future__ import annotations
-import json
 
 import unittest
 from unittest import mock
 
-
 from airflow.providers.huawei.cloud.hooks.dataarts import DataArtsHook
-from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
+from tests.providers.huawei.cloud.utils.hw_mock import default_mock_constants, mock_huawei_cloud_default
 
 DLF_STRING = "airflow.providers.huawei.cloud.hooks.dataarts.{}"
 JOB_NAME = "job-name"
 WORKSPACE = "workspace-id"
 BODY = {"jobParams": [{"name": "param1", "value": "value1"}]}
+
 
 class TestDataArtsHook(unittest.TestCase):
     def setUp(self):
@@ -49,7 +48,7 @@ class TestDataArtsHook(unittest.TestCase):
         self.hook.dlf_start_job(WORKSPACE, JOB_NAME, BODY)
         request = self.hook.dlf_start_job_request(WORKSPACE, JOB_NAME, BODY)
         start_job.assert_called_once_with(request)
-        
+
     @mock.patch(DLF_STRING.format("DlfSdk.DlfClient.show_job_status"))
     def test_show_job_status(self, show_job_status):
         self.hook.dlf_show_job_status(WORKSPACE, JOB_NAME)

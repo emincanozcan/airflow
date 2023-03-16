@@ -19,13 +19,12 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence
-import json
 
 from airflow.models import BaseOperator
 from airflow.providers.huawei.cloud.hooks.dli import DLIHook
 
 if TYPE_CHECKING:
-    from airflow.utils.context import Context
+    pass
 
 
 class DLICreateQueueOperator(BaseOperator):
@@ -110,8 +109,9 @@ class DLICreateQueueOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         return dli_hook.create_queue(
             queue_name=self.queue_name,
@@ -142,8 +142,7 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
-    template_fields: Sequence[str] = (
-        "queue_name", "cidr_in_vpc", "project_id")
+    template_fields: Sequence[str] = ("queue_name", "cidr_in_vpc", "project_id")
     ui_color = "#44b5e2"
 
     def __init__(
@@ -165,11 +164,13 @@ class DLIUpdateQueueCidrOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
-        return dli_hook.update_queue_cidr(queue_name=self.queue_name, cidr_in_vpc=self.cidr_in_vpc
-                                          ).to_json_object()
+        return dli_hook.update_queue_cidr(
+            queue_name=self.queue_name, cidr_in_vpc=self.cidr_in_vpc
+        ).to_json_object()
 
 
 class DLIDeleteQueueOperator(BaseOperator):
@@ -202,8 +203,9 @@ class DLIDeleteQueueOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         return dli_hook.delete_queue(queue_name=self.queue_name).to_json_object()
 
@@ -247,8 +249,9 @@ class DLIListQueuesOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         list = dli_hook.list_queues(
             queue_type=self.queue_type,
@@ -324,14 +327,39 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
     """
 
     template_fields: Sequence[str] = (
-        "file", "class_name", "project_id", "queue_name", "obs_bucket", "catalog_name", "image",
-        "spark_version", "feature", "executor_memory", "driver_memory", "name", "sc_type", "cluster_name", "list_conf_body",
-        "list_groups_body", "list_resources_body", "list_modules_body", "list_files_body", "list_python_files_body",
-        "list_jars_body", "list_args_body"
+        "file",
+        "class_name",
+        "project_id",
+        "queue_name",
+        "obs_bucket",
+        "catalog_name",
+        "image",
+        "spark_version",
+        "feature",
+        "executor_memory",
+        "driver_memory",
+        "name",
+        "sc_type",
+        "cluster_name",
+        "list_conf_body",
+        "list_groups_body",
+        "list_resources_body",
+        "list_modules_body",
+        "list_files_body",
+        "list_python_files_body",
+        "list_jars_body",
+        "list_args_body",
     )
-    template_fields_renderers = {"list_conf_body": "json", "list_groups_body": "json", "list_resources_body": "json",
-                                 "list_modules_body": "json", "list_files_body": "json", "list_python_files_body": "json",
-                                 "list_jars_body": "json", "list_args_body": "json"}
+    template_fields_renderers = {
+        "list_conf_body": "json",
+        "list_groups_body": "json",
+        "list_resources_body": "json",
+        "list_modules_body": "json",
+        "list_files_body": "json",
+        "list_python_files_body": "json",
+        "list_jars_body": "json",
+        "list_args_body": "json",
+    }
     ui_color = "#f0eee4"
 
     def __init__(
@@ -401,8 +429,9 @@ class DLISparkCreateBatchJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         return dli_hook.create_batch_job(
             queue_name=self.queue_name,
@@ -468,8 +497,9 @@ class DLIUploadFilesOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         return dli_hook.upload_files(group=self.group, paths=self.paths).to_json_object()
 
@@ -525,8 +555,9 @@ class DLIRunSqlJobOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         return dli_hook.run_job(
             sql_query=self.sql_query,
@@ -539,10 +570,10 @@ class DLIRunSqlJobOperator(BaseOperator):
 
 class DLIGetSqlJobResultOperator(BaseOperator):
     """
-    This operator is used to view the job execution result after a job is executed using SQL query statements. 
+    This operator is used to view the job execution result after a job is executed using SQL query statements.
     Currently, you can only query execution results of jobs of the QUERY type.
 
-    This API can be used to view only the first 1000 result records and does not support pagination query. 
+    This API can be used to view only the first 1000 result records and does not support pagination query.
     To view all query results, you need to export the query results first
 
     :param project_id: Specifies the project ID.
@@ -575,10 +606,8 @@ class DLIGetSqlJobResultOperator(BaseOperator):
 
     def execute(self, context):
 
-        dli_hook = DLIHook(huaweicloud_conn_id=self.huaweicloud_conn_id,
-                           region=self.region, project_id=self.project_id)
+        dli_hook = DLIHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
-        return dli_hook.get_job_result(
-            job_id=self.job_id,
-            queue_name=self.queue_name
-        ).to_json_object()
+        return dli_hook.get_job_result(job_id=self.job_id, queue_name=self.queue_name).to_json_object()

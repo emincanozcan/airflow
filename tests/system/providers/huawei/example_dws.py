@@ -19,17 +19,15 @@ from __future__ import annotations
 from datetime import datetime
 
 from airflow import DAG
-
-from airflow.providers.huawei.cloud.sensors.dws import DWSClusterSensor, DWSSnapshotSensor
 from airflow.providers.huawei.cloud.operators.dws import (
     DWSCreateClusterOperator,
     DWSCreateClusterSnapshotOperator,
+    DWSDeleteClusterBasedOnSnapshotOperator,
+    DWSDeleteClusterOperator,
     DWSDeleteClusterSnapshotOperator,
     DWSRestoreClusterOperator,
-    DWSDeleteClusterOperator,
-    DWSDeleteClusterBasedOnSnapshotOperator,
 )
-
+from airflow.providers.huawei.cloud.sensors.dws import DWSClusterSensor, DWSSnapshotSensor
 
 DAG_ID = "example_dws"
 DB_USER = "dbadmin"
@@ -38,9 +36,7 @@ DB_PWD = "AdminPassword"
 
 with DAG(
     dag_id=DAG_ID,
-    default_args={
-        "huaweicloud_conn_id": 'huaweicloud_default'
-    },
+    default_args={"huaweicloud_conn_id": "huaweicloud_default"},
     schedule="@once",
     start_date=datetime(2023, 1, 29),
     catchup=False,
@@ -61,7 +57,7 @@ with DAG(
     create_cluster = DWSCreateClusterOperator(
         task_id="create_cluster",
         name=cluster_name,
-        node_type='dwsk2.xlarge',
+        node_type="dwsk2.xlarge",
         number_of_node=3,
         number_of_cn=3,
         subnet_id=subnet_id,
@@ -70,7 +66,7 @@ with DAG(
         availability_zone=availability_zone,
         user_name=DB_USER,
         user_pwd=DB_PWD,
-        public_bind_type='auto_assign',
+        public_bind_type="auto_assign",
     )
     # [END howto_operator_dws_create_cluster]
 
@@ -78,7 +74,7 @@ with DAG(
     create_cluster_2 = DWSCreateClusterOperator(
         task_id="create_cluster_2",
         name=cluster_name_2,
-        node_type='dwsk2.xlarge',
+        node_type="dwsk2.xlarge",
         number_of_node=3,
         number_of_cn=3,
         subnet_id=subnet_id,
@@ -87,7 +83,7 @@ with DAG(
         availability_zone=availability_zone,
         user_name=DB_USER,
         user_pwd=DB_PWD,
-        public_bind_type='auto_assign',
+        public_bind_type="auto_assign",
     )
     # [END howto_operator_dws_create_cluster]
 
@@ -196,10 +192,28 @@ with DAG(
     )
     # [END howto_operator_dws_delete_cluster]
 
-    create_cluster >> wait_cluster_available >> create_cluster_snapshot >> wait_snapshot_available \
-        >> restore_cluster >> wait_restore_cluster_available >> delete_cluster_based_on_snapshot >> \
-        delete_snapshot
+    (
+        create_cluster
+        >> wait_cluster_available
+        >> create_cluster_snapshot
+        >> wait_snapshot_available
+        >> restore_cluster
+        >> wait_restore_cluster_available
+        >> delete_cluster_based_on_snapshot
+        >> delete_snapshot
+    )
 
-    create_cluster_2 >> wait_cluster_available_2 >> create_cluster_snapshot_2 >> wait_snapshot_available_2 \
-        >> delete_snapshot_2 >> delete_cluster_2
+    (
+        create_cluster_2
+        >> wait_cluster_available_2
+        >> create_cluster_snapshot_2
+        >> wait_snapshot_available_2
+        >> delete_snapshot_2
+        >> delete_cluster_2
+    )
 
+
+from tests.system.utils import get_test_run  # noqa: E402
+
+# Needed to run the example DAG with pytest (see: tests/system/README.md#run_via_pytest)
+test_run = get_test_run(dag)

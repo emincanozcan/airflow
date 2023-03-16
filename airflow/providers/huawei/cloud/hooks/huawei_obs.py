@@ -20,17 +20,23 @@ from __future__ import annotations
 import json
 from functools import wraps
 from inspect import signature
-from typing import TYPE_CHECKING, Callable, TypeVar, cast, Any
+from typing import Any, Callable, TypeVar, cast
 from urllib.parse import urlsplit
+
+from obs import (
+    CopyObjectHeader,
+    DeleteObjectsRequest,
+    Object,
+    ObsClient,
+    PutObjectHeader,
+    SseKmsHeader,
+    Tag,
+    TagInfo,
+)
+from obs.bucket import BucketClient
 
 from airflow.exceptions import AirflowException
 from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
-
-from obs.bucket import BucketClient
-from obs import (ObsClient, Tag, TagInfo, Object,
-                 PutObjectHeader, CopyObjectHeader,
-                 DeleteObjectsRequest, SseKmsHeader)
-
 
 T = TypeVar("T", bound=Callable)
 
@@ -48,7 +54,7 @@ def provide_bucket_name(func: T) -> T:
         self = args[0]
         if bound_args.arguments.get("bucket_name") is None and self.huaweicloud_conn_id:
             connection = self.get_connection(self.huaweicloud_conn_id)
-            if connection.extra_dejson.get('obs_bucket', None):
+            if connection.extra_dejson.get("obs_bucket", None):
                 bound_args.arguments["bucket_name"] = connection.schema
 
         return func(*bound_args.args, **bound_args.kwargs)
@@ -84,12 +90,14 @@ def unify_bucket_name_and_key(func: T) -> T:
 
 
 def get_err_info(resp):
-    return json.dumps({
-        "status": resp.status,
-        "reason": resp.reason,
-        "errorCode": resp.errorCode,
-        "errorMessage": resp.errorMessage
-    })
+    return json.dumps(
+        {
+            "status": resp.status,
+            "reason": resp.reason,
+            "errorCode": resp.errorCode,
+            "errorMessage": resp.errorMessage,
+        }
+    )
 
 
 class OBSHook(HuaweiBaseHook):
@@ -107,7 +115,7 @@ class OBSHook(HuaweiBaseHook):
         if not parsed_url.netloc:
             raise AirflowException(f"Please provide a bucket_name instead of '{obsurl}'.")
 
-        bucket_name = parsed_url.netloc.split('.', 1)[0]
+        bucket_name = parsed_url.netloc.split(".", 1)[0]
         object_key = parsed_url.path.lstrip("/")
 
         return bucket_name, object_key
@@ -170,7 +178,6 @@ class OBSHook(HuaweiBaseHook):
         :param bucket_name: The name of the bucket.
         :param region: The name of the region in which to create the bucket.
         """
-
         try:
             resp = self.get_bucket_client(bucket_name).createBucket(location=self.get_region())
             if resp.status < 300:
@@ -191,11 +198,14 @@ class OBSHook(HuaweiBaseHook):
             if resp.status < 300:
                 buckets = []
                 for bucket in resp.body.buckets:
-                    buckets.append({"name": bucket.name,
-                                    "region": bucket.location,
-                                    "create_date": bucket.create_date,
-                                    "bucket_type": bucket.bucket_type,
-                                    })
+                    buckets.append(
+                        {
+                            "name": bucket.name,
+                            "region": bucket.location,
+                            "create_date": bucket.create_date,
+                            "bucket_type": bucket.bucket_type,
+                        }
+                    )
                 return buckets
             else:
                 e = get_err_info(resp)
@@ -244,7 +254,10 @@ class OBSHook(HuaweiBaseHook):
             raise AirflowException(f"Errors when deleting {bucket_name}({e})")
 
     @provide_bucket_name
-    def get_bucket_tagging(self, bucket_name: str | None = None, ) -> list[dict[str, str]]:
+    def get_bucket_tagging(
+        self,
+        bucket_name: str | None = None,
+    ) -> list[dict[str, str]]:
         """
         Get bucket tagging from OBS.
 
@@ -275,7 +288,6 @@ class OBSHook(HuaweiBaseHook):
         :param bucket_name: the name of the bucket.
         :param tag_info: bucket tagging information.
         """
-
         if not tag_info:
             self.log.warning("No 'tag_info' information was passed.")
             return
@@ -288,7 +300,7 @@ class OBSHook(HuaweiBaseHook):
                 self.log.info("Setting the bucket tagging succeeded.")
             else:
                 e = get_err_info(resp)
-                self.log.error(f'Error message when setting the bucket tagging: {e}.')
+                self.log.error(f"Error message when setting the bucket tagging: {e}.")
                 raise AirflowException(e)
         except Exception as e:
             raise AirflowException(f"Errors when setting the bucket tagging of {bucket_name}({e}).")
@@ -325,7 +337,6 @@ class OBSHook(HuaweiBaseHook):
         :param bucket_name: bucket name.
         :param object_key: object key.
         """
-
         bucket_name, object_key = OBSHook.get_obs_bucket_object_key(
             bucket_name, object_key, "bucket_name", "object_key"
         )
@@ -423,13 +434,16 @@ class OBSHook(HuaweiBaseHook):
         :param headers: The additional header field of the uploaded object.
         """
         if object_type not in ["content", "file"]:
-            raise AirflowException(f"invalid object_type(choices 'content', 'file')")
+            raise AirflowException("invalid object_type(choices 'content', 'file')")
         try:
             headers = headers if headers else {}
-            sse_header = self._get_encryption_header(
-                encryption=headers.pop("encryption", None),
-                key=headers.pop("key", None)
-            ) if headers else None
+            sse_header = (
+                self._get_encryption_header(
+                    encryption=headers.pop("encryption", None), key=headers.pop("key", None)
+                )
+                if headers
+                else None
+            )
             headers = PutObjectHeader(sseHeader=sse_header, **headers)
             if object_type == "content":
                 resp = self.get_bucket_client(bucket_name).putContent(
@@ -449,7 +463,7 @@ class OBSHook(HuaweiBaseHook):
                 )
 
             if isinstance(resp, list):
-                err_object = [i[0] for i in self.flatten(resp) if i[1]['status'] >= 300]
+                err_object = [i[0] for i in self.flatten(resp) if i[1]["status"] >= 300]
                 if err_object:
                     self.log.error(f"List of objects that failed to upload: {err_object}.")
                     return err_object
@@ -464,7 +478,7 @@ class OBSHook(HuaweiBaseHook):
                 raise AirflowException(e)
 
         except Exception as e:
-            if object_type == 'content' and getattr(data, "read", None):
+            if object_type == "content" and getattr(data, "read", None):
                 data.close()
             raise AirflowException(f"Errors when create object({e}).")
 
@@ -616,19 +630,22 @@ class OBSHook(HuaweiBaseHook):
                 self.log.warning("The object list is empty.")
                 return
             if len(object_list) > 1000:
-                self.log.warning(f"A maximum of 1000 objects can be deleted in a batch, "
-                                 f"{len(object_list)} is out of limit")
+                self.log.warning(
+                    f"A maximum of 1000 objects can be deleted in a batch, "
+                    f"{len(object_list)} is out of limit"
+                )
                 return
             if isinstance(object_list[0], dict):
                 objects = [
-                    Object(key=obj.get("object_key", None), versionId=obj.get("version_id", None)) for
-                    obj in object_list]
+                    Object(key=obj.get("object_key", None), versionId=obj.get("version_id", None))
+                    for obj in object_list
+                ]
             else:
                 objects = [Object(key=obj) for obj in object_list]
             delete_objects_request = DeleteObjectsRequest(objects=objects, quiet=quiet)
             resp = self.get_bucket_client(bucket_name).deleteObjects(delete_objects_request)
             if resp.status < 300:
-                self.log.info('Succeeded in deleting objects in batches.')
+                self.log.info("Succeeded in deleting objects in batches.")
             else:
                 e = get_err_info(resp)
                 self.log.error(f"Error message when deleting batch objects: {e}.")
@@ -662,16 +679,12 @@ class OBSHook(HuaweiBaseHook):
             )
             if copy_resp.status < 300:
                 delete_resp = obs_client.deleteObject(
-                    objectKey=source_object_key,
-                    bucketName=source_bucket_name
+                    objectKey=source_object_key, bucketName=source_bucket_name
                 )
                 if delete_resp.status < 300:
-                    self.log.info('Object moved successfully')
+                    self.log.info("Object moved successfully")
                 else:
-                    obs_client.deleteObject(
-                        objectKey=dest_object_key,
-                        bucketName=dest_bucket_name
-                    )
+                    obs_client.deleteObject(objectKey=dest_object_key, bucketName=dest_bucket_name)
                     e = get_err_info(delete_resp)
                     self.log.error(f"Error message when moving objects: {e}.")
                     raise AirflowException(e)

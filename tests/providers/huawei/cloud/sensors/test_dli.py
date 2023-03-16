@@ -21,7 +21,7 @@ import unittest
 from unittest import mock
 from unittest.mock import PropertyMock
 
-from airflow.providers.huawei.cloud.sensors.dli import DLISqlShowJobStatusSensor, DLISparkShowBatchStateSensor
+from airflow.providers.huawei.cloud.sensors.dli import DLISparkShowBatchStateSensor, DLISqlShowJobStatusSensor
 
 DLI_SENSOR_STRING = "airflow.providers.huawei.cloud.sensors.dli.{}"
 MOCK_JOB_ID = "test-job"
@@ -30,6 +30,7 @@ MOCK_CONN_ID = "huaweicloud_default"
 MOCK_REGION = "mock_region"
 MOCK_TASK_ID = "test-dli-operator"
 
+
 class TestDLISensor(unittest.TestCase):
     def setUp(self):
         self.job_status_sensor = DLISqlShowJobStatusSensor(
@@ -37,7 +38,7 @@ class TestDLISensor(unittest.TestCase):
             job_id=MOCK_JOB_ID,
             project_id=MOCK_PROJECT_ID,
             huaweicloud_conn_id=MOCK_CONN_ID,
-            region=MOCK_REGION
+            region=MOCK_REGION,
         )
         self.batch_state_sensor = DLISparkShowBatchStateSensor(
             task_id=MOCK_TASK_ID,
@@ -49,7 +50,9 @@ class TestDLISensor(unittest.TestCase):
     @mock.patch(DLI_SENSOR_STRING.format("DLIHook"))
     def test_get_hook(self, mock_service):
         self.job_status_sensor.get_hook()
-        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION)
+        mock_service.assert_called_once_with(
+            huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION
+        )
 
     @mock.patch(DLI_SENSOR_STRING.format("DLISqlShowJobStatusSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_job_status(self, mock_service):
@@ -61,9 +64,7 @@ class TestDLISensor(unittest.TestCase):
 
         # Then
         assert res is True
-        mock_service.return_value.show_job_status.assert_called_once_with(
-            job_id=MOCK_JOB_ID
-        )
+        mock_service.return_value.show_job_status.assert_called_once_with(job_id=MOCK_JOB_ID)
 
     @mock.patch(DLI_SENSOR_STRING.format("DLISparkShowBatchStateSensor.get_hook"), new_callable=PropertyMock)
     def test_poke_show_batch_state(self, mock_service):
@@ -75,6 +76,4 @@ class TestDLISensor(unittest.TestCase):
 
         # Then
         assert res is True
-        mock_service.return_value.show_batch_state.assert_called_once_with(
-            job_id=MOCK_JOB_ID
-        )
+        mock_service.return_value.show_batch_state.assert_called_once_with(job_id=MOCK_JOB_ID)

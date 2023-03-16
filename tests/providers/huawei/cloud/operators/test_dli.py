@@ -16,20 +16,19 @@
 # specific language governing permissions and limitations
 # under the License.
 from __future__ import annotations
-import json
 
 import unittest
 from unittest import mock
 
 from airflow.providers.huawei.cloud.operators.dli import (
-    DLISparkCreateBatchJobOperator,
     DLICreateQueueOperator,
     DLIDeleteQueueOperator,
+    DLIGetSqlJobResultOperator,
     DLIListQueuesOperator,
     DLIRunSqlJobOperator,
+    DLISparkCreateBatchJobOperator,
     DLIUpdateQueueCidrOperator,
     DLIUploadFilesOperator,
-    DLIGetSqlJobResultOperator
 )
 
 MOCK_TASK_ID = "test-dli-operator"
@@ -66,7 +65,7 @@ MOCK_ELASTIC_RESOURCE_POOL_NAME = "pool_1"
 MOCK_ENTERPRISE_PROJECT_ID = "0"
 MOCK_FEATURE = "basic"
 MOCK_LISTLABELSBODY = ["multi_az=2"]
-MOCK_LIST_TAGS_BODY = [{"key":"test_key", "value": "test_value"}]
+MOCK_LIST_TAGS_BODY = [{"key": "test_key", "value": "test_value"}]
 MOCK_PLATFORM = "x86_64"
 MOCK_QUEUE_NAME = "test_queue"
 MOCK_QUEUE_TYPE = "sql"
@@ -113,7 +112,8 @@ class TestDLISparkCreateBatchJobOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
         mock_hook.return_value.create_batch_job.assert_called_once_with(
             auto_recovery=MOCK_AUTO_RECOVERY,
             catalog_name=MOCK_CATALOG_NAME,
@@ -140,8 +140,9 @@ class TestDLISparkCreateBatchJobOperator(unittest.TestCase):
             list_jars_body=None,
             list_modules_body=None,
             list_python_files_body=None,
-            list_resources_body=None
+            list_resources_body=None,
         )
+
 
 class TestDLICreateQueueOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
@@ -162,11 +163,12 @@ class TestDLICreateQueueOperator(unittest.TestCase):
             platform=MOCK_PLATFORM,
             queue_name=MOCK_QUEUE_NAME,
             queue_type=MOCK_QUEUE_TYPE,
-            resource_mode=MOCK_RESOURCE_MODE
+            resource_mode=MOCK_RESOURCE_MODE,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
         mock_hook.return_value.create_queue.assert_called_once_with(
             charging_mode=MOCK_CHARGING_MODE,
             cu_count=MOCK_CU_COUNT,
@@ -179,8 +181,9 @@ class TestDLICreateQueueOperator(unittest.TestCase):
             platform=MOCK_PLATFORM,
             queue_name=MOCK_QUEUE_NAME,
             queue_type=MOCK_QUEUE_TYPE,
-            resource_mode=MOCK_RESOURCE_MODE
+            resource_mode=MOCK_RESOURCE_MODE,
         )
+
 
 class TestDLIDeleteQueueOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
@@ -190,13 +193,14 @@ class TestDLIDeleteQueueOperator(unittest.TestCase):
             region=MOCK_REGION,
             huaweicloud_conn_id=MOCK_DLI_CONN_ID,
             project_id=MOCK_PROJECT_ID,
-            queue_name=MOCK_QUEUE_NAME
+            queue_name=MOCK_QUEUE_NAME,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
-        mock_hook.return_value.delete_queue.assert_called_once_with(
-            queue_name=MOCK_QUEUE_NAME)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
+        mock_hook.return_value.delete_queue.assert_called_once_with(queue_name=MOCK_QUEUE_NAME)
+
 
 class TestDLIGetSqlJobResultOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
@@ -207,14 +211,16 @@ class TestDLIGetSqlJobResultOperator(unittest.TestCase):
             huaweicloud_conn_id=MOCK_DLI_CONN_ID,
             project_id=MOCK_PROJECT_ID,
             queue_name=MOCK_QUEUE_NAME,
-            job_id=MOCK_JOB_ID
+            job_id=MOCK_JOB_ID,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
         mock_hook.return_value.get_job_result.assert_called_once_with(
-            queue_name=MOCK_QUEUE_NAME,
-            job_id=MOCK_JOB_ID)
+            queue_name=MOCK_QUEUE_NAME, job_id=MOCK_JOB_ID
+        )
+
 
 class TestDLIListQueueOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
@@ -227,16 +233,19 @@ class TestDLIListQueueOperator(unittest.TestCase):
             queue_type=MOCK_QUEUE_TYPE,
             return_billing_info=MOCK_BILLING_INFO,
             return_permission_info=MOCK_PERMISSION_INFO,
-            tags=MOCK_TAGS
+            tags=MOCK_TAGS,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
         mock_hook.return_value.list_queues.assert_called_once_with(
             queue_type=MOCK_QUEUE_TYPE,
             return_billing_info=MOCK_BILLING_INFO,
             return_permission_info=MOCK_PERMISSION_INFO,
-            tags=MOCK_TAGS)
+            tags=MOCK_TAGS,
+        )
+
 
 class TestDLIRunSqlJobOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
@@ -250,17 +259,20 @@ class TestDLIRunSqlJobOperator(unittest.TestCase):
             list_conf_body=MOCK_LIST_CONF_BODY,
             list_tags_body=MOCK_LIST_TAGS_BODY,
             queue_name=MOCK_QUEUE_NAME,
-            sql_query=MOCK_SQL_QUERY
+            sql_query=MOCK_SQL_QUERY,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
         mock_hook.return_value.run_job.assert_called_once_with(
             database_name=MOCK_DATABASE_NAME,
             list_conf_body=MOCK_LIST_CONF_BODY,
             list_tags_body=MOCK_LIST_TAGS_BODY,
             queue_name=MOCK_QUEUE_NAME,
-            sql_query=MOCK_SQL_QUERY)
+            sql_query=MOCK_SQL_QUERY,
+        )
+
 
 class TestDLIUpdateQueueCidrOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
@@ -271,14 +283,16 @@ class TestDLIUpdateQueueCidrOperator(unittest.TestCase):
             huaweicloud_conn_id=MOCK_DLI_CONN_ID,
             project_id=MOCK_PROJECT_ID,
             cidr_in_vpc=MOCK_CIDR_IN_VPC,
-            queue_name=MOCK_QUEUE_NAME
+            queue_name=MOCK_QUEUE_NAME,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
         mock_hook.return_value.update_queue_cidr.assert_called_once_with(
-            cidr_in_vpc=MOCK_CIDR_IN_VPC,
-            queue_name=MOCK_QUEUE_NAME)
+            cidr_in_vpc=MOCK_CIDR_IN_VPC, queue_name=MOCK_QUEUE_NAME
+        )
+
 
 class TestDLIUploadFilesOperator(unittest.TestCase):
     @mock.patch("airflow.providers.huawei.cloud.operators.dli.DLIHook")
@@ -289,11 +303,10 @@ class TestDLIUploadFilesOperator(unittest.TestCase):
             huaweicloud_conn_id=MOCK_DLI_CONN_ID,
             project_id=MOCK_PROJECT_ID,
             paths=MOCK_FILE_PATHS,
-            group=MOCK_GROUP
+            group=MOCK_GROUP,
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID)
-        mock_hook.return_value.upload_files.assert_called_once_with(
-            paths=MOCK_FILE_PATHS,
-            group=MOCK_GROUP)
+            huaweicloud_conn_id=MOCK_DLI_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+        )
+        mock_hook.return_value.upload_files.assert_called_once_with(paths=MOCK_FILE_PATHS, group=MOCK_GROUP)

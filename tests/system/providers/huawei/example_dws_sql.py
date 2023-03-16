@@ -29,9 +29,7 @@ DB_PWD = "AdminPassword"
 with DAG(
     dag_id=DAG_ID,
     schedule="@once",
-    default_args={
-            "dws_conn_id": 'dws_default'
-        },
+    default_args={"dws_conn_id": "dws_default"},
     start_date=datetime(2023, 1, 29),
     catchup=False,
     tags=["example"],
@@ -57,7 +55,7 @@ with DAG(
             INSERT INTO fruit VALUES ( 2, 'Bob', 'Doctor');
             INSERT INTO fruit VALUES ( 3, 'LiHua', 'Teacher');
             """,
-            autocommit=True,
+        autocommit=True,
     )
     # [END howto_operator_dws_sql_insert_data]
 
@@ -69,6 +67,12 @@ with DAG(
             INSERT INTO fruit VALUES ( 2, 'Bob', 'Doctor');
             INSERT INTO fruit VALUES ( 3, 'LiHua', 'Teacher');
             """,
-            autocommit=True,
+        autocommit=True,
     )
     # [END howto_operator_dws_drop_table]
+
+
+from tests.system.utils import get_test_run  # noqa: E402
+
+# Needed to run the example DAG with pytest (see: tests/system/README.md#run_via_pytest)
+test_run = get_test_run(dag)

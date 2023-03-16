@@ -47,7 +47,9 @@ class TestDWSClusterSensor(unittest.TestCase):
     @mock.patch(DWS_SENSOR_STRING.format("DWSHook"))
     def test_get_hook(self, mock_service):
         self.cluster_sensor.get_hook()
-        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION)
+        mock_service.assert_called_once_with(
+            huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION
+        )
 
     @mock.patch(DWS_SENSOR_STRING.format("DWSClusterSensor.get_hook"), new_callable=PropertyMock)
     def test_poke(self, mock_service):
@@ -73,7 +75,9 @@ class TestDWSSnapshotSensor(unittest.TestCase):
     @mock.patch(DWS_SENSOR_STRING.format("DWSHook"))
     def test_get_hook(self, mock_service):
         self.snapshot_sensor.get_hook()
-        mock_service.assert_called_once_with(huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION)
+        mock_service.assert_called_once_with(
+            huaweicloud_conn_id=MOCK_CONN_ID, project_id=MOCK_PROJECT_ID, region=MOCK_REGION
+        )
 
     @mock.patch(DWS_SENSOR_STRING.format("DWSSnapshotSensor.get_hook"), new_callable=PropertyMock)
     def test_poke(self, mock_service):
@@ -83,4 +87,3 @@ class TestDWSSnapshotSensor(unittest.TestCase):
         res = self.snapshot_sensor.poke(None)
 
         self.assertEqual(expect_status == MOCK_STATUS, res)
-

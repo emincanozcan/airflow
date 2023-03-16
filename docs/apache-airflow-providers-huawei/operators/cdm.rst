@@ -22,9 +22,9 @@ Huawei Cloud CDM Operators
 Overview
 --------
 
-Cloud Data Migration (CDM) is an efficient and easy-to-use batch data integration service. 
-Based on the big data migration to the cloud and intelligent data lake solution, CDM provides easy-to-use migration 
-capabilities and capabilities of integrating multiple data sources to the data lake, reducing the complexity 
+Cloud Data Migration (CDM) is an efficient and easy-to-use batch data integration service.
+Based on the big data migration to the cloud and intelligent data lake solution, CDM provides easy-to-use migration
+capabilities and capabilities of integrating multiple data sources to the data lake, reducing the complexity
 of data source migration and integration and effectively improving the data migration and integration efficiency.
 
  - :class:`~airflow.providers.huawei.cloud.operators.cdm.CDMCreateJobOperator`

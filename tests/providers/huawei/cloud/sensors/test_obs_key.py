@@ -19,10 +19,8 @@ from __future__ import annotations
 
 import unittest
 from unittest import mock
-from unittest.mock import PropertyMock
 
 from airflow.providers.huawei.cloud.sensors.huawei_obs_key import OBSObjectKeySensor
-
 
 OBS_SENSOR_STRING = "airflow.providers.huawei.cloud.sensors.huawei_obs_key.{}"
 MOCK_CONN_ID = "huaweicloud_default"
@@ -32,6 +30,7 @@ MOCK_BUCKET = "mock_bucket"
 MOCK_OBJECT_KEY = "mock_object_key"
 MOCK_OBJECT_KEY_2 = "mock_object_key_2"
 MOCK_STATUS = "AVAILABLE"
+
 
 class TestOBSObjectKeySensor(unittest.TestCase):
     def setUp(self):
@@ -83,4 +82,3 @@ class TestOBSObjectKeySensor(unittest.TestCase):
         res = self.sensor.poke(None)
 
         self.assertEqual(False, res)
-

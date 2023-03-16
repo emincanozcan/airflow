@@ -25,6 +25,3 @@ Huawei Cloud integration (including `Huawei Cloud <https://www.huaweicloud.com/i
 
 This is detailed commit list of changes for versions provider package: ``Huawei``.
 For high-level changelog, see :doc:`package information including changelog <index>`.
-
-
-

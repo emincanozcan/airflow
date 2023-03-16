@@ -24,7 +24,7 @@ from airflow.models import BaseOperator
 from airflow.providers.huawei.cloud.hooks.cdm import CDMHook
 
 if TYPE_CHECKING:
-    from airflow.utils.context import Context
+    pass
 
 
 class CDMCreateJobOperator(BaseOperator):
@@ -37,10 +37,10 @@ class CDMCreateJobOperator(BaseOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
-    
-    template_fields: Sequence[str] = ("cluster_id","project_id")
+
+    template_fields: Sequence[str] = ("cluster_id", "project_id")
     ui_color = "#f0eee4"
-    
+
     def __init__(
         self,
         cluster_id: str,
@@ -61,12 +61,10 @@ class CDMCreateJobOperator(BaseOperator):
     def execute(self, context):
 
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
-        return cdm_hook.create_job(
-            cluster_id=self.cluster_id,
-            jobs=self.jobs
-        ).to_json_object()
+        return cdm_hook.create_job(cluster_id=self.cluster_id, jobs=self.jobs).to_json_object()
 
 
 class CDMCreateAndExecuteJobOperator(BaseOperator):
@@ -74,17 +72,17 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
     This operator is used to create and execute a job in a random cluster.
 
     :param project_id: Specifies the project ID.
-    :param clusters: IDs of CDM clusters. The system selects a random cluster in running 
+    :param clusters: IDs of CDM clusters. The system selects a random cluster in running
         state from the specified clusters and creates and executes a migration job in the cluster.
     :param x_language: Request language
     :param jobs: Job list.
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
-    
-    template_fields: Sequence[str] = ("x_language","clusters","project_id")
+
+    template_fields: Sequence[str] = ("x_language", "clusters", "project_id")
     ui_color = "#f0eee4"
-    
+
     def __init__(
         self,
         x_language: str,
@@ -107,12 +105,11 @@ class CDMCreateAndExecuteJobOperator(BaseOperator):
     def execute(self, context):
 
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
         return cdm_hook.create_and_execute_job(
-            x_language=self.x_language,
-            clusters=self.clusters,
-            jobs=self.jobs
+            x_language=self.x_language, clusters=self.clusters, jobs=self.jobs
         ).to_json_object()
 
 
@@ -126,10 +123,10 @@ class CDMStartJobOperator(BaseOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
-    
-    template_fields: Sequence[str] = ("cluster_id", "job_name","project_id")
+
+    template_fields: Sequence[str] = ("cluster_id", "job_name", "project_id")
     ui_color = "#f0eee4"
-    
+
     def __init__(
         self,
         cluster_id: str,
@@ -150,12 +147,10 @@ class CDMStartJobOperator(BaseOperator):
     def execute(self, context):
 
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
-        return cdm_hook.start_job(
-            cluster_id=self.cluster_id,
-            job_name=self.job_name
-        ).to_json_object()
+        return cdm_hook.start_job(cluster_id=self.cluster_id, job_name=self.job_name).to_json_object()
 
 
 class CDMDeleteJobOperator(BaseOperator):
@@ -168,10 +163,10 @@ class CDMDeleteJobOperator(BaseOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
-    
-    template_fields: Sequence[str] = ("cluster_id", "job_name","project_id")
+
+    template_fields: Sequence[str] = ("cluster_id", "job_name", "project_id")
     ui_color = "#f0eee4"
-    
+
     def __init__(
         self,
         cluster_id: str,
@@ -192,12 +187,10 @@ class CDMDeleteJobOperator(BaseOperator):
     def execute(self, context):
 
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
-        return cdm_hook.delete_job(
-            cluster_id=self.cluster_id,
-            job_name=self.job_name
-        ).to_json_object()
+        return cdm_hook.delete_job(cluster_id=self.cluster_id, job_name=self.job_name).to_json_object()
 
 
 class CDMStopJobOperator(BaseOperator):
@@ -210,10 +203,10 @@ class CDMStopJobOperator(BaseOperator):
     :param region: Regions where the API is available.
     :param huaweicloud_conn_id: The Airflow connection used for CDM credentials.
     """
-    
-    template_fields: Sequence[str] = ("cluster_id", "job_name","project_id")
+
+    template_fields: Sequence[str] = ("cluster_id", "job_name", "project_id")
     ui_color = "#f0eee4"
-    
+
     def __init__(
         self,
         cluster_id: str,
@@ -234,9 +227,7 @@ class CDMStopJobOperator(BaseOperator):
     def execute(self, context):
 
         cdm_hook = CDMHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id)
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
+        )
 
-        return cdm_hook.stop_job(
-            cluster_id=self.cluster_id,
-            job_name=self.job_name
-        ).to_json_object()
+        return cdm_hook.stop_job(cluster_id=self.cluster_id, job_name=self.job_name).to_json_object()

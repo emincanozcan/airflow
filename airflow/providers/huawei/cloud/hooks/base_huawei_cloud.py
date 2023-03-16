@@ -1,13 +1,31 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
 from __future__ import annotations
+
+import json
 from typing import Any
 
 from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import IamClient, KeystoneListAuthDomainsRequest
 
-import json
-
 from airflow.hooks.base import BaseHook
+
 
 class HuaweiBaseHook(BaseHook):
 
@@ -16,26 +34,22 @@ class HuaweiBaseHook(BaseHook):
     conn_type = "huaweicloud"
     hook_name = "Huawei Cloud"
 
-    def __init__(self,
-                 region=None,
-                 project_id=None,
-                 huaweicloud_conn_id="huaweicloud_default",
-                 *args,
-                 **kwargs) -> None:
+    def __init__(
+        self, region=None, project_id=None, huaweicloud_conn_id="huaweicloud_default", *args, **kwargs
+    ) -> None:
         self.huaweicloud_conn_id = huaweicloud_conn_id
         self.conn = self.get_connection(self.huaweicloud_conn_id)
         self.override_region = region
         self.override_project_id = project_id
         super().__init__(*args, **kwargs)
-        
+
     def get_enterprise_project_id_from_extra_data(self) -> str:
         """
         Gets enterprise_project_id from the extra_config option in connection.
         """
-        if self.conn.extra_dejson.get('enterprise_project_id', None) is not None:
-            return self.conn.extra_dejson.get('enterprise_project_id', None)
+        if self.conn.extra_dejson.get("enterprise_project_id", None) is not None:
+            return self.conn.extra_dejson.get("enterprise_project_id", None)
         return None
-
 
     def get_project_id(self) -> str | None:
         """
@@ -43,17 +57,17 @@ class HuaweiBaseHook(BaseHook):
         """
         if self.override_project_id is not None:
             return self.override_project_id
-        if self.conn.extra_dejson.get('project_id', None) is not None:
-            return self.conn.extra_dejson.get('project_id', None)
+        if self.conn.extra_dejson.get("project_id", None) is not None:
+            return self.conn.extra_dejson.get("project_id", None)
         raise Exception(f"No project_id is specified for connection: {self.huaweicloud_conn_id}")
 
     def get_region(self) -> str:
         """Returns region for the hook."""
         if self.override_region is not None:
             return self.override_region
-        if self.conn.extra_dejson.get('region', None) is not None:
-            return self.conn.extra_dejson.get('region', None)
-        raise Exception(f"No region is specified for connection")
+        if self.conn.extra_dejson.get("region", None) is not None:
+            return self.conn.extra_dejson.get("region", None)
+        raise Exception("No region is specified for connection")
 
     @staticmethod
     def get_ui_field_behaviour() -> dict[str, Any]:
@@ -71,7 +85,7 @@ class HuaweiBaseHook(BaseHook):
                     {
                         "region": "ap-southeast-3",
                         "project_id": "1234567890",
-                        "obs_bucket": "your-obs-bucket-name"
+                        "obs_bucket": "your-obs-bucket-name",
                     },
                     indent=2,
                 ),
@@ -84,10 +98,12 @@ class HuaweiBaseHook(BaseHook):
             sk = self.conn.password
             credentials = GlobalCredentials(ak, sk)
 
-            client = IamClient.new_builder() \
-                .with_credentials(credentials) \
-                .with_endpoint(f"https://iam.myhuaweicloud.com") \
+            client = (
+                IamClient.new_builder()
+                .with_credentials(credentials)
+                .with_endpoint("https://iam.myhuaweicloud.com")
                 .build()
+            )
 
             request = KeystoneListAuthDomainsRequest()
             client.keystone_list_auth_domains(request)

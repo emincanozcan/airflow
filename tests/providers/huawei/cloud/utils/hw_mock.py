@@ -27,11 +27,16 @@ default_mock_constants = {
     "PROJECT_ID": "project_id",
     "REGION": "ap-southeast-3",
     "CONN_ID": "mock_smn_default",
-    "OBS_BUCKET": "mock_bucket_name"
+    "OBS_BUCKET": "mock_bucket_name",
 }
 
 
-def mock_huawei_cloud_default(self, huaweicloud_conn_id=default_mock_constants["CONN_ID"], region=default_mock_constants["REGION"], project_id=default_mock_constants["PROJECT_ID"]):
+def mock_huawei_cloud_default(
+    self,
+    huaweicloud_conn_id=default_mock_constants["CONN_ID"],
+    region=default_mock_constants["REGION"],
+    project_id=default_mock_constants["PROJECT_ID"],
+):
     self.huaweicloud_conn_id = huaweicloud_conn_id
     self.override_project_id = project_id
     self.override_region = region
@@ -44,5 +49,5 @@ def mock_huawei_cloud_default(self, huaweicloud_conn_id=default_mock_constants["
                 "obs_bucket": default_mock_constants["OBS_BUCKET"],
                 "project_id": project_id,
             }
-        )
+        ),
     )

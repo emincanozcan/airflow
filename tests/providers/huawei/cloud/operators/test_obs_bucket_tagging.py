@@ -19,10 +19,11 @@ from __future__ import annotations
 
 import unittest
 from unittest import mock
+
 from airflow.providers.huawei.cloud.operators.huawei_obs import (
+    OBSDeleteBucketTaggingOperator,
     OBSGetBucketTaggingOperator,
     OBSSetBucketTaggingOperator,
-    OBSDeleteBucketTaggingOperator
 )
 
 MOCK_TASK_ID = "test-obs-operator"
@@ -83,8 +84,7 @@ class TestOBSSetBucketTaggingOperator(unittest.TestCase):
         mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.exist_bucket.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_hook.return_value.set_bucket_tagging.assert_called_once_with(
-            bucket_name=MOCK_BUCKET_NAME,
-            tag_info=MOCK_TAG_INGO
+            bucket_name=MOCK_BUCKET_NAME, tag_info=MOCK_TAG_INGO
         )
 
     @mock.patch("airflow.providers.huawei.cloud.operators.huawei_obs.OBSHook")
@@ -130,6 +130,3 @@ class TestOBSDeleteBucketTaggingOperator(unittest.TestCase):
         mock_hook.assert_called_once_with(huaweicloud_conn_id=MOCK_OBS_CONN_ID, region=MOCK_REGION)
         mock_hook.return_value.exist_bucket.assert_called_once_with(MOCK_BUCKET_NAME)
         mock_hook.return_value.delete_bucket_tagging.assert_not_called()
-
-
-

@@ -24,7 +24,7 @@ from airflow.models import BaseOperator
 from airflow.providers.huawei.cloud.hooks.dataarts import DataArtsHook
 
 if TYPE_CHECKING:
-    from airflow.utils.context import Context
+    pass
 
 
 class DataArtsDLFStartJobOperator(BaseOperator):
@@ -40,10 +40,10 @@ class DataArtsDLFStartJobOperator(BaseOperator):
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
     """
 
-    template_fields: Sequence[str] = ("job_name", "project_id","workspace","body")
+    template_fields: Sequence[str] = ("job_name", "project_id", "workspace", "body")
     template_fields_renderers = {"body": "json"}
     ui_color = "#f0eee4"
-    
+
     def __init__(
         self,
         job_name: str,
@@ -66,13 +66,7 @@ class DataArtsDLFStartJobOperator(BaseOperator):
     def execute(self, context):
 
         dataarts_hook = DataArtsHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
 
-        dataarts_hook.dlf_start_job(
-            workspace=self.workspace,
-            job_name=self.job_name,
-            body=self.body
-        )
+        dataarts_hook.dlf_start_job(workspace=self.workspace, job_name=self.job_name, body=self.body)

@@ -18,24 +18,26 @@
 
 from __future__ import annotations
 
-from airflow.exceptions import AirflowException
-from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
-
+import huaweicloudsdksmn.v2 as SmnSdk
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
 
-import huaweicloudsdksmn.v2 as SmnSdk
+from airflow.exceptions import AirflowException
+from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
+
 
 class SMNHook(HuaweiBaseHook):
     """Interact with Huawei Cloud SMN, using the huaweicloudsdksmn library."""
-    
-    def send_message(self,
-                        topic_urn: str,
-                        tags: dict | None = None,
-                        template_name: str | None = None,
-                        subject: str | None = None,
-                        message_structure: str | None = None,
-                        message: str | None = None, ):
+
+    def send_message(
+        self,
+        topic_urn: str,
+        tags: dict | None = None,
+        template_name: str | None = None,
+        subject: str | None = None,
+        message_structure: str | None = None,
+        message: str | None = None,
+    ):
         """
         This function is used to publish messages to a topic
 
@@ -56,12 +58,11 @@ class SMNHook(HuaweiBaseHook):
         if subject:
             kwargs["subject"] = subject
         if tags:
-            kwargs['tags'] = tags
+            kwargs["tags"] = tags
         if message:
-            kwargs['message'] = message
+            kwargs["message"] = message
 
-        self.send_request(self.make_publish_app_message_request(
-            topic_urn=topic_urn, body=kwargs))
+        self.send_request(self.make_publish_app_message_request(topic_urn=topic_urn, body=kwargs))
 
     def send_request(self, request: SmnSdk.PublishMessageRequest) -> None:
         try:
@@ -84,7 +85,9 @@ class SMNHook(HuaweiBaseHook):
 
         credentials = BasicCredentials(ak, sk, self.get_project_id())
 
-        return SmnSdk.SmnClient.new_builder() \
-            .with_credentials(credentials) \
-            .with_region(SmnRegion.value_of(self.get_region())) \
+        return (
+            SmnSdk.SmnClient.new_builder()
+            .with_credentials(credentials)
+            .with_region(SmnRegion.value_of(self.get_region()))
             .build()
+        )

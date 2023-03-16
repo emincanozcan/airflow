@@ -17,7 +17,7 @@
 # under the License.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -31,28 +31,17 @@ from airflow.sensors.base import BaseSensorOperator
 class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
     """
     Used to view running status of a real-time job
-    
+
     :param job_name: The name of the job.
     :param project_id: The ID of the project.
     :param workspace: The name of the workspace.
     :param huaweicloud_conn_id: The connection ID to use when fetching connection info.
     """
-    
-    END_STATES = (
-        "STOPPED", 
-        "EXCEPTION"
-    )
-    
-    INTERMEDIATE_STATES = (
-        "waiting",
-        "running",
-        "pause",
-        "manual-stop"
-    )
-    FAILURE_STATES = (
-        "fail",
-        "running-exception"
-    )
+
+    END_STATES = ("STOPPED", "EXCEPTION")
+
+    INTERMEDIATE_STATES = ("waiting", "running", "pause", "manual-stop")
+    FAILURE_STATES = ("fail", "running-exception")
     SUCCESS_STATES = ("success",)
 
     def __init__(
@@ -79,11 +68,10 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
         @param context - the context of the object
         @returns True if the job status success, False otherwise
         """
-        
         status = self.get_hook.dlf_show_job_status(job_name=self.job_name, workspace=self.workspace)
         if status not in self.END_STATES:
             return False
-        
+
         instances = self.get_hook.dlf_list_job_instances(workspace=self.workspace)
         for instance in instances:
             if instance.job_name == self.job_name:
@@ -92,12 +80,14 @@ class DataArtsDLFShowJobStatusSensor(BaseSensorOperator):
 
                 if instance.status in self.INTERMEDIATE_STATES:
                     return False
-                
+
                 return True
-    
+
         return False
-    
+
     @cached_property
     def get_hook(self) -> DataArtsHook:
         """Create and return a DataArtsHook"""
-        return DataArtsHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
+        return DataArtsHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region
+        )

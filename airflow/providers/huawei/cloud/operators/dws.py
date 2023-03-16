@@ -16,10 +16,8 @@
 # under the License.
 from __future__ import annotations
 
-import time
 from typing import TYPE_CHECKING, Any, Sequence
 
-from airflow.exceptions import AirflowException
 from airflow.models import BaseOperator
 from airflow.providers.huawei.cloud.hooks.dws import DWSHook
 
@@ -125,9 +123,7 @@ class DWSCreateClusterOperator(BaseOperator):
 
     def execute(self, context: Context):
         dws_hook = DWSHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
         self.log.info("Creating DWS cluster %s", self.name)
 
@@ -160,7 +156,7 @@ class DWSCreateClusterSnapshotOperator(BaseOperator):
         running Airflow in a distributed manner and huaweicloud_conn_id is None or
         empty, then default obs configuration would be used (and must be
         maintained on each worker node).
-    :param project_id: 	Project ID.
+    :param project_id:     Project ID.
     :param region: The DWS region.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
         Be associated with project_id.
@@ -198,9 +194,7 @@ class DWSCreateClusterSnapshotOperator(BaseOperator):
 
     def execute(self, context: Context) -> Any:
         dws_hook = DWSHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
         return dws_hook.create_snapshot(
             name=self.name,
@@ -218,16 +212,14 @@ class DWSDeleteClusterSnapshotOperator(BaseOperator):
         running Airflow in a distributed manner and huaweicloud_conn_id is None or
         empty, then default obs configuration would be used (and must be
         maintained on each worker node).
-    :param project_id: 	Project ID.
+    :param project_id:     Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
         Be associated with project_id.
     :param snapshot_name: Snapshot name.
     """
 
-    template_fields: Sequence[str] = (
-        "snapshot_name",
-    )
+    template_fields: Sequence[str] = ("snapshot_name",)
 
     def __init__(
         self,
@@ -246,9 +238,7 @@ class DWSDeleteClusterSnapshotOperator(BaseOperator):
 
     def execute(self, context: Context) -> Any:
         dws_hook = DWSHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
         dws_hook.delete_snapshot(snapshot_name=self.snapshot_name)
 
@@ -262,7 +252,7 @@ class DWSRestoreClusterOperator(BaseOperator):
         running Airflow in a distributed manner and huaweicloud_conn_id is None or
         empty, then default obs configuration would be used (and must be
         maintained on each worker node).
-    :param project_id: 	Project ID.
+    :param project_id:     Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
         Be associated with project_id.
@@ -323,9 +313,7 @@ class DWSRestoreClusterOperator(BaseOperator):
 
     def execute(self, context: Context):
         dws_hook = DWSHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
         return dws_hook.restore_cluster(
             snapshot_name=self.snapshot_name,
@@ -350,7 +338,7 @@ class DWSDeleteClusterBasedOnSnapshotOperator(BaseOperator):
         running Airflow in a distributed manner and huaweicloud_conn_id is None or
         empty, then default obs configuration would be used (and must be
         maintained on each worker node).
-    :param project_id: 	Project ID.
+    :param project_id:     Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
         Be associated with project_id.
@@ -378,9 +366,7 @@ class DWSDeleteClusterBasedOnSnapshotOperator(BaseOperator):
 
     def execute(self, context: Context):
         dws_hook = DWSHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
         return dws_hook.delete_cluster_based_on_snapshot(snapshot_name=self.snapshot_name)
 
@@ -394,7 +380,7 @@ class DWSDeleteClusterOperator(BaseOperator):
         running Airflow in a distributed manner and huaweicloud_conn_id is None or
         empty, then default obs configuration would be used (and must be
         maintained on each worker node).
-    :param project_id: 	Project ID.
+    :param project_id:     Project ID.
     :param region: The DWS region you want to create cluster.
         By default, the value is obtained from connection corresponding to huaweicloud_conn_id.
         Be associated with project_id.
@@ -426,9 +412,7 @@ class DWSDeleteClusterOperator(BaseOperator):
 
     def execute(self, context: Context):
         dws_hook = DWSHook(
-            huaweicloud_conn_id=self.huaweicloud_conn_id,
-            region=self.region,
-            project_id=self.project_id
+            huaweicloud_conn_id=self.huaweicloud_conn_id, region=self.region, project_id=self.project_id
         )
         dws_hook.delete_cluster(
             cluster_name=self.cluster_name,

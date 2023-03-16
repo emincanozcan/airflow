@@ -67,7 +67,9 @@ class DWSClusterSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DWSHook:
         """Create and return a DWSHook"""
-        return DWSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
+        return DWSHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region
+        )
 
 
 class DWSSnapshotSensor(BaseSensorOperator):
@@ -111,5 +113,6 @@ class DWSSnapshotSensor(BaseSensorOperator):
     @cached_property
     def get_hook(self) -> DWSHook:
         """Create and return a DWSHook"""
-
-        return DWSHook(huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region)
+        return DWSHook(
+            huaweicloud_conn_id=self.huaweicloud_conn_id, project_id=self.project_id, region=self.region
+        )

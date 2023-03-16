@@ -18,27 +18,24 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from airflow.models.baseoperator import chain
 from airflow import DAG
-
-from airflow.providers.huawei.cloud.sensors.huawei_obs_key import OBSObjectKeySensor
+from airflow.models.baseoperator import chain
 from airflow.providers.huawei.cloud.operators.huawei_obs import (
-    OBSCreateBucketOperator,
-    OBSDeleteBucketOperator,
-    OBSListBucketOperator,
-
-    OBSGetBucketTaggingOperator,
-    OBSSetBucketTaggingOperator,
-    OBSDeleteBucketTaggingOperator,
-
-    OBSCreateObjectOperator,
-    OBSGetObjectOperator,
-    OBSDeleteObjectOperator,
-    OBSDeleteBatchObjectOperator,
-    OBSListObjectsOperator,
     OBSCopyObjectOperator,
-    OBSMoveObjectOperator
+    OBSCreateBucketOperator,
+    OBSCreateObjectOperator,
+    OBSDeleteBatchObjectOperator,
+    OBSDeleteBucketOperator,
+    OBSDeleteBucketTaggingOperator,
+    OBSDeleteObjectOperator,
+    OBSGetBucketTaggingOperator,
+    OBSGetObjectOperator,
+    OBSListBucketOperator,
+    OBSListObjectsOperator,
+    OBSMoveObjectOperator,
+    OBSSetBucketTaggingOperator,
 )
+from airflow.providers.huawei.cloud.sensors.huawei_obs_key import OBSObjectKeySensor
 
 DAG_ID = "example_obs"
 
@@ -56,17 +53,11 @@ with DAG(
     object_key_file = "example_object_file"
 
     # [START howto_operator_obs_create_bucket]
-    create_bucket = OBSCreateBucketOperator(
-        task_id="create_bucket",
-        bucket_name=bucket_name
-    )
+    create_bucket = OBSCreateBucketOperator(task_id="create_bucket", bucket_name=bucket_name)
     # [END howto_operator_obs_create_bucket]
 
     # [START howto_operator_obs_create_bucket]
-    create_bucket_2 = OBSCreateBucketOperator(
-        task_id="create_bucket_2",
-        bucket_name=bucket_name_2
-    )
+    create_bucket_2 = OBSCreateBucketOperator(task_id="create_bucket_2", bucket_name=bucket_name_2)
     # [END howto_operator_obs_create_bucket]
 
     # [START howto_operator_obs_list_bucket]
@@ -82,7 +73,7 @@ with DAG(
         tag_info={
             "type": "temp",
             "app": "nginx",
-        }
+        },
     )
     # [END howto_operator_obs_set_bucket_tagging]
 
@@ -105,7 +96,7 @@ with DAG(
         task_id="create_object_content",
         bucket_name=bucket_name,
         object_key=object_key_content,
-        data="Beijing\nShanghai\nGuangzhou\nShenzhen"
+        data="Beijing\nShanghai\nGuangzhou\nShenzhen",
     )
     # [END howto_operator_obs_create_object]
 
@@ -115,7 +106,7 @@ with DAG(
         bucket_name=bucket_name,
         object_type="file",
         object_key=object_key_file,
-        data="/tmp/upload/filename"
+        data="/tmp/upload/filename",
     )
     # [END howto_operator_obs_create_object]
 
@@ -128,17 +119,13 @@ with DAG(
 
     # [START howto_sensor_obs_object_key_single]
     sensor_one_key = OBSObjectKeySensor(
-        task_id="sensor_one_key",
-        bucket_name=bucket_name,
-        object_key=object_key_content
+        task_id="sensor_one_key", bucket_name=bucket_name, object_key=object_key_content
     )
     # [END howto_sensor_obs_object_key_single]
 
     # [START howto_sensor_obs_object_key_multiple]
     sensor_two_keys = OBSObjectKeySensor(
-        task_id="sensor_two_keys",
-        bucket_name=bucket_name,
-        object_key=[object_key_content, object_key_file]
+        task_id="sensor_two_keys", bucket_name=bucket_name, object_key=[object_key_content, object_key_file]
     )
     # [END howto_sensor_obs_object_key_multiple]
 
@@ -147,7 +134,7 @@ with DAG(
         task_id="get_object",
         bucket_name=bucket_name,
         object_key=object_key_content,
-        download_path="/tmp/download/filename"
+        download_path="/tmp/download/filename",
     )
     # [END howto_operator_obs_get_object]
 
@@ -229,3 +216,9 @@ with DAG(
         delete_batch_object_2,
         delete_bucket_2,
     )
+
+
+from tests.system.utils import get_test_run  # noqa: E402
+
+# Needed to run the example DAG with pytest (see: tests/system/README.md#run_via_pytest)
+test_run = get_test_run(dag)

@@ -20,10 +20,11 @@ from __future__ import annotations
 import unittest
 from unittest import mock
 
-
 from airflow.providers.huawei.cloud.hooks.smn import SMNHook
-from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
+from tests.providers.huawei.cloud.utils.hw_mock import default_mock_constants, mock_huawei_cloud_default
+
 SMN_STRING = "airflow.providers.huawei.cloud.hooks.smn.{}"
+
 
 class TestSmnHook(unittest.TestCase):
     def setUp(self):
@@ -43,22 +44,24 @@ class TestSmnHook(unittest.TestCase):
         assert client.get_credentials().project_id == default_mock_constants["PROJECT_ID"]
 
     def test_get_request_body(self):
-        req = self.hook.make_publish_app_message_request(
-            "test_urn", {"subject": "bar"})
+        req = self.hook.make_publish_app_message_request("test_urn", {"subject": "bar"})
         assert req.body.subject == "bar"
 
     @mock.patch(SMN_STRING.format("SmnSdk.smn_client.SmnClient.publish_message"))
     def test_send_request(self, publish_message):
-        var = self.hook.make_publish_app_message_request(
-            "test_urn", {"subject": "bar"})
+        var = self.hook.make_publish_app_message_request("test_urn", {"subject": "bar"})
         self.hook.send_request(var)
         publish_message.assert_called_once_with(var)
 
     @mock.patch(SMN_STRING.format("SMNHook.send_request"))
     def test_publish_message(self, send_request):
-        payload = {"message_structure": '{"default":"Hello", "sms":"Hello SMS", "email":"Hello Email"}',
-                   "tags": {"name": "value"},
-                   "message": "message",
-                   "subject": "subject"}
+        payload = {
+            "message_structure": '{"default":"Hello", "sms":"Hello SMS", "email":"Hello Email"}',
+            "tags": {"name": "value"},
+            "message": "message",
+            "subject": "subject",
+        }
         self.hook.send_message(topic_urn="example-urn", **payload)
-        send_request.assert_called_once_with(self.hook.make_publish_app_message_request("example-urn", payload))
+        send_request.assert_called_once_with(
+            self.hook.make_publish_app_message_request("example-urn", payload)
+        )

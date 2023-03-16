@@ -17,15 +17,15 @@
 # under the License.
 
 from __future__ import annotations
+
 import os.path
 
-from typing import Any
-from airflow.exceptions import AirflowException
-from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
-
+import huaweicloudsdkdli.v1 as DliSdk
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdkdli.v1.region.dli_region import DliRegion
-import huaweicloudsdkdli.v1 as DliSdk
+
+from airflow.exceptions import AirflowException
+from airflow.providers.huawei.cloud.hooks.base_huawei_cloud import HuaweiBaseHook
 
 
 class DLIHook(HuaweiBaseHook):
@@ -48,7 +48,7 @@ class DLIHook(HuaweiBaseHook):
     ) -> DliSdk.CreateQueueResponse:
         """
         Create a queue in DLI
-        
+
         :param queue_name: The name of the queue.
         :type queue_name: str
         :param platform: The platform of the queue.
@@ -76,7 +76,7 @@ class DLIHook(HuaweiBaseHook):
         :return: The response of the queue creation.
         :rtype: DliSdk.CreateQueueResponse
         """
-        if list_tags_body != None and len(list_tags_body) > 10:
+        if list_tags_body is not None and len(list_tags_body) > 10:
             raise AirflowException("You can add up to 10 tags.")
         try:
             return self.get_dli_client().create_queue(
@@ -87,7 +87,9 @@ class DLIHook(HuaweiBaseHook):
                     list_labels_body=list_labels_body,
                     resource_mode=resource_mode,
                     platform=platform,
-                    enterprise_project_id= enterprise_project_id if enterprise_project_id is not None else self.get_enterprise_project_id_from_extra_data(),
+                    enterprise_project_id=enterprise_project_id
+                    if enterprise_project_id is not None
+                    else self.get_enterprise_project_id_from_extra_data(),
                     charging_mode=charging_mode,
                     cu_count=cu_count,
                     description=description,
@@ -102,7 +104,7 @@ class DLIHook(HuaweiBaseHook):
     def update_queue_cidr(self, queue_name, cidr_in_vpc) -> DliSdk.UpdateQueueCidrResponse:
         """
         Update the CIDR of a queue in DLI
-        
+
         :param queue_name: The name of the queue.
         :type queue_name: str
         :param cidr_in_vpc: The CIDR of the queue.
@@ -121,7 +123,7 @@ class DLIHook(HuaweiBaseHook):
     def delete_queue(self, queue_name) -> DliSdk.DeleteQueueResponse:
         """
         Delete a queue in DLI
-        
+
         :param queue_name: The name of the queue.
         :type queue_name: str
         :return: The response of the queue deletion.
@@ -138,7 +140,7 @@ class DLIHook(HuaweiBaseHook):
     ) -> DliSdk.ListQueuesResponse:
         """
         List queues in DLI
-        
+
         :param queue_type: The type of the queue.
         :type queue_type: str
         :param tags: The tags of the queue.
@@ -194,7 +196,7 @@ class DLIHook(HuaweiBaseHook):
     ) -> DliSdk.CreateBatchJobResponse:
         """
         Create a batch job in DLI
-        
+
         :param queue_name: The name of the queue.
         :type queue_name: str
         :param file: The file of the batch job.
@@ -279,7 +281,7 @@ class DLIHook(HuaweiBaseHook):
                     list_jars_body=list_jars_body,
                     sc_type=sc_type,
                     list_args_body=list_args_body,
-                    cluster_name=cluster_name
+                    cluster_name=cluster_name,
                 )
             )
         except Exception as e:
@@ -289,7 +291,7 @@ class DLIHook(HuaweiBaseHook):
     def upload_files(self, paths, group) -> DliSdk.UploadFilesResponse:
         """
         Upload files to DLI
-        
+
         :param paths: The paths of the files to be uploaded.
         :type paths: list
         :param group: The group of the files to be uploaded.
@@ -298,9 +300,7 @@ class DLIHook(HuaweiBaseHook):
         :rtype: DliSdk.UploadFilesResponse
         """
         try:
-            return self.get_dli_client().upload_files(
-                self.upload_files_request(paths=paths, group=group)
-            )
+            return self.get_dli_client().upload_files(self.upload_files_request(paths=paths, group=group))
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when uploading files: {e}")
@@ -310,7 +310,7 @@ class DLIHook(HuaweiBaseHook):
     ) -> DliSdk.RunJobResponse:
         """
         Run a job in DLI
-        
+
         :param sql_query: The SQL query of the job.
         :type sql_query: str
         :param database_name: The database name of the job.
@@ -326,7 +326,7 @@ class DLIHook(HuaweiBaseHook):
         """
         try:
             if os.path.isfile(sql_query):
-                sql_file = open(sql_query, "r")
+                sql_file = open(sql_query)
                 sql_query = sql_file.read()
                 sql_file.close()
 
@@ -336,7 +336,7 @@ class DLIHook(HuaweiBaseHook):
                     database_name=database_name,
                     list_conf_body=list_conf_body,
                     list_tags_body=list_tags_body,
-                    queue_name=queue_name
+                    queue_name=queue_name,
                 )
             )
         except Exception as e:
@@ -346,16 +346,14 @@ class DLIHook(HuaweiBaseHook):
     def show_batch_state(self, job_id) -> str:
         """
         Get the state of a batch job
-        
+
         :param job_id: The ID of the batch job.
         :type job_id: str
         :return: The state of the batch job.
         :rtype: str
         """
         try:
-            response = self.get_dli_client().show_batch_state(
-                self.show_batch_state_request(job_id)
-            )
+            response = self.get_dli_client().show_batch_state(self.show_batch_state_request(job_id))
             return response.state
         except Exception as e:
             self.log.error(e)
@@ -364,7 +362,7 @@ class DLIHook(HuaweiBaseHook):
     def show_job_status(self, job_id) -> str:
         """
         Get the status of a job
-        
+
         :param job_id: The ID of the job.
         :type job_id: str
         :return: The status of the job.
@@ -469,7 +467,7 @@ class DLIHook(HuaweiBaseHook):
             jars=list_jars_body,
             sc_type=sc_type,
             args=list_args_body,
-            cluster_name=cluster_name
+            cluster_name=cluster_name,
         )
         return request
 
@@ -521,7 +519,7 @@ class DLIHook(HuaweiBaseHook):
             queue_name=queue_name,
         )
         return request
-    
+
     def get_job_result(self, job_id, queue_name) -> DliSdk.ShowJobResultResponse:
         try:
             response = self.get_dli_client().show_job_result(self.get_job_result_request(job_id, queue_name))
@@ -529,7 +527,7 @@ class DLIHook(HuaweiBaseHook):
         except Exception as e:
             self.log.error(e)
             raise AirflowException(f"Errors when get job result: {e}")
-    
+
     def get_job_result_request(self, job_id, queue_name):
         request = DliSdk.ShowJobResultRequest(job_id=job_id, queue_name=queue_name)
         return request

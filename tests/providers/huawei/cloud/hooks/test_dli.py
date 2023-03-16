@@ -16,16 +16,15 @@
 # specific language governing permissions and limitations
 # under the License.
 from __future__ import annotations
-import json
 
 import unittest
 from unittest import mock
 
-
 from airflow.providers.huawei.cloud.hooks.dli import DLIHook
-from tests.providers.huawei.cloud.utils.hw_mock import mock_huawei_cloud_default, default_mock_constants
+from tests.providers.huawei.cloud.utils.hw_mock import default_mock_constants, mock_huawei_cloud_default
 
 DLI_STRING = "airflow.providers.huawei.cloud.hooks.dli.{}"
+
 
 class TestDliHook(unittest.TestCase):
     def setUp(self):
@@ -119,19 +118,13 @@ class TestDliHook(unittest.TestCase):
             return_permission_info=return_permission_info,
         )
         list_queues.assert_called_once_with(request)
-    
+
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.show_job_result"))
     def test_get_job_result(self, show_job_result):
         job_id = "job-id"
         queue_name = "queue_name"
-        self.hook.get_job_result(
-            queue_name=queue_name,
-            job_id=job_id
-        )
-        request = self.hook.get_job_result_request(
-            queue_name=queue_name,
-            job_id=job_id
-        )
+        self.hook.get_job_result(queue_name=queue_name, job_id=job_id)
+        request = self.hook.get_job_result_request(queue_name=queue_name, job_id=job_id)
         show_job_result.assert_called_once_with(request)
 
     @mock.patch(DLI_STRING.format("DliSdk.DliClient.show_job_status"))

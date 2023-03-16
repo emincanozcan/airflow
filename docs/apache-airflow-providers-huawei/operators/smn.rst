@@ -74,4 +74,3 @@ To publish a SMN message template you can use
    :language: python
    :start-after: [START howto_operator_smn_message_template]
    :end-before: [END howto_operator_smn_message_template]
-
