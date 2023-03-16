@@ -139,6 +139,7 @@ class SMNPublishJsonMessageOperator(BaseOperator):
     """
 
     template_fields: Sequence[str] = ("project_id","topic_urn","subject","default","sms","email","http","https","functionstage")
+
     ui_color = "#66c3ff"
     
     def __init__(
@@ -162,6 +163,12 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         self.project_id = project_id
         self.topic_urn = topic_urn
         self.subject = subject
+        self.default = default
+        self.sms = sms
+        self.email = email
+        self.http = http
+        self.https = https
+        self.functionstage = functionstage
         msg = {"default": default, "sms": sms, "email": email,
                "http": http, "https": https, "functionstage": functionstage}
         self.message_structure = json.dumps(

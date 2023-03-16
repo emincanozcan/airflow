@@ -49,7 +49,7 @@ class CDMShowJobStatusSensor(BaseSensorOperator):
         "FAILED",
         "FAILURE_ON_SUBMIT"
     )
-    SUCCESS_STATES = ("SUCCEEDED",)
+    SUCCESS_STATES = ("SUCCEEDED","STOPPED")
 
     template_fields: Sequence[str] = ("cluster_id",)
     template_ext: Sequence[str] = ()
