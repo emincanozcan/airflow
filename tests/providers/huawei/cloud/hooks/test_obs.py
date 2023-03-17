@@ -628,9 +628,7 @@ class TestOBSHook(unittest.TestCase):
 
         with self.assertRaises(AirflowException):
             self.hook.get_object(
-                object_key=MOCK_OBJECT_KEY,
-                bucket_name=MOCK_BUCKET_NAME,
-                download_path="/mock/download/test"
+                object_key=MOCK_OBJECT_KEY, bucket_name=MOCK_BUCKET_NAME, download_path="/mock/download/test"
             )
 
             mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
