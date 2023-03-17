@@ -340,7 +340,7 @@ class OBSCreateObjectOperator(BaseOperator):
         If region is cn-north-1, you can create objects in a bucket in any region.
     :param bucket_name: This is bucket name you want to create.
     :param object_key: Object name or the name of the uploaded file.
-    :param object_type: The type of the object，default is content.
+    :param object_type: The type of the object, default is content.
 
         - file:
             Full path of the file/folder to be uploaded, for example, /aa/bb.txt, or /aa/.
@@ -353,7 +353,7 @@ class OBSCreateObjectOperator(BaseOperator):
     :param metadata: Upload custom metadata for the object.
     :param md5: Base64-encoded MD5 value of the object data to be uploaded.
         It is provided for the OBS server to verify data integrity.
-    :param acl: Pre-defined Access Control Policies specified during the object upload，
+    :param acl: Pre-defined Access Control Policies specified during the object upload.
         The access policy is as follows:
 
             - PRIVATE: Private read/write.

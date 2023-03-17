@@ -419,7 +419,7 @@ class OBSHook(HuaweiBaseHook):
 
         :param bucket_name: The name of the bucket.
         :param object_key: Object name or the name of the uploaded file.
-        :param object_type: The type of the object，default is content.
+        :param object_type: The type of the object, default is content.
 
             - file:
                 Full path of the file/folder to be uploaded, for example, /aa/bb.txt, or /aa/.
