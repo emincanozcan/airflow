@@ -60,14 +60,6 @@ integrations:
       - /docs/apache-airflow-providers-huawei/operators/dli.rst
     tags: [huawei]
 
-
-  - integration-name: Huawei Cloud DWS - SQL
-    external-doc-url: https://support.huaweicloud.com/intl/en-us/dws/index.html
-    logo: /integration-logos/huawei/DWS.png
-    how-to-guide:
-      - /docs/apache-airflow-providers-huawei/operators/dws_sql.rst
-    tags: [huawei]
-
   - integration-name: Huawei Cloud DWS
     external-doc-url: https://support.huaweicloud.com/intl/en-us/dws/index.html
     logo: /integration-logos/huawei/DWS.png
@@ -96,7 +88,6 @@ operators:
   - integration-name: Huawei Cloud DWS
     python-modules:
       - airflow.providers.huawei.cloud.operators.dws
-      - airflow.providers.huawei.cloud.operators.dws_sql
   - integration-name: Huawei Cloud SMN
     python-modules:
       - airflow.providers.huawei.cloud.operators.smn
@@ -137,7 +128,6 @@ hooks:
   - integration-name: Huawei Cloud DWS
     python-modules:
       - airflow.providers.huawei.cloud.hooks.dws
-      - airflow.providers.huawei.cloud.hooks.dws_sql
   - integration-name: Huawei Cloud SMN
     python-modules:
       - airflow.providers.huawei.cloud.hooks.smn
@@ -154,5 +144,3 @@ hooks:
 connection-types:
   - hook-class-name: airflow.providers.huawei.cloud.hooks.base_huawei_cloud.HuaweiBaseHook
     connection-type: huaweicloud
-  - hook-class-name: airflow.providers.huawei.cloud.hooks.dws_sql.DWSSqlHook
-    connection-type: dws
