@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import huaweicloudsdksmn.v2 as SmnSdk
 from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
@@ -50,7 +52,7 @@ class SMNHook(HuaweiBaseHook):
         :param message_structure: Specifies the message structure, which contains JSON strings.
         :param message: Specifies the message content.
         """
-        kwargs = {}
+        kwargs: dict[str, Any] = {}
 
         if message_structure:
             kwargs["message_structure"] = message_structure
@@ -79,7 +81,6 @@ class SMNHook(HuaweiBaseHook):
         return request
 
     def get_smn_client(self) -> SmnSdk.SmnClient:
-
         ak = self.conn.login
         sk = self.conn.password
 

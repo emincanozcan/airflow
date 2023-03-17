@@ -123,7 +123,7 @@ class OBSHook(HuaweiBaseHook):
     @staticmethod
     def get_obs_bucket_object_key(
         bucket_name: str | None, object_key: str, bucket_param_name: str, object_key_param_name: str
-    ) -> tuple[str, str]:
+    ) -> tuple:
         """
         Get the OBS bucket name and object key from either:
             - bucket name and object key. Return the info as it is after checking `object_key` is a relative
@@ -451,7 +451,7 @@ class OBSHook(HuaweiBaseHook):
                     metadata=metadata,
                     headers=headers,
                 )
-                if getattr(data, "read", None):
+                if getattr(data, "read", None) and hasattr(data, "close") and callable(data.close):
                     data.close()
             else:
                 resp = self.get_bucket_client(bucket_name).putFile(
@@ -477,7 +477,12 @@ class OBSHook(HuaweiBaseHook):
                 raise AirflowException(e)
 
         except Exception as e:
-            if object_type == "content" and getattr(data, "read", None):
+            if (
+                object_type == "content"
+                and getattr(data, "read", None)
+                and hasattr(data, "close")
+                and callable(data.close)
+            ):
                 data.close()
             raise AirflowException(f"Errors when create object({e}).")
 

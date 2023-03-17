@@ -303,7 +303,7 @@ class DWSHook(HuaweiBaseHook):
         public_bind_type: str | None = None,
         eip_id: str | None = None,
         enterprise_project_id: str | None = None,
-    ) -> str:
+    ) -> str | None:
         """
         Restore the cluster using a snapshot
 
@@ -370,3 +370,4 @@ class DWSHook(HuaweiBaseHook):
         for tag in resp.tags:
             if tag.key == "snapshot_id":
                 return tag.value
+        return None
