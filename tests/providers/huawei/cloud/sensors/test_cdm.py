@@ -66,7 +66,7 @@ class TestCDMSensor(unittest.TestCase):
     def test_poke_show_job_status(self, mock_service):
         # Given
         mock_service.return_value.show_job_status.return_value = MOCK_STATUS_RESPONSE["submissions"]
-        # assert mock_service.return_value.show_job_status.return_value is 123
+
         # When
         res = self.job_status_sensor.poke(None)
 

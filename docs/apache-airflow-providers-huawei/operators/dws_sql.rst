@@ -1,5 +1,3 @@
- TODO: This license is not consistent with license used in the project.
-       Delete the inconsistent license and above line and rerun pre-commit to insert a good license.
  .. Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -11,7 +9,7 @@
  ..   http://www.apache.org/licenses/LICENSE-2.0
 
  .. Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on a
+    software distributed under the License is distributed on an
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations

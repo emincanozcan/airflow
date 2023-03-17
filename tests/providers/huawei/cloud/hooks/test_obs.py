@@ -453,8 +453,8 @@ class TestOBSHook(unittest.TestCase):
     def test_list_object_if_max_keys_and_prefix(self, mock_bucket_client):
         mock_list_object = mock_bucket_client.return_value.listObjects
 
-        expect_object_list = list()
-        body = {"contents": list()}
+        expect_object_list = []
+        body = {"contents": []}
         n = 0
         for key in MOCK_OBJECT_KEYS:
             if key.startswith("mock2") and n < 2:

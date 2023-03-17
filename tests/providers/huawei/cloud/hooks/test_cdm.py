@@ -26,9 +26,7 @@ from tests.providers.huawei.cloud.utils.hw_mock import default_mock_constants, m
 CDM_STRING = "airflow.providers.huawei.cloud.hooks.cdm.{}"
 JOB_NAME = "job-name"
 CLUSTER_ID = "cluster-id"
-JOBS = (
-    []
-)  # NOTE: Huawei Cloud doesn't accept empty job list. But, we have mocked the SDK, so there is no problem for tests.
+JOBS = []
 
 
 class TestCdmHook(unittest.TestCase):
