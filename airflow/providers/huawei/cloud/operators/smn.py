@@ -142,7 +142,7 @@ class SMNPublishJsonMessageOperator(BaseOperator):
         "email_subject",
         "default",
         "sms",
-        "email",
+        "email_body",
         "http",
         "https",
         "functionstage",
