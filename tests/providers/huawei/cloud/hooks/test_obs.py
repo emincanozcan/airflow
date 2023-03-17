@@ -75,7 +75,6 @@ class TestOBSHook(unittest.TestCase):
     @mock.patch(OBS_STRING.format("urlsplit"))
     @mock.patch(OBS_STRING.format("OBSHook"))
     def test_get_obs_bucket_object_key_if_relative_object_key(self, mock_hook, mock_urlsplit):
-        # mock_urlsplit.return_value = mock.Mock(scheme="obs", netloc=MOCK_BUCKET_NAME)
         mock_urlsplit.return_value = mock.Mock(scheme="", netloc="")
 
         bucket_name, object_key = self.hook.get_obs_bucket_object_key(
@@ -631,12 +630,13 @@ class TestOBSHook(unittest.TestCase):
             self.hook.get_object(
                 object_key=MOCK_OBJECT_KEY,
                 bucket_name=MOCK_BUCKET_NAME,
+                download_path="/mock/download/test"
             )
 
             mock_bucket_client.assert_called_once_with(MOCK_BUCKET_NAME)
             mock_get_object.assert_called_once_with(
                 objectKey=MOCK_OBJECT_KEY,
-                downloadPath=None,
+                downloadPath="/mock/download/test",
             )
 
     @mock.patch(OBS_STRING.format("OBSHook.get_obs_client"))
