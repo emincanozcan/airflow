@@ -50,7 +50,7 @@ class SMNHook(HuaweiBaseHook):
         :param message_structure: Specifies the message structure, which contains JSON strings.
         :param message: Specifies the message content.
         """
-        kwargs = dict()
+        kwargs = {}
 
         if message_structure:
             kwargs["message_structure"] = message_structure
