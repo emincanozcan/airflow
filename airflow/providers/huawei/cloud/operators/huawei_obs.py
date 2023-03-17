@@ -378,7 +378,7 @@ class OBSCreateObjectOperator(BaseOperator):
                 Applicable to archiving rarely-accessed (once a year) data.
     :param expires: Expiration time of an object to be uploaded, in days.
     :param encryption: Algorithm used in SSE-KMS encryption. The value can be:kms
-    :param key: Master key used in SSE-KMS encryption. The value can be None.
+    :param key: The key used in SSE-KMS encryption. The value can be None.
     """
 
     template_fields: Sequence[str] = ("bucket_name", "object_key", "object_type", "data", "metadata")
