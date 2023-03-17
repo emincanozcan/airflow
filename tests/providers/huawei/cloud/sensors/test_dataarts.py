@@ -96,6 +96,7 @@ class TestDataArtsDLFShowJobStatusSensor(unittest.TestCase):
         assert res is False
         mock_service.return_value.dlf_list_job_instances.assert_called_once_with(workspace=MOCK_WORKSPACE)
 
+
 class mock_node:
     def __init__(self, job_name, status):
         self.job_name = job_name
