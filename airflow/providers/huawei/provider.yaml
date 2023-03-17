@@ -36,13 +36,58 @@ dependencies:
   - huaweicloudsdkdlf>=3.1.19
   - huaweicloudsdkiam>=3.1.19
 
-# integrations:
-#   - integration-name: Huawei Cloud SMN
-#     external-doc-url: https://www.alibabacloud.com/help/product/31815.htm
-#     logo: /integration-logos/alibaba/cloud/alibabacloud-oss.png
-#     how-to-guide:
-#       - /docs/apache-airflow-providers-alibaba/operators/oss.rst
-#     tags: [alibaba]
+integrations:
+  - integration-name: Huawei Cloud CDM
+    external-doc-url: https://support.huaweicloud.com/intl/en-us/cdm/index.html
+    logo: !TODO
+    how-to-guide:
+      - /docs/apache-airflow-providers-huawei/operators/cdm.rst
+    tags: [huawei]
+
+
+  - integration-name: Huawei Cloud DataArts
+    external-doc-url: https://support.huaweicloud.com/intl/en-us/dataartsstudio/index.html
+    logo: !TODO
+    how-to-guide:
+      - /docs/apache-airflow-providers-huawei/operators/dataarts.rst
+    tags: [huawei]
+
+
+  - integration-name: Huawei Cloud DLI
+    external-doc-url: https://support.huaweicloud.com/intl/en-us/dli/index.html
+    logo: !TODO
+    how-to-guide:
+      - /docs/apache-airflow-providers-huawei/operators/dli.rst
+    tags: [huawei]
+
+
+  - integration-name: Huawei Cloud DWS - SQL
+    external-doc-url: https://support.huaweicloud.com/intl/en-us/dws/index.html
+    logo: !TODO
+    how-to-guide:
+      - /docs/apache-airflow-providers-huawei/operators/dws_sql.rst
+    tags: [huawei]
+
+  - integration-name: Huawei Cloud DWS
+    external-doc-url: https://support.huaweicloud.com/intl/en-us/dws/index.html
+    logo: !TODO
+    how-to-guide:
+      - /docs/apache-airflow-providers-huawei/operators/dws.rst
+    tags: [huawei]
+
+  - integration-name: Huawei Cloud SMN
+    external-doc-url: https://support.huaweicloud.com/intl/en-us/smn/index.html
+    logo: !TODO
+    how-to-guide:
+      - /docs/apache-airflow-providers-huawei/operators/smn.rst
+    tags: [huawei]
+
+  - integration-name: Huawei Cloud OBS
+    external-doc-url: https://support.huaweicloud.com/intl/en-us/obs/index.html
+    logo: !TODO
+    how-to-guide:
+      - /docs/apache-airflow-providers-huawei/operators/obs.rst
+    tags: [huawei]
 
 operators:
   - integration-name: Huawei Cloud OBS
