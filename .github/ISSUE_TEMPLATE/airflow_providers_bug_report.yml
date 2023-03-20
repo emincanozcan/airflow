@@ -62,6 +62,7 @@ body:
         - grpc
         - hashicorp
         - http
+        - huawei
         - imap
         - influxdb
         - jdbc
