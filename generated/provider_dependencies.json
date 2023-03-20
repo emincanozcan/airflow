@@ -434,8 +434,7 @@
       "huaweicloudsdkdli>=3.1.19",
       "huaweicloudsdkdws>=3.1.21",
       "huaweicloudsdkiam>=3.1.19",
-      "huaweicloudsdksmn>=3.1.19",
-      "psycopg2>=2.9.4"
+      "huaweicloudsdksmn>=3.1.19"
     ],
     "cross-providers-deps": []
   },

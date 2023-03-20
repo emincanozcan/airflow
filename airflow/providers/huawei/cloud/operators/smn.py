@@ -74,7 +74,10 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
         )
 
         smn_hook.send_message(
-            topic_urn=self.topic_urn, tags=self.tags, template_name=self.template_name, subject=self.email_subject
+            topic_urn=self.topic_urn,
+            tags=self.tags,
+            template_name=self.template_name,
+            subject=self.email_subject,
         )
 
 
