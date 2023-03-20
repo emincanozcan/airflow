@@ -38,8 +38,8 @@ class SMNPublishMessageTemplateOperator(BaseOperator):
     :param tags: Specifies the dictionary consisting of variable parameters and values.
     :param template_name: Specifies the message template name
     :param region: Regions where the API is available
-    :param email_subject: Specifies the message subject, which is used as the email subject when you publish email
-        messages
+    :param email_subject: Specifies the message subject, which is used as the email subject when you publish
+        email messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
@@ -87,8 +87,8 @@ class SMNPublishTextMessageOperator(BaseOperator):
         identifier.
     :param message: Specifies the message content
     :param region: Regions where the API is available
-    :param email_subject: Specifies the message subject, which is used as the email subject when you publish email
-        messages
+    :param email_subject: Specifies the message subject, which is used as the email subject when you publis
+        email messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
@@ -131,8 +131,8 @@ class SMNPublishJsonMessageOperator(BaseOperator):
     :param topic_urn: Specifies the resource identifier of the topic, which is unique.
     :param message_structure: Specifies the message structure, which contains JSON strings
     :param region: Regions where the API is available
-    :param email_subject: Specifies the message subject, which is used as the email subject when you publish email
-        messages.
+    :param email_subject: Specifies the message subject, which is used as the email subject when you publis
+        email messages
     :param huaweicloud_conn_id: The Airflow connection used for SMN credentials.
     """
 
