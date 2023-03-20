@@ -176,7 +176,7 @@ with DAG(
 
     # [START howto_operator_obs_delete_batch_object]
     delete_batch_object_2 = OBSDeleteBatchObjectOperator(
-        task_id="delete_batch_object",
+        task_id="delete_batch_object2",
         bucket_name=bucket_name_2,
         object_list=[object_key_content, object_key_file],
     )
