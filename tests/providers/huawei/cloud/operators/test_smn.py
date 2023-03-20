@@ -54,10 +54,14 @@ class TestSMNPublishTextMessageOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_SMN_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_SMN_CONN_ID, 
+            region=MOCK_REGION,
+            project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.send_message.assert_called_once_with(
-            topic_urn=MOCK_TOPIC_URN, message=MOCK_MESSAGE, subject=MOCK_SUBJECT,
+            topic_urn=MOCK_TOPIC_URN,
+            message=MOCK_MESSAGE,
+            subject=MOCK_SUBJECT,
         )
 
 
@@ -77,11 +81,15 @@ class TestSMNPublishJsonMessageOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_SMN_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_SMN_CONN_ID,
+            region=MOCK_REGION,
+            project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.send_message.assert_called_once_with(
             topic_urn=MOCK_TOPIC_URN,
-            message_structure=json.dumps({"default": MOCK_DEFAULT_MESSAGE, "sms": MOCK_SMS_MESSAGE, "email": MOCK_MESSAGE}),
+            message_structure=json.dumps(
+                {"default": MOCK_DEFAULT_MESSAGE, "sms": MOCK_SMS_MESSAGE, "email": MOCK_MESSAGE}
+            ),
             subject=MOCK_SUBJECT,
         )
 
@@ -101,8 +109,13 @@ class TestSMNPublishMessageTemplateOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_SMN_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_SMN_CONN_ID,
+            region=MOCK_REGION,
+            project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.send_message.assert_called_once_with(
-            topic_urn=MOCK_TOPIC_URN, tags=MOCK_TAGS, template_name=MOCK_TEMPLATE_NAME, subject=MOCK_SUBJECT,
+            topic_urn=MOCK_TOPIC_URN,
+            tags=MOCK_TAGS,
+            template_name=MOCK_TEMPLATE_NAME,
+            subject=MOCK_SUBJECT,
         )
