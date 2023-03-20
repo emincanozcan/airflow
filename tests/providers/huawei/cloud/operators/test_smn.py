@@ -54,9 +54,7 @@ class TestSMNPublishTextMessageOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_SMN_CONN_ID, 
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_SMN_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.send_message.assert_called_once_with(
             topic_urn=MOCK_TOPIC_URN,
@@ -81,9 +79,7 @@ class TestSMNPublishJsonMessageOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_SMN_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_SMN_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.send_message.assert_called_once_with(
             topic_urn=MOCK_TOPIC_URN,
@@ -109,9 +105,7 @@ class TestSMNPublishMessageTemplateOperator(unittest.TestCase):
         )
         operator.execute(None)
         mock_hook.assert_called_once_with(
-            huaweicloud_conn_id=MOCK_SMN_CONN_ID,
-            region=MOCK_REGION,
-            project_id=MOCK_PROJECT_ID
+            huaweicloud_conn_id=MOCK_SMN_CONN_ID, region=MOCK_REGION, project_id=MOCK_PROJECT_ID
         )
         mock_hook.return_value.send_message.assert_called_once_with(
             topic_urn=MOCK_TOPIC_URN,
