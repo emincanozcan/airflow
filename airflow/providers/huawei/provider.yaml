@@ -42,44 +42,36 @@ integrations:
     how-to-guide:
       - /docs/apache-airflow-providers-huawei/operators/cdm.rst
     tags: [huawei]
-
-
   - integration-name: Huawei Cloud DataArts
     external-doc-url: https://support.huaweicloud.com/intl/en-us/dataartsstudio/index.html
     logo: /integration-logos/huawei/DataArts.png
     how-to-guide:
       - /docs/apache-airflow-providers-huawei/operators/dataarts.rst
     tags: [huawei]
-
-
   - integration-name: Huawei Cloud DLI
     external-doc-url: https://support.huaweicloud.com/intl/en-us/dli/index.html
     logo: /integration-logos/huawei/DLI.png
     how-to-guide:
       - /docs/apache-airflow-providers-huawei/operators/dli.rst
     tags: [huawei]
-
   - integration-name: Huawei Cloud DWS
     external-doc-url: https://support.huaweicloud.com/intl/en-us/dws/index.html
     logo: /integration-logos/huawei/DWS.png
     how-to-guide:
       - /docs/apache-airflow-providers-huawei/operators/dws.rst
     tags: [huawei]
-
   - integration-name: Huawei Cloud SMN
     external-doc-url: https://support.huaweicloud.com/intl/en-us/smn/index.html
     logo: /integration-logos/huawei/SMN.png
     how-to-guide:
       - /docs/apache-airflow-providers-huawei/operators/smn.rst
     tags: [huawei]
-
   - integration-name: Huawei Cloud OBS
     external-doc-url: https://support.huaweicloud.com/intl/en-us/obs/index.html
     logo: /integration-logos/huawei/OBS.png
     how-to-guide:
       - /docs/apache-airflow-providers-huawei/operators/obs.rst
     tags: [huawei]
-
 operators:
   - integration-name: Huawei Cloud OBS
     python-modules:
