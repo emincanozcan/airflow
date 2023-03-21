@@ -36,6 +36,10 @@ dependencies:
   - huaweicloudsdkiam>=3.1.19
 
 integrations:
+  - integration-name: Huawei Cloud
+    external-doc-url: https://www.huaweicloud.com/intl/en-us/
+    logo: /integration-logos/huawei/huawei-cloud.png
+    tags: [huawei]
   - integration-name: Huawei Cloud CDM
     external-doc-url: https://support.huaweicloud.com/intl/en-us/cdm/index.html
     logo: /integration-logos/huawei/CDM.png
